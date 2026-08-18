@@ -38,12 +38,12 @@ export default async function PropertiesPage({
 
         {/* Catalog Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
-          {/* Sidebar Filters */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-24">
+          {/* Sticky Sidebar Filters */}
+          <aside className="lg:col-span-1">
+            <div className="sticky top-24 z-20 max-h-[calc(100vh-105px)] overflow-y-auto pr-1 scrollbar-thin">
               <PropertyFilter />
             </div>
-          </div>
+          </aside>
           
           {/* Main Grid */}
           <div className="lg:col-span-3">
