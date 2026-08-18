@@ -13,11 +13,14 @@ import {
   Trash2, 
   Save, 
   ArrowLeft,
-  Sparkles,
-  Eye,
-  Check
+  Star,
+  ArrowLeftRight,
+  ChevronLeft,
+  ChevronRight,
+  GripVertical
 } from 'lucide-react';
 import Link from 'next/link';
+import { cn } from '@/lib/utils';
 
 const sampleImages = [
   { name: 'Квартира премиум', url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80' },
@@ -58,6 +61,8 @@ export function PropertyForm({
   });
 
   const [newImageUrl, setNewImageUrl] = useState('');
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -88,6 +93,56 @@ export function PropertyForm({
       ...prev,
       images: prev.images?.filter((_, i) => i !== index),
     }));
+  };
+
+  const setAsPrimary = (index: number) => {
+    if (index === 0 || !formData.images) return;
+    const images = [...formData.images];
+    const [selected] = images.splice(index, 1);
+    images.unshift(selected);
+    setFormData((prev) => ({ ...prev, images }));
+  };
+
+  const moveImage = (index: number, direction: 'left' | 'right') => {
+    if (!formData.images) return;
+    const targetIndex = direction === 'left' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= formData.images.length) return;
+
+    const images = [...formData.images];
+    const temp = images[index];
+    images[index] = images[targetIndex];
+    images[targetIndex] = temp;
+    setFormData((prev) => ({ ...prev, images }));
+  };
+
+  // Drag and Drop handlers
+  const handleDragStart = (index: number) => {
+    setDraggedIndex(index);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (dragOverIndex !== index) {
+      setDragOverIndex(index);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === dropIndex || !formData.images) return;
+
+    const images = [...formData.images];
+    const [draggedItem] = images.splice(draggedIndex, 1);
+    images.splice(dropIndex, 0, draggedItem);
+
+    setFormData((prev) => ({ ...prev, images }));
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -335,11 +390,16 @@ export function PropertyForm({
         </div>
       </div>
 
-      {/* 4. Media & Photos Card */}
+      {/* 4. Media & Photos Card with Drag and Drop Reordering */}
       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">
-        <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-          <ImageIcon className="w-5 h-5 text-primary" />
-          <h2 className="text-lg font-bold text-slate-900">Фотографии и медиа</h2>
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div className="flex items-center gap-2">
+            <ImageIcon className="w-5 h-5 text-primary" />
+            <h2 className="text-lg font-bold text-slate-900">Управление медиа и фотографиями</h2>
+          </div>
+          <span className="text-xs font-medium text-slate-400">
+            Перетягивайте фото мышкой для смены порядка
+          </span>
         </div>
 
         {/* Add Image Input */}
@@ -380,29 +440,108 @@ export function PropertyForm({
           </div>
         </div>
 
-        {/* Uploaded Images Preview Grid */}
-        {formData.images && formData.images.length > 0 && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-3">
-            {formData.images.map((imgUrl, i) => (
-              <div key={i} className="relative group rounded-xl overflow-hidden aspect-[4/3] bg-slate-100 border border-slate-200">
-                <img src={imgUrl} alt={`Фото ${i + 1}`} className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveImage(i)}
-                    className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors shadow-sm"
-                    title="Удалить фото"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+        {/* Interactive Drag & Drop Images Grid */}
+        {formData.images && formData.images.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-3">
+            {formData.images.map((imgUrl, i) => {
+              const isPrimary = i === 0;
+              const isBeingDragged = draggedIndex === i;
+              const isDropTarget = dragOverIndex === i;
+
+              return (
+                <div
+                  key={i}
+                  draggable
+                  onDragStart={() => handleDragStart(i)}
+                  onDragOver={(e) => handleDragOver(e, i)}
+                  onDrop={(e) => handleDrop(e, i)}
+                  onDragEnd={handleDragEnd}
+                  className={cn(
+                    'relative rounded-2xl overflow-hidden bg-slate-100 border transition-all select-none cursor-grab active:cursor-grabbing group shadow-sm',
+                    isPrimary ? 'border-primary ring-2 ring-primary/20 bg-primary-50/20' : 'border-slate-200',
+                    isBeingDragged && 'opacity-40 scale-95 border-dashed border-primary',
+                    isDropTarget && 'ring-4 ring-secondary border-secondary scale-105'
+                  )}
+                >
+                  {/* Image Aspect Ratio Box */}
+                  <div className="relative aspect-[4/3] w-full overflow-hidden">
+                    <img src={imgUrl} alt={`Фото ${i + 1}`} className="w-full h-full object-cover pointer-events-none" />
+
+                    {/* Order & Primary Badges */}
+                    <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 z-10">
+                      <span className="w-6 h-6 rounded-full bg-slate-900/80 text-white text-xs font-bold flex items-center justify-center backdrop-blur-sm">
+                        {i + 1}
+                      </span>
+                      {isPrimary && (
+                        <span className="bg-primary text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full shadow-md flex items-center gap-1">
+                          <Star className="w-3 h-3 fill-white" />
+                          Главное фото
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Drag Handle Indicator */}
+                    <div className="absolute top-2.5 right-2.5 p-1.5 rounded-lg bg-slate-900/60 text-white backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                      <GripVertical className="w-4 h-4" />
+                    </div>
+                  </div>
+
+                  {/* Actions Toolbar on Bottom of card */}
+                  <div className="p-2.5 bg-white border-t border-slate-100 flex items-center justify-between gap-1">
+                    <div className="flex items-center gap-1">
+                      {/* Move Left */}
+                      <button
+                        type="button"
+                        onClick={() => moveImage(i, 'left')}
+                        disabled={i === 0}
+                        className="p-1.5 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-30 disabled:pointer-events-none"
+                        title="Сдвинуть влево"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+
+                      {/* Move Right */}
+                      <button
+                        type="button"
+                        onClick={() => moveImage(i, 'right')}
+                        disabled={i === (formData.images?.length || 1) - 1}
+                        className="p-1.5 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-30 disabled:pointer-events-none"
+                        title="Сдвинуть вправо"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+
+                      {/* Make Primary Button */}
+                      {!isPrimary && (
+                        <button
+                          type="button"
+                          onClick={() => setAsPrimary(i)}
+                          className="px-2 py-1 text-[11px] font-semibold text-slate-700 hover:text-primary hover:bg-primary-50 rounded-lg transition-colors flex items-center gap-1"
+                          title="Сделать главным фото объекта"
+                        >
+                          <Star className="w-3 h-3 text-secondary" />
+                          На обложку
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Delete Photo */}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(i)}
+                      className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      title="Удалить это фото"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
-                {i === 0 && (
-                  <span className="absolute bottom-2 left-2 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm">
-                    Главное
-                  </span>
-                )}
-              </div>
-            ))}
+              );
+            })}
+          </div>
+        ) : (
+          <div className="py-8 text-center border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 text-sm">
+            Фотографии еще не добавлены. Вставьте ссылку или выберите из готовых выше.
           </div>
         )}
       </div>
