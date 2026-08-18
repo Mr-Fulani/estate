@@ -15,7 +15,7 @@ async def seed_data():
         cat_house = Category(name="Дом", slug="dom", description="Частные дома и коттеджи")
         cat_land = Category(name="Участок", slug="uchastok", description="Земельные участки")
         cat_comm = Category(name="Коммерция", slug="kommerciya", description="Коммерческая недвижимость")
-        cat_villa = Category(name="Виллы", slug="villy", description="Премиальные виллы и резиденции")
+        cat_villa = Category(name="Вилла", slug="villa", description="Премиальные виллы и резиденции")
         
         db.add_all([cat_flat, cat_house, cat_land, cat_comm, cat_villa])
         await db.commit()
