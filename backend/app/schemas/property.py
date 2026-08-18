@@ -58,6 +58,7 @@ class PropertyListResponse(BaseModel):
     per_page: int
 
 class PropertyFilter(BaseModel):
+    search: Optional[str] = None
     category_id: Optional[int] = None
     city: Optional[str] = None
     min_price: Optional[float] = None

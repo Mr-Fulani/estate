@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func, desc, asc
+from sqlalchemy import select, func, desc, asc, or_
 from sqlalchemy.orm import selectinload
 from typing import Optional
 from app.database import get_db
@@ -12,6 +12,7 @@ router = APIRouter(prefix="/api/v1/properties", tags=["Properties"])
 @router.get("", include_in_schema=False)
 @router.get("/", response_model=PropertyListResponse)
 async def list_properties(
+    search: Optional[str] = Query(None),
     category_id: Optional[int] = Query(None),
     city: Optional[str] = Query(None),
     min_price: Optional[float] = Query(None),
@@ -27,6 +28,17 @@ async def list_properties(
 ):
     query = select(Property).options(selectinload(Property.category)).where(Property.is_active == True)
     count_query = select(func.count()).select_from(Property).where(Property.is_active == True)
+
+    if search:
+        search_filter = or_(
+            Property.title.ilike(f"%{search}%"),
+            Property.description.ilike(f"%{search}%"),
+            Property.city.ilike(f"%{search}%"),
+            Property.district.ilike(f"%{search}%"),
+            Property.address.ilike(f"%{search}%")
+        )
+        query = query.where(search_filter)
+        count_query = count_query.where(search_filter)
 
     if category_id:
         query = query.where(Property.category_id == category_id)

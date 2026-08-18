@@ -12,6 +12,7 @@ export default async function PropertiesPage({
   const resolvedParams = await searchParams;
   const params: any = {};
   
+  if (resolvedParams?.search) params.search = resolvedParams.search;
   if (resolvedParams?.category_id) params.category_id = resolvedParams.category_id;
   if (resolvedParams?.city) params.city = resolvedParams.city;
   if (resolvedParams?.min_price) params.min_price = resolvedParams.min_price;

@@ -46,6 +46,7 @@ export interface PropertyListResponse {
 }
 
 export interface PropertyFilter {
+  search?: string;
   category_id?: number;
   city?: string;
   min_price?: number;

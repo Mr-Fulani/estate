@@ -13,6 +13,7 @@ export function PropertyFilter() {
   const [categories, setCategories] = useState<Category[]>([]);
 
   const [filters, setFilters] = useState({
+    search: searchParams.get('search') || '',
     category_id: searchParams.get('category_id') || '',
     city: searchParams.get('city') || '',
     min_price: searchParams.get('min_price') || '',
@@ -29,6 +30,7 @@ export function PropertyFilter() {
   // Sync state with URL if URL changes
   useEffect(() => {
     setFilters({
+      search: searchParams.get('search') || '',
       category_id: searchParams.get('category_id') || '',
       city: searchParams.get('city') || '',
       min_price: searchParams.get('min_price') || '',
@@ -56,11 +58,13 @@ export function PropertyFilter() {
         params.append(key, value);
       }
     });
-    router.push(`/properties?${params.toString()}`);
+    const queryString = params.toString();
+    router.push(queryString ? `/properties?${queryString}` : '/properties');
   };
 
   const handleReset = () => {
     setFilters({
+      search: '',
       category_id: '',
       city: '',
       min_price: '',
@@ -98,6 +102,24 @@ export function PropertyFilter() {
       </div>
 
       <form onSubmit={handleApply} className="flex flex-col gap-5">
+        {/* Search Keyword */}
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            Поиск по названию/описанию
+          </label>
+          <div className="relative">
+            <input
+              type="text"
+              name="search"
+              value={filters.search}
+              onChange={handleChange}
+              placeholder="Ключевое слово..."
+              className="w-full h-11 rounded-xl border border-slate-200 bg-slate-50 px-3.5 pl-9 text-sm text-slate-800 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+            />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          </div>
+        </div>
+
         {/* Category */}
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
