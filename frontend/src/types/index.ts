@@ -90,3 +90,15 @@ export interface PropertyFormData {
   is_active?: boolean;
   status_badge?: string | null;
 }
+
+export interface SiteSettings {
+  id?: number;
+  phone: string;
+  email: string;
+  address: string;
+  working_hours: string;
+  telegram?: string | null;
+  whatsapp?: string | null;
+  vk?: string | null;
+  youtube?: string | null;
+}

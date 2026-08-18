@@ -5,7 +5,8 @@ import {
   PropertyFilter, 
   PropertyListResponse,
   AdminStats,
-  PropertyFormData
+  PropertyFormData,
+  SiteSettings
 } from '@/types';
 
 function getApiBaseUrl(): string {
@@ -268,4 +269,57 @@ export async function deleteCategory(id: number): Promise<void> {
   if (!res.ok) {
     throw new Error('Failed to delete category');
   }
+}
+
+export async function fetchSiteSettings(): Promise<SiteSettings> {
+  try {
+    const baseUrl = getApiBaseUrl();
+    const res = await fetch(`${baseUrl}/settings`, {
+      cache: 'no-store',
+    });
+
+    if (!res.ok) {
+      return {
+        phone: '+7 (495) 123-45-67',
+        email: 'info@estate-agency.ru',
+        address: 'г. Москва, Пресненская набережная, 12, Башня Федерация',
+        working_hours: 'Ежедневно с 9:00 до 21:00',
+        telegram: 'https://t.me/estate_agency',
+        whatsapp: 'https://wa.me/79991234567',
+        vk: 'https://vk.com/estate_agency',
+        youtube: 'https://youtube.com/@estate_agency',
+      };
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error('Failed to fetch site settings:', error);
+    return {
+      phone: '+7 (495) 123-45-67',
+      email: 'info@estate-agency.ru',
+      address: 'г. Москва, Пресненская набережная, 12, Башня Федерация',
+      working_hours: 'Ежедневно с 9:00 до 21:00',
+      telegram: 'https://t.me/estate_agency',
+      whatsapp: 'https://wa.me/79991234567',
+      vk: 'https://vk.com/estate_agency',
+      youtube: 'https://youtube.com/@estate_agency',
+    };
+  }
+}
+
+export async function updateSiteSettings(data: Partial<SiteSettings>): Promise<SiteSettings> {
+  const baseUrl = getApiBaseUrl();
+  const res = await fetch(`${baseUrl}/settings`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to update site settings');
+  }
+
+  return await res.json();
 }

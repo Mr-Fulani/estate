@@ -3,15 +3,26 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Mail, MapPin, Phone, Shield } from 'lucide-react';
+import { useSiteSettings } from '@/context/SiteSettingsContext';
+import { TelegramIcon, WhatsappIcon, VkIcon, YoutubeIcon } from '../ui/SocialIcons';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
   const pathname = usePathname();
+  const { settings } = useSiteSettings();
 
-  // Hide footer on admin pages
   if (pathname?.startsWith('/admin')) {
     return null;
   }
+
+  const socialLinks = [
+    { url: settings.telegram, icon: TelegramIcon, label: 'Telegram' },
+    { url: settings.whatsapp, icon: WhatsappIcon, label: 'WhatsApp' },
+    { url: settings.vk, icon: VkIcon, label: 'VK' },
+    { url: settings.youtube, icon: YoutubeIcon, label: 'YouTube' },
+  ].filter((s) => s.url);
+
+  const phoneTel = 'tel:' + settings.phone.replace(/[\s\-\(\)]/g, '');
 
   return (
     <footer className="bg-primary-900 text-slate-300 pt-16 pb-8">
@@ -27,6 +38,24 @@ export function Footer() {
             <p className="mb-6 leading-relaxed text-sm text-slate-300">
               Ваш надежный партнер в мире недвижимости. Мы помогаем находить идеальные дома и выгодно инвестировать в недвижимость с 2010 года.
             </p>
+
+            {/* Social Icons */}
+            {socialLinks.length > 0 && (
+              <div className="flex items-center gap-2">
+                {socialLinks.map((social) => (
+                  <a
+                    key={social.label}
+                    href={social.url!}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/10 text-slate-300 hover:bg-secondary hover:text-white transition-all"
+                    title={social.label}
+                  >
+                    <social.icon className="w-5 h-5" />
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Links */}
@@ -63,15 +92,15 @@ export function Footer() {
             <ul className="space-y-4 text-sm">
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-secondary shrink-0 mt-0.5" />
-                <span>г. Москва, Пресненская набережная, 12<br/>Башня Федерация, офис 45</span>
+                <span>{settings.address}</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-secondary shrink-0" />
-                <a href="tel:+74951234567" className="hover:text-white transition-colors">+7 (495) 123-45-67</a>
+                <a href={phoneTel} className="hover:text-white transition-colors">{settings.phone}</a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-secondary shrink-0" />
-                <a href="mailto:info@estate-agency.ru" className="hover:text-white transition-colors">info@estate-agency.ru</a>
+                <a href={`mailto:${settings.email}`} className="hover:text-white transition-colors">{settings.email}</a>
               </li>
             </ul>
           </div>

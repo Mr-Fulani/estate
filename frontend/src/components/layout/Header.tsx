@@ -5,6 +5,8 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Menu, X, Phone, Shield } from 'lucide-react';
 import { useState } from 'react';
+import { useSiteSettings } from '@/context/SiteSettingsContext';
+import { TelegramIcon, WhatsappIcon, VkIcon, YoutubeIcon } from '../ui/SocialIcons';
 
 const navItems = [
   { href: '/', label: 'Главная' },
@@ -14,14 +16,26 @@ const navItems = [
   { href: '/contact', label: 'Контакты' },
 ];
 
+function phoneToTel(phone: string): string {
+  return 'tel:' + phone.replace(/[\s\-\(\)]/g, '');
+}
+
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { settings } = useSiteSettings();
 
   // Hide public header on admin pages
   if (pathname?.startsWith('/admin')) {
     return null;
   }
+
+  const socialLinks = [
+    { url: settings.telegram, icon: TelegramIcon, label: 'Telegram' },
+    { url: settings.whatsapp, icon: WhatsappIcon, label: 'WhatsApp' },
+    { url: settings.vk, icon: VkIcon, label: 'VK' },
+    { url: settings.youtube, icon: YoutubeIcon, label: 'YouTube' },
+  ].filter((s) => s.url);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm transition-all duration-200">
@@ -59,15 +73,37 @@ export function Header() {
           </nav>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-4">
+            {/* Social Icons */}
+            <div className="flex items-center gap-1.5">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.url!}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-primary hover:bg-primary/5 transition-colors"
+                  title={social.label}
+                >
+                  <social.icon className="w-4.5 h-4.5" />
+                </a>
+              ))}
+            </div>
+
+            {/* Divider */}
+            {socialLinks.length > 0 && (
+              <div className="w-px h-6 bg-slate-200" />
+            )}
+
+            {/* Phone */}
             <a
-              href="tel:+74951234567"
+              href={phoneToTel(settings.phone)}
               className="flex items-center gap-2 text-sm font-medium text-slate-700 hover:text-primary transition-colors"
             >
               <div className="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center text-secondary">
                 <Phone className="w-4 h-4" />
               </div>
-              <span>+7 (495) 123-45-67</span>
+              <span>{settings.phone}</span>
             </a>
 
             <Link href="/contact">
@@ -110,12 +146,28 @@ export function Header() {
 
           <div className="pt-2 flex flex-col gap-3">
             <a
-              href="tel:+74951234567"
+              href={phoneToTel(settings.phone)}
               className="flex items-center gap-2.5 text-slate-800 font-medium py-1.5"
             >
               <Phone className="w-4 h-4 text-secondary" />
-              <span>+7 (495) 123-45-67</span>
+              <span>{settings.phone}</span>
             </a>
+
+            {/* Social Links in Mobile */}
+            <div className="flex items-center gap-2 py-1.5">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.url!}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 bg-slate-100 hover:text-primary hover:bg-primary/10 transition-colors"
+                  title={social.label}
+                >
+                  <social.icon className="w-5 h-5" />
+                </a>
+              ))}
+            </div>
 
             <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)}>
               <button className="w-full bg-primary text-white py-3 rounded-xl font-medium hover:bg-primary-800 transition-colors">

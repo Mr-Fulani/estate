@@ -10,7 +10,8 @@ import {
   Globe, 
   PlusCircle, 
   ShieldAlert,
-  ChevronRight
+  ChevronRight,
+  Settings
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -19,6 +20,7 @@ const adminNavItems = [
   { href: '/admin/properties', label: 'Объекты', icon: Building2 },
   { href: '/admin/leads', label: 'Заявки и лиды', icon: Users },
   { href: '/admin/categories', label: 'Категории', icon: Tags },
+  { href: '/admin/settings', label: 'Настройки сайта', icon: Settings },
 ];
 
 export default function AdminLayout({
