@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, Building, Home, Trees, Briefcase, SlidersHorizontal } from 'lucide-react';
+import { Search, Building, Home, Trees, Briefcase, Palmtree, SlidersHorizontal } from 'lucide-react';
 import { Category } from '@/types';
 import { fetchCategories } from '@/lib/api';
 import { cn } from '@/lib/utils';
@@ -12,6 +12,8 @@ const categoryIcons: Record<string, any> = {
   dom: Home,
   uchastok: Trees,
   kommerciya: Briefcase,
+  villy: Palmtree,
+  villa: Palmtree,
 };
 
 export function HeroSearch() {
