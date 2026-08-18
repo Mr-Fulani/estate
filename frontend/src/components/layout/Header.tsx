@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Menu, X, Phone } from 'lucide-react';
+import { Menu, X, Phone, Shield } from 'lucide-react';
 import { useState } from 'react';
 
 const navItems = [
@@ -17,6 +17,11 @@ const navItems = [
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+
+  // Hide public header on admin pages
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
 
   return (
     <header className="fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm transition-all duration-200">
@@ -116,6 +121,13 @@ export function Header() {
               <button className="w-full bg-primary text-white py-3 rounded-xl font-medium hover:bg-primary-800 transition-colors">
                 Оставить заявку
               </button>
+            </Link>
+
+            <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)}>
+              <div className="flex items-center gap-2 text-xs font-semibold text-secondary py-2 border-t border-slate-100 mt-2">
+                <Shield className="w-4 h-4" />
+                <span>Панель администратора</span>
+              </div>
             </Link>
           </div>
         </div>

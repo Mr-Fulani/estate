@@ -31,11 +31,14 @@ export interface Property {
 }
 
 export interface ContactRequest {
+  id?: number;
   name: string;
   email: string;
-  phone: string;
+  phone?: string | null;
   message: string;
-  property_id?: number;
+  property_id?: number | null;
+  status?: 'new' | 'contacted' | 'closed' | string;
+  created_at?: string;
 }
 
 export interface PropertyListResponse {
@@ -54,4 +57,34 @@ export interface PropertyFilter {
   rooms?: number;
   min_area?: number;
   max_area?: number;
+  include_inactive?: boolean;
+}
+
+export interface AdminStats {
+  total_properties: number;
+  active_properties: number;
+  featured_properties: number;
+  total_contacts: number;
+  new_contacts: number;
+  categories_count: number;
+}
+
+export interface PropertyFormData {
+  title: string;
+  slug?: string;
+  description?: string;
+  price: number;
+  currency?: string;
+  address?: string;
+  city?: string;
+  district?: string;
+  area?: number;
+  rooms?: number;
+  floor?: number;
+  total_floors?: number;
+  year_built?: number;
+  images?: string[];
+  category_id: number;
+  is_featured?: boolean;
+  is_active?: boolean;
 }

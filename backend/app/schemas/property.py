@@ -21,6 +21,8 @@ class PropertyBase(BaseModel):
 
 class PropertyCreate(PropertyBase):
     slug: Optional[str] = None
+    is_featured: bool = False
+    is_active: bool = True
 
 class PropertyUpdate(BaseModel):
     title: Optional[str] = None

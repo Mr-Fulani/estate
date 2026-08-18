@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from app.config import get_settings
 from app.database import engine, Base
-from app.api import properties, categories, contacts
+from app.api import properties, categories, contacts, admin
 
 settings = get_settings()
 
@@ -31,6 +31,7 @@ app.add_middleware(
 app.include_router(properties.router)
 app.include_router(categories.router)
 app.include_router(contacts.router)
+app.include_router(admin.router)
 
 @app.get("/")
 async def root():

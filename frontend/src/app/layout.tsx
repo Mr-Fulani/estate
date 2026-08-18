@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
+import { AppShell } from '@/components/layout/AppShell';
 
 const inter = Inter({ subsets: ['latin', 'cyrillic'] });
 
@@ -19,11 +18,9 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <body className={`${inter.className} min-h-screen flex flex-col`}>
-        <Header />
-        <main className="flex-grow pt-20">
+        <AppShell>
           {children}
-        </main>
-        <Footer />
+        </AppShell>
       </body>
     </html>
   );
