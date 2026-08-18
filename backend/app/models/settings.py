@@ -14,6 +14,8 @@ class SiteSetting(Base):
     whatsapp: Mapped[str | None] = mapped_column(String(200), default="https://wa.me/79991234567", nullable=True)
     vk: Mapped[str | None] = mapped_column(String(200), default="https://vk.com/estate_agency", nullable=True)
     youtube: Mapped[str | None] = mapped_column(String(200), default="https://youtube.com/@estate_agency", nullable=True)
+    instagram: Mapped[str | None] = mapped_column(String(200), default="", nullable=True)
+    max_messenger: Mapped[str | None] = mapped_column(String(200), default="", nullable=True)
 
     def __repr__(self) -> str:
         return f"<SiteSetting phone={self.phone}>"

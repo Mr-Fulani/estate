@@ -13,7 +13,7 @@ import {
   Check,
   ExternalLink,
 } from 'lucide-react';
-import { TelegramIcon, WhatsappIcon, VkIcon, YoutubeIcon } from '@/components/ui/SocialIcons';
+import { TelegramIcon, WhatsappIcon, VkIcon, YoutubeIcon, InstagramIcon, MaxIcon } from '@/components/ui/SocialIcons';
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<SiteSettings | null>(null);
@@ -223,6 +223,40 @@ export default function AdminSettingsPage() {
                 value={settings.youtube || ''}
                 onChange={(e) => handleChange('youtube', e.target.value)}
                 placeholder="https://youtube.com/@your_channel"
+                className="w-full h-10 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              />
+            </div>
+          </div>
+
+          {/* Instagram */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500/10 via-rose-500/10 to-purple-500/10 flex items-center justify-center text-pink-600 shrink-0">
+              <InstagramIcon className="w-5 h-5" />
+            </div>
+            <div className="flex-1">
+              <label className="text-xs font-semibold text-slate-600 block mb-1">Instagram</label>
+              <input
+                type="url"
+                value={settings.instagram || ''}
+                onChange={(e) => handleChange('instagram', e.target.value)}
+                placeholder="https://instagram.com/your_profile"
+                className="w-full h-10 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              />
+            </div>
+          </div>
+
+          {/* MAX Messenger */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-600/10 flex items-center justify-center text-blue-600 shrink-0">
+              <MaxIcon className="w-5 h-5" />
+            </div>
+            <div className="flex-1">
+              <label className="text-xs font-semibold text-slate-600 block mb-1">Мессенджер МАКС</label>
+              <input
+                type="url"
+                value={settings.max_messenger || ''}
+                onChange={(e) => handleChange('max_messenger', e.target.value)}
+                placeholder="https://max.im/your_account или ссылка на диалог"
                 className="w-full h-10 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               />
             </div>

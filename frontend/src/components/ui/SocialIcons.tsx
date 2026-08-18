@@ -31,3 +31,21 @@ export function YoutubeIcon({ className = 'w-5 h-5' }: { className?: string }) {
     </svg>
   );
 }
+
+export function InstagramIcon({ className = 'w-5 h-5' }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+    </svg>
+  );
+}
+
+export function MaxIcon({ className = 'w-5 h-5' }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2C6.48 2 2 6.48 2 12c0 1.82.49 3.53 1.34 5L2 22l5.18-1.31C8.61 21.49 10.26 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm4.5 14h-2.2l-2.3-4.2-2.3 4.2H7.5l3.4-6.1L7.7 4h2.2l2.1 3.9L14.1 4h2.2l-3.2 5.9 3.4 6.1z" />
+    </svg>
+  );
+}

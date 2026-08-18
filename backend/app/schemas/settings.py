@@ -10,6 +10,8 @@ class SiteSettingsBase(BaseModel):
     whatsapp: Optional[str] = "https://wa.me/79991234567"
     vk: Optional[str] = "https://vk.com/estate_agency"
     youtube: Optional[str] = "https://youtube.com/@estate_agency"
+    instagram: Optional[str] = ""
+    max_messenger: Optional[str] = ""
 
 class SiteSettingsUpdate(BaseModel):
     phone: Optional[str] = None
@@ -20,6 +22,8 @@ class SiteSettingsUpdate(BaseModel):
     whatsapp: Optional[str] = None
     vk: Optional[str] = None
     youtube: Optional[str] = None
+    instagram: Optional[str] = None
+    max_messenger: Optional[str] = None
 
 class SiteSettingsResponse(SiteSettingsBase):
     id: int

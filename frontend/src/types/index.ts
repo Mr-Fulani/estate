@@ -101,4 +101,6 @@ export interface SiteSettings {
   whatsapp?: string | null;
   vk?: string | null;
   youtube?: string | null;
+  instagram?: string | null;
+  max_messenger?: string | null;
 }

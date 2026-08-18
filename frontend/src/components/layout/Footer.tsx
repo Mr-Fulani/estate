@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Mail, MapPin, Phone, Shield } from 'lucide-react';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
-import { TelegramIcon, WhatsappIcon, VkIcon, YoutubeIcon } from '../ui/SocialIcons';
+import { TelegramIcon, WhatsappIcon, VkIcon, YoutubeIcon, InstagramIcon, MaxIcon } from '../ui/SocialIcons';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -20,7 +20,9 @@ export function Footer() {
     { url: settings.whatsapp, icon: WhatsappIcon, label: 'WhatsApp' },
     { url: settings.vk, icon: VkIcon, label: 'VK' },
     { url: settings.youtube, icon: YoutubeIcon, label: 'YouTube' },
-  ].filter((s) => s.url);
+    { url: settings.instagram, icon: InstagramIcon, label: 'Instagram' },
+    { url: settings.max_messenger, icon: MaxIcon, label: 'MAX' },
+  ].filter((s) => s.url && typeof s.url === 'string' && s.url.trim() !== '');
 
   const phoneTel = 'tel:' + settings.phone.replace(/[\s\-\(\)]/g, '');
 
