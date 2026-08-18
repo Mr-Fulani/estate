@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, desc, asc
+from sqlalchemy.orm import selectinload
 from typing import Optional
 from app.database import get_db
 from app.models.property import Property
@@ -8,6 +9,7 @@ from app.schemas.property import PropertyListResponse, PropertyResponse
 
 router = APIRouter(prefix="/api/v1/properties", tags=["Properties"])
 
+@router.get("", include_in_schema=False)
 @router.get("/", response_model=PropertyListResponse)
 async def list_properties(
     category_id: Optional[int] = Query(None),
@@ -23,7 +25,7 @@ async def list_properties(
     order: str = Query("desc"),
     db: AsyncSession = Depends(get_db)
 ):
-    query = select(Property).where(Property.is_active == True)
+    query = select(Property).options(selectinload(Property.category)).where(Property.is_active == True)
     count_query = select(func.count()).select_from(Property).where(Property.is_active == True)
 
     if category_id:
@@ -72,13 +74,13 @@ async def list_properties(
 
 @router.get("/featured", response_model=list[PropertyResponse])
 async def featured_properties(limit: int = 6, db: AsyncSession = Depends(get_db)):
-    query = select(Property).where(Property.is_active == True, Property.is_featured == True).limit(limit)
+    query = select(Property).options(selectinload(Property.category)).where(Property.is_active == True, Property.is_featured == True).limit(limit)
     result = await db.execute(query)
     return result.scalars().all()
 
 @router.get("/{property_id}", response_model=PropertyResponse)
 async def get_property(property_id: int, db: AsyncSession = Depends(get_db)):
-    query = select(Property).where(Property.id == property_id)
+    query = select(Property).options(selectinload(Property.category)).where(Property.id == property_id)
     result = await db.execute(query)
     property_obj = result.scalars().first()
     

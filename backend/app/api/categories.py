@@ -7,6 +7,7 @@ from app.schemas.category import CategoryResponse
 
 router = APIRouter(prefix="/api/v1/categories", tags=["Categories"])
 
+@router.get("", include_in_schema=False)
 @router.get("/", response_model=list[CategoryResponse])
 async def list_categories(db: AsyncSession = Depends(get_db)):
     query = select(Category)

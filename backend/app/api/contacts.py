@@ -6,6 +6,7 @@ from app.schemas.contact import ContactCreate, ContactResponse
 
 router = APIRouter(prefix="/api/v1/contacts", tags=["Contacts"])
 
+@router.post("", include_in_schema=False)
 @router.post("/", response_model=ContactResponse, status_code=status.HTTP_201_CREATED)
 async def create_contact(contact: ContactCreate, db: AsyncSession = Depends(get_db)):
     new_contact = ContactRequest(**contact.model_dump())
