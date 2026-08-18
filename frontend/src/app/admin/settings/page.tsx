@@ -13,7 +13,7 @@ import {
   Check,
   ExternalLink,
 } from 'lucide-react';
-import { TelegramIcon, WhatsappIcon, VkIcon, YoutubeIcon, InstagramIcon, MaxIcon } from '@/components/ui/SocialIcons';
+import { TelegramIcon, WhatsappIcon, VkIcon, YoutubeIcon, InstagramIcon, FacebookIcon, MaxIcon } from '@/components/ui/SocialIcons';
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<SiteSettings | null>(null);
