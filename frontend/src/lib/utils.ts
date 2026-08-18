@@ -42,7 +42,7 @@ export function getStatusBadgeVariant(badgeText?: string | null): 'success' | 'w
   if (lower.includes('акт') || lower.includes('свобод')) return 'success';
   if (lower.includes('брон') || lower.includes('ожидан')) return 'warning';
   if (lower.includes('продан') || lower.includes('архив') || lower.includes('снят')) return 'danger';
-  if (lower.includes('спец') || lower.includes('горяч') || lower.includes('скид')) return 'purple';
+  if (lower.includes('спец') || lower.includes('горяч') || lower.includes('скид') || lower.includes('рассроч')) return 'purple';
   if (lower.includes('эксклюзив') || lower.includes('рекоменд')) return 'secondary';
   return 'primary';
 }
