@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Property, Category } from '@/types';
@@ -29,6 +29,10 @@ export function PropertiesTable({
   const [search, setSearch] = useState('');
   const [selectedCat, setSelectedCat] = useState('');
   const [deletingId, setDeletingId] = useState<number | null>(null);
+
+  useEffect(() => {
+    setProperties(initialProperties);
+  }, [initialProperties]);
 
   const filtered = properties.filter((p) => {
     const matchesSearch = search === '' || 

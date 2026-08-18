@@ -33,9 +33,10 @@ export async function fetchProperties(
     const baseUrl = getApiBaseUrl();
     const query = urlParams.toString();
     const url = query ? `${baseUrl}/properties?${query}` : `${baseUrl}/properties`;
-    const res = await fetch(url, {
-      next: { revalidate: 60 },
-    });
+    
+    // If admin context (include_inactive), do not cache. Otherwise, revalidate every 10s
+    const isNoCache = !!params.include_inactive;
+    const res = await fetch(url, isNoCache ? { cache: 'no-store' } : { next: { revalidate: 10 } });
 
     if (!res.ok) {
       return { items: [], total: 0, page: 1, per_page: 10 };
@@ -52,7 +53,7 @@ export async function fetchFeaturedProperties(): Promise<Property[]> {
   try {
     const baseUrl = getApiBaseUrl();
     const res = await fetch(`${baseUrl}/properties/featured?limit=6`, {
-      next: { revalidate: 60 },
+      next: { revalidate: 10 },
     });
 
     if (!res.ok) {
@@ -70,7 +71,7 @@ export async function fetchProperty(id: number | string): Promise<Property | nul
   try {
     const baseUrl = getApiBaseUrl();
     const res = await fetch(`${baseUrl}/properties/${id}`, {
-      next: { revalidate: 60 },
+      cache: 'no-store',
     });
 
     if (!res.ok) {
@@ -88,7 +89,7 @@ export async function fetchCategories(): Promise<Category[]> {
   try {
     const baseUrl = getApiBaseUrl();
     const res = await fetch(`${baseUrl}/categories`, {
-      next: { revalidate: 3600 },
+      cache: 'no-store',
     });
 
     if (!res.ok) {

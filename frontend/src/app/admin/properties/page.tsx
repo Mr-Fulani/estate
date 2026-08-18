@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function AdminPropertiesPage() {
   const [propsData, categories] = await Promise.all([
-    fetchProperties({ per_page: 100, sort_by: 'created_at', order: 'desc' }),
+    fetchProperties({ per_page: 100, sort_by: 'created_at', order: 'desc', include_inactive: true }),
     fetchCategories(),
   ]);
 
