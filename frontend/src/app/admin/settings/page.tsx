@@ -230,7 +230,7 @@ export default function AdminSettingsPage() {
 
           {/* Instagram */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500/10 via-rose-500/10 to-purple-500/10 flex items-center justify-center text-pink-600 shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-[#E1306C]/10 flex items-center justify-center text-[#E1306C] shrink-0">
               <InstagramIcon className="w-5 h-5" />
             </div>
             <div className="flex-1">
