@@ -58,6 +58,7 @@ export function PropertyForm({
     category_id: initialData?.category_id || (categories[0]?.id || 1),
     is_featured: initialData?.is_featured ?? false,
     is_active: initialData?.is_active ?? true,
+    status_badge: initialData?.status_badge ?? 'Актуально',
   });
 
   const [newImageUrl, setNewImageUrl] = useState('');
@@ -546,13 +547,59 @@ export function PropertyForm({
         )}
       </div>
 
-      {/* 5. Publication Settings */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+      {/* 5. Publication & Badge Settings */}
+      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">
         <h2 className="text-lg font-bold text-slate-900 pb-3 border-b border-slate-100">
-          Настройки видимости
+          Статус объекта и видимость
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* Custom Status Badge */}
+        <div className="space-y-2">
+          <label className="text-xs font-semibold uppercase tracking-wider text-slate-600">
+            Текст плашки / Бейдж статуса
+          </label>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <input
+              type="text"
+              name="status_badge"
+              value={formData.status_badge || ''}
+              onChange={handleChange}
+              placeholder="Например: Актуально, В брони, Продано, Спецпредложение, Торг..."
+              className="flex-1 h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            />
+          </div>
+
+          {/* Badge Presets */}
+          <div className="flex flex-wrap gap-1.5 pt-1">
+            {[
+              { label: '🟢 Актуально', val: 'Актуально' },
+              { label: '🟡 В брони', val: 'В брони' },
+              { label: '🔴 Продано', val: 'Продано' },
+              { label: '🟣 Спецпредложение', val: 'Спецпредложение' },
+              { label: '🔥 Горячая цена', val: 'Горячая цена' },
+              { label: '⭐ Эксклюзив', val: 'Эксклюзив' },
+              { label: '🏦 Ипотека от 6%', val: 'Ипотека от 6%' },
+              { label: '🤝 Торг уместен', val: 'Торг уместен' },
+              { label: '❌ Без плашки', val: '' },
+            ].map((preset, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setFormData((prev) => ({ ...prev, status_badge: preset.val }))}
+                className={cn(
+                  'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border',
+                  formData.status_badge === preset.val
+                    ? 'bg-primary text-white border-primary shadow-sm'
+                    : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                )}
+              >
+                {preset.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
           <label className="flex items-center gap-3 p-4 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:bg-slate-100/80 transition-colors">
             <input
               type="checkbox"

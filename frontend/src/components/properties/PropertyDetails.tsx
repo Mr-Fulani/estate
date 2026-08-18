@@ -14,6 +14,7 @@ export function PropertyDetails({ property }: { property: Property }) {
           isFeatured={property.is_featured}
           categoryName={property.category?.name}
           isActive={property.is_active}
+          statusBadge={property.status_badge}
         />
       </div>
 

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Property } from '@/types';
 import { Card } from '../ui/Card';
 import { Badge } from '../ui/Badge';
-import { formatPrice, formatArea, pluralize } from '@/lib/utils';
+import { formatPrice, formatArea, pluralize, getStatusBadgeVariant } from '@/lib/utils';
 import { MapPin, Bed, Maximize, Layers } from 'lucide-react';
 
 interface PropertyCardProps {
@@ -14,6 +14,9 @@ export function PropertyCard({ property }: PropertyCardProps) {
   const imageUrl = property.images && property.images.length > 0 
     ? property.images[0] 
     : null;
+
+  const statusBadgeText = property.status_badge || (property.is_active ? 'Актуально' : 'В архиве');
+  const statusBadgeVariant = getStatusBadgeVariant(statusBadgeText);
 
   return (
     <Link href={`/properties/${property.id}`} className="group block">
@@ -31,14 +34,23 @@ export function PropertyCard({ property }: PropertyCardProps) {
             </div>
           )}
           
-          <div className="absolute top-4 left-4 flex gap-2">
+          <div className="absolute top-3.5 left-3.5 flex flex-wrap gap-1.5 z-10">
             {property.is_featured && (
-              <Badge variant="secondary" className="shadow-sm">Рекомендуем</Badge>
+              <Badge variant="secondary" className="shadow-md font-semibold">Рекомендуем</Badge>
             )}
             {property.category && (
-              <Badge variant="primary" className="shadow-sm">{property.category.name}</Badge>
+              <Badge variant="primary" className="shadow-md">{property.category.name}</Badge>
             )}
           </div>
+
+          {/* Status Badge in Top Right */}
+          {statusBadgeText && (
+            <div className="absolute top-3.5 right-3.5 z-10">
+              <Badge variant={statusBadgeVariant} className="shadow-md bg-white/95 backdrop-blur-sm font-semibold">
+                {statusBadgeText}
+              </Badge>
+            </div>
+          )}
         </div>
 
         <div className="p-5 flex flex-col flex-grow">

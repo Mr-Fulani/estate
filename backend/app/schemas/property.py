@@ -18,6 +18,7 @@ class PropertyBase(BaseModel):
     year_built: Optional[int] = None
     images: list[str] = []
     category_id: int
+    status_badge: Optional[str] = "Актуально"
 
 class PropertyCreate(PropertyBase):
     slug: Optional[str] = None
@@ -41,6 +42,7 @@ class PropertyUpdate(BaseModel):
     category_id: Optional[int] = None
     is_featured: Optional[bool] = None
     is_active: Optional[bool] = None
+    status_badge: Optional[str] = None
 
 class PropertyResponse(PropertyBase):
     id: int

@@ -23,6 +23,7 @@ export interface Property {
   year_built: number | null;
   is_featured: boolean;
   is_active: boolean;
+  status_badge?: string | null;
   images: string[];
   category_id: number;
   category: Category | null;
@@ -87,4 +88,5 @@ export interface PropertyFormData {
   category_id: number;
   is_featured?: boolean;
   is_active?: boolean;
+  status_badge?: string | null;
 }

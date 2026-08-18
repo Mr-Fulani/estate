@@ -6,11 +6,10 @@ import {
   ChevronRight, 
   Maximize2, 
   X, 
-  Sparkles,
   Camera
 } from 'lucide-react';
 import { Badge } from '../ui/Badge';
-import { cn } from '@/lib/utils';
+import { cn, getStatusBadgeVariant } from '@/lib/utils';
 
 export function PropertyGallery({
   images,
@@ -18,18 +17,26 @@ export function PropertyGallery({
   isFeatured,
   categoryName,
   isActive,
+  statusBadge,
 }: {
   images: string[];
   title: string;
   isFeatured?: boolean;
   categoryName?: string;
   isActive?: boolean;
+  statusBadge?: string | null;
 }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   const hasImages = images && images.length > 0;
   const currentImage = hasImages ? images[selectedIndex] : null;
+
+  const displayStatus = statusBadge !== undefined && statusBadge !== null 
+    ? statusBadge 
+    : (isActive ? 'Актуально' : 'В архиве');
+
+  const statusVariant = getStatusBadgeVariant(displayStatus);
 
   // Keyboard navigation for Lightbox
   useEffect(() => {
@@ -93,9 +100,11 @@ export function PropertyGallery({
               {categoryName}
             </Badge>
           )}
-          <Badge variant={isActive ? 'success' : 'outline'} className="shadow-md bg-white/90 backdrop-blur-sm">
-            {isActive ? 'Актуально' : 'В архиве'}
-          </Badge>
+          {displayStatus && (
+            <Badge variant={statusVariant} className="shadow-md bg-white/95 backdrop-blur-sm font-semibold">
+              {displayStatus}
+            </Badge>
+          )}
         </div>
 
         {/* Counter and Zoom Button */}

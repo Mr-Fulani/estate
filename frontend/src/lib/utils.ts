@@ -35,3 +35,14 @@ export function pluralize(n: number | null | undefined, forms: [string, string, 
   }
   return `${n} ${forms[2]}`;
 }
+
+export function getStatusBadgeVariant(badgeText?: string | null): 'success' | 'warning' | 'danger' | 'purple' | 'secondary' | 'primary' | 'outline' {
+  if (!badgeText) return 'outline';
+  const lower = badgeText.toLowerCase();
+  if (lower.includes('акт') || lower.includes('свобод')) return 'success';
+  if (lower.includes('брон') || lower.includes('ожидан')) return 'warning';
+  if (lower.includes('продан') || lower.includes('архив') || lower.includes('снят')) return 'danger';
+  if (lower.includes('спец') || lower.includes('горяч') || lower.includes('скид')) return 'purple';
+  if (lower.includes('эксклюзив') || lower.includes('рекоменд')) return 'secondary';
+  return 'primary';
+}
