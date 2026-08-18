@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { Menu, X, Phone, Shield } from 'lucide-react';
 import { useState } from 'react';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
-import { TelegramIcon, WhatsappIcon, VkIcon, YoutubeIcon, InstagramIcon, MaxIcon } from '../ui/SocialIcons';
+import { TelegramIcon, WhatsappIcon, VkIcon, YoutubeIcon, InstagramIcon, FacebookIcon, MaxIcon } from '../ui/SocialIcons';
 
 const navItems = [
   { href: '/', label: 'Главная' },
@@ -36,6 +36,7 @@ export function Header() {
     { url: settings.vk, icon: VkIcon, label: 'VK' },
     { url: settings.youtube, icon: YoutubeIcon, label: 'YouTube' },
     { url: settings.instagram, icon: InstagramIcon, label: 'Instagram' },
+    { url: settings.facebook, icon: FacebookIcon, label: 'Facebook' },
     { url: settings.max_messenger, icon: MaxIcon, label: 'MAX' },
   ].filter((s) => s.url && typeof s.url === 'string' && s.url.trim() !== '');
 

@@ -245,6 +245,23 @@ export default function AdminSettingsPage() {
             </div>
           </div>
 
+          {/* Facebook */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#1877F2]/10 flex items-center justify-center text-[#1877F2] shrink-0">
+              <FacebookIcon className="w-5 h-5" />
+            </div>
+            <div className="flex-1">
+              <label className="text-xs font-semibold text-slate-600 block mb-1">Facebook</label>
+              <input
+                type="url"
+                value={settings.facebook || ''}
+                onChange={(e) => handleChange('facebook', e.target.value)}
+                placeholder="https://facebook.com/your_page"
+                className="w-full h-10 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              />
+            </div>
+          </div>
+
           {/* MAX Messenger */}
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-blue-600/10 flex items-center justify-center text-blue-600 shrink-0">

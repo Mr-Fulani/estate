@@ -11,6 +11,7 @@ class SiteSettingsBase(BaseModel):
     vk: Optional[str] = "https://vk.com/estate_agency"
     youtube: Optional[str] = "https://youtube.com/@estate_agency"
     instagram: Optional[str] = ""
+    facebook: Optional[str] = ""
     max_messenger: Optional[str] = ""
 
 class SiteSettingsUpdate(BaseModel):
@@ -23,6 +24,7 @@ class SiteSettingsUpdate(BaseModel):
     vk: Optional[str] = None
     youtube: Optional[str] = None
     instagram: Optional[str] = None
+    facebook: Optional[str] = None
     max_messenger: Optional[str] = None
 
 class SiteSettingsResponse(SiteSettingsBase):

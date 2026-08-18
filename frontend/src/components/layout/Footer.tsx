@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Mail, MapPin, Phone, Shield } from 'lucide-react';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
-import { TelegramIcon, WhatsappIcon, VkIcon, YoutubeIcon, InstagramIcon, MaxIcon } from '../ui/SocialIcons';
+import { TelegramIcon, WhatsappIcon, VkIcon, YoutubeIcon, InstagramIcon, FacebookIcon, MaxIcon } from '../ui/SocialIcons';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -21,6 +21,7 @@ export function Footer() {
     { url: settings.vk, icon: VkIcon, label: 'VK' },
     { url: settings.youtube, icon: YoutubeIcon, label: 'YouTube' },
     { url: settings.instagram, icon: InstagramIcon, label: 'Instagram' },
+    { url: settings.facebook, icon: FacebookIcon, label: 'Facebook' },
     { url: settings.max_messenger, icon: MaxIcon, label: 'MAX' },
   ].filter((s) => s.url && typeof s.url === 'string' && s.url.trim() !== '');
 
