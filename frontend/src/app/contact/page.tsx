@@ -1,7 +1,33 @@
+'use client';
+
 import { ContactForm } from '@/app/properties/[id]/ContactForm';
-import { MapPin, Phone, Mail, Clock } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, MessageSquare } from 'lucide-react';
+import { useSiteSettings } from '@/context/SiteSettingsContext';
+import {
+  TelegramIcon,
+  WhatsappIcon,
+  VkIcon,
+  YoutubeIcon,
+  InstagramIcon,
+  FacebookIcon,
+  MaxIcon,
+} from '@/components/ui/SocialIcons';
 
 export default function ContactPage() {
+  const { settings } = useSiteSettings();
+
+  const phoneTel = 'tel:' + (settings.phone || '').replace(/[\s\-\(\)]/g, '');
+
+  const socialLinks = [
+    { url: settings.telegram, icon: TelegramIcon, label: 'Telegram', color: 'hover:bg-[#27A7E7] hover:text-white' },
+    { url: settings.whatsapp, icon: WhatsappIcon, label: 'WhatsApp', color: 'hover:bg-[#25D366] hover:text-white' },
+    { url: settings.vk, icon: VkIcon, label: 'ВКонтакте', color: 'hover:bg-[#4C75A3] hover:text-white' },
+    { url: settings.youtube, icon: YoutubeIcon, label: 'YouTube', color: 'hover:bg-[#FF0000] hover:text-white' },
+    { url: settings.instagram, icon: InstagramIcon, label: 'Instagram', color: 'hover:bg-[#E1306C] hover:text-white' },
+    { url: settings.facebook, icon: FacebookIcon, label: 'Facebook', color: 'hover:bg-[#1877F2] hover:text-white' },
+    { url: settings.max_messenger, icon: MaxIcon, label: 'MAX', color: 'hover:bg-blue-600 hover:text-white' },
+  ].filter((s) => s.url && typeof s.url === 'string' && s.url.trim() !== '');
+
   return (
     <div className="bg-slate-50 min-h-[calc(100vh-80px)] py-12">
       <div className="container mx-auto px-4 md:px-6">
@@ -13,70 +39,104 @@ export default function ContactPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-          {/* Contact Info */}
-          <div className="bg-primary-900 rounded-2xl p-8 md:p-12 text-white">
-            <h2 className="text-3xl font-bold mb-8">Контактная информация</h2>
-            
-            <div className="space-y-8">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center shrink-0">
-                  <MapPin className="text-secondary" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">Наш офис</h3>
-                  <p className="text-primary-100 leading-relaxed">
-                    г. Москва, Пресненская набережная, 12<br />
-                    Башня Федерация, офис 45
-                  </p>
-                </div>
-              </div>
+          {/* Dynamic Contact Info Card */}
+          <div className="bg-primary-900 rounded-3xl p-8 md:p-12 text-white shadow-xl flex flex-col justify-between">
+            <div>
+              <h2 className="text-3xl font-bold mb-8">Контактная информация</h2>
               
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center shrink-0">
-                  <Phone className="text-secondary" />
+              <div className="space-y-7">
+                {/* Address */}
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center shrink-0 text-secondary">
+                    <MapPin className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-1 text-white/90">Наш офис</h3>
+                    <p className="text-primary-100 leading-relaxed text-sm md:text-base">
+                      {settings.address}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">Телефон</h3>
-                  <a href="tel:+74951234567" className="text-primary-100 hover:text-white transition-colors">
-                    +7 (495) 123-45-67
-                  </a>
-                  <br />
-                  <a href="tel:+79991234567" className="text-primary-100 hover:text-white transition-colors">
-                    +7 (999) 123-45-67
-                  </a>
+                
+                {/* Phone */}
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center shrink-0 text-secondary">
+                    <Phone className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-1 text-white/90">Телефон</h3>
+                    <a
+                      href={phoneTel}
+                      className="text-primary-100 hover:text-white font-semibold text-base md:text-lg transition-colors inline-block"
+                    >
+                      {settings.phone}
+                    </a>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center shrink-0">
-                  <Mail className="text-secondary" />
+                
+                {/* Email */}
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center shrink-0 text-secondary">
+                    <Mail className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-1 text-white/90">Email</h3>
+                    <a
+                      href={`mailto:${settings.email}`}
+                      className="text-primary-100 hover:text-white transition-colors text-sm md:text-base"
+                    >
+                      {settings.email}
+                    </a>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">Email</h3>
-                  <a href="mailto:info@estate-agency.ru" className="text-primary-100 hover:text-white transition-colors">
-                    info@estate-agency.ru
-                  </a>
-                </div>
-              </div>
 
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center shrink-0">
-                  <Clock className="text-secondary" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">Режим работы</h3>
-                  <p className="text-primary-100">
-                    Пн - Пт: 09:00 - 20:00<br />
-                    Сб - Вс: 10:00 - 18:00
-                  </p>
+                {/* Working Hours */}
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center shrink-0 text-secondary">
+                    <Clock className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-1 text-white/90">Режим работы</h3>
+                    <p className="text-primary-100 text-sm md:text-base">
+                      {settings.working_hours}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
+
+            {/* Social & Messengers Section */}
+            {socialLinks.length > 0 && (
+              <div className="pt-8 mt-8 border-t border-white/10">
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-primary-200 mb-4 flex items-center gap-2">
+                  <MessageSquare className="w-4 h-4 text-secondary" />
+                  Мессенджеры и соцсети
+                </h3>
+                <div className="flex flex-wrap gap-2.5">
+                  {socialLinks.map((social) => (
+                    <a
+                      key={social.label}
+                      href={social.url!}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`h-11 px-4 rounded-xl bg-white/10 text-white font-medium text-xs md:text-sm flex items-center gap-2 transition-all active:scale-95 ${social.color}`}
+                      title={social.label}
+                    >
+                      <social.icon className="w-4.5 h-4.5" />
+                      <span>{social.label}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Contact Form */}
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 md:p-12">
-            <h2 className="text-2xl font-bold text-slate-900 mb-6">Напишите нам</h2>
+          {/* Contact Form Card */}
+          <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 md:p-12">
+            <h2 className="text-2xl font-bold text-slate-900 mb-2">Напишите нам</h2>
+            <p className="text-slate-500 text-sm mb-6">
+              Оставьте свои контактные данные и наш специалист свяжется с вами в течение 15 минут.
+            </p>
             <ContactForm />
           </div>
         </div>
