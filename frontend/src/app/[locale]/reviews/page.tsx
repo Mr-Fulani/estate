@@ -15,6 +15,9 @@ type ReviewsPageProps = {
 };
 
 
+export const dynamic = 'force-dynamic';
+
+
 export async function generateMetadata({ params }: ReviewsPageProps): Promise<Metadata> {
   const { locale } = await params;
   if (!isLocale(locale)) return {};

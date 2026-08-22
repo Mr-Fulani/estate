@@ -76,6 +76,13 @@ async function ensureAdminResponse(response: Response, fallback: string): Promis
   return response;
 }
 
+function normalizeNewsArticle(article: NewsArticle): NewsArticle {
+  return {
+    ...article,
+    media: Array.isArray(article.media) ? article.media : [],
+  };
+}
+
 // ---------------- PUBLIC API ----------------
 
 export async function fetchExchangeRates(): Promise<ExchangeRatesResponse> {
@@ -109,7 +116,7 @@ export async function fetchProperties(
 
     if (!res.ok) throw new ApiError('Failed to fetch properties', res.status);
 
-    return await res.json();
+    return await res.json() as PropertyListResponse;
   } catch (error) {
     console.error('Failed to fetch properties:', error);
     throw error;
@@ -127,7 +134,7 @@ export async function fetchFeaturedProperties(): Promise<Property[]> {
       return [];
     }
 
-    return await res.json();
+    return await res.json() as Property[];
   } catch (error) {
     console.error('Failed to fetch featured properties:', error);
     return [];
@@ -174,7 +181,11 @@ export async function fetchNews(locale: Locale, page = 1, perPage = 9): Promise<
     const res = await fetch(`${baseUrl}/news/?${params}`, { next: { revalidate: 60 } });
 
     if (!res.ok) throw new ApiError('Failed to fetch news', res.status);
-    return await res.json();
+    const data = await res.json() as NewsListResponse;
+    return {
+      ...data,
+      items: Array.isArray(data.items) ? data.items.map(normalizeNewsArticle) : [],
+    };
   } catch (error) {
     console.error('Failed to fetch news:', error);
     throw error;
@@ -191,7 +202,8 @@ export async function fetchNewsArticle(slug: string, locale: Locale): Promise<Ne
 
     if (res.status === 404) return null;
     if (!res.ok) throw new ApiError('Failed to fetch news article', res.status);
-    return await res.json();
+    const article = await res.json() as NewsArticle;
+    return normalizeNewsArticle(article);
   } catch (error) {
     console.error(`Failed to fetch news article ${slug}:`, error);
     throw error;

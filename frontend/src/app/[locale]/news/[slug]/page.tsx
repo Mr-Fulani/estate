@@ -59,7 +59,7 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
     '@type': 'Article',
     headline: article.title,
     description: article.excerpt,
-    image: [article.cover_image, ...article.media.filter((item) => item.media_type === 'image').map((item) => item.url)].filter(Boolean),
+    image: [article.cover_image, ...(article.media ?? []).filter((item) => item.media_type === 'image').map((item) => item.url)].filter(Boolean),
     datePublished: article.published_at || undefined,
     author: { '@type': 'Organization', name: article.author },
     inLanguage: article.locale,
@@ -95,7 +95,7 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
           <div className="mx-auto max-w-3xl space-y-6 text-lg leading-8 text-slate-700">
             {paragraphs.map((paragraph, index) => <p key={`${index}-${paragraph.slice(0, 24)}`}>{paragraph}</p>)}
           </div>
-          <NewsMediaGallery media={article.media} title={article.title} locale={locale} coverImage={article.cover_image} />
+          <NewsMediaGallery media={article.media ?? []} title={article.title} locale={locale} coverImage={article.cover_image} />
         </div>
       </article>
     </main>
