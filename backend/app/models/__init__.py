@@ -7,6 +7,7 @@ from app.models.news import NewsArticle, NewsMedia, NewsTranslation
 from app.models.review import Review, ReviewTranslation
 from app.models.admin_user import AdminAuditLog, AdminLoginAttempt, AdminSession, AdminUser
 from app.models.exchange_rate import ExchangeRateSnapshot
+from app.models.rate_limit import PublicRateLimit
 
 __all__ = [
     "Category",
@@ -25,4 +26,5 @@ __all__ = [
     "AdminAuditLog",
     "AdminLoginAttempt",
     "ExchangeRateSnapshot",
+    "PublicRateLimit",
 ]

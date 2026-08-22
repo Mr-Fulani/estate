@@ -4,6 +4,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, status
 from sqlalchemy import desc, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -23,6 +24,7 @@ from app.audit import add_audit_log
 from app.models.admin_user import AdminUser
 from app.security import require_permission
 from app.services.currency import convert_amount_to_rub, get_exchange_rates
+from app.rate_limit import enforce_rate_limit
 
 
 router = APIRouter(prefix="/api/v1/contacts", tags=["Contacts"])
@@ -161,8 +163,22 @@ async def list_contacts(
 
 @router.post("", include_in_schema=False)
 @router.post("/", response_model=ContactResponse, status_code=status.HTTP_201_CREATED)
-async def create_contact(contact: ContactCreate, db: AsyncSession = Depends(get_db)):
-    new_contact = ContactRequest(**contact.model_dump(), status="new", is_read=False)
+async def create_contact(
+    contact: ContactCreate,
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+):
+    await enforce_rate_limit(
+        request,
+        action="contact_form",
+        limit=settings.PUBLIC_FORM_RATE_LIMIT,
+        window_minutes=settings.PUBLIC_RATE_WINDOW_MINUTES,
+    )
+    new_contact = ContactRequest(
+        **contact.model_dump(exclude={"website"}),
+        status="new",
+        is_read=False,
+    )
     db.add(new_contact)
     await db.flush()
     db.add(
@@ -178,8 +194,18 @@ async def create_contact(contact: ContactCreate, db: AsyncSession = Depends(get_
 
 
 @router.post("/track", response_model=ContactResponse, status_code=status.HTTP_201_CREATED)
-async def track_contact_action(event: ContactTrackCreate, db: AsyncSession = Depends(get_db)):
+async def track_contact_action(
+    event: ContactTrackCreate,
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+):
     """Record a high-intent contact click without claiming that a message was delivered."""
+    await enforce_rate_limit(
+        request,
+        action="contact_tracking",
+        limit=settings.PUBLIC_TRACK_RATE_LIMIT,
+        window_minutes=settings.PUBLIC_RATE_WINDOW_MINUTES,
+    )
     existing = None
     if event.session_id:
         dedupe_after = datetime.now(timezone.utc) - timedelta(minutes=30)
@@ -240,6 +266,16 @@ async def ingest_messenger_message(
     ):
         raise HTTPException(status_code=401, detail="Invalid CRM webhook secret")
 
+    if payload.external_message_id:
+        existing_contact_id = await db.scalar(
+            select(LeadActivity.contact_id).where(
+                LeadActivity.event_type == "messenger_message",
+                LeadActivity.external_message_id == payload.external_message_id,
+            )
+        )
+        if existing_contact_id is not None:
+            return await _get_lead(existing_contact_id, db)
+
     result = await db.execute(
         _lead_query()
         .where(
@@ -283,6 +319,7 @@ async def ingest_messenger_message(
             event_type="messenger_message",
             to_status=lead.status,
             note=payload.message,
+            external_message_id=payload.external_message_id,
             event_data={
                 "channel": payload.channel,
                 "external_message_id": payload.external_message_id,
@@ -290,7 +327,20 @@ async def ingest_messenger_message(
             },
         )
     )
-    await db.commit()
+    try:
+        await db.commit()
+    except IntegrityError:
+        await db.rollback()
+        if payload.external_message_id:
+            existing_contact_id = await db.scalar(
+                select(LeadActivity.contact_id).where(
+                    LeadActivity.event_type == "messenger_message",
+                    LeadActivity.external_message_id == payload.external_message_id,
+                )
+            )
+            if existing_contact_id is not None:
+                return await _get_lead(existing_contact_id, db)
+        raise
     return await _get_lead(lead.id, db)
 
 

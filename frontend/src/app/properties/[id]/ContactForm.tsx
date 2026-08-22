@@ -36,6 +36,7 @@ export function ContactForm({ propertyId }: { propertyId?: number }) {
     try {
       await submitContact({
         ...formData,
+        website: String(new FormData(e.currentTarget as HTMLFormElement).get('website') || ''),
         email: formData.email.trim() || undefined,
         phone: formData.phone.trim() || undefined,
         kind: 'form',
@@ -69,6 +70,11 @@ export function ContactForm({ propertyId }: { propertyId?: number }) {
           {error}
         </div>
       )}
+
+      <label className="hidden" aria-hidden="true">
+        Website
+        <input name="website" tabIndex={-1} autoComplete="off" />
+      </label>
       
       <Input
         id={`${formId}-name`}

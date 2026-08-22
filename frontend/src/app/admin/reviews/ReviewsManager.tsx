@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { BadgeCheck, ChevronDown, Copy, ExternalLink, Search, Star, Trash2 } from 'lucide-react';
+import { BadgeCheck, ChevronDown, ExternalLink, Search, Star, Trash2 } from 'lucide-react';
 
 import { deleteAdminReview, updateAdminReview } from '@/lib/api';
 import { cn } from '@/lib/utils';
@@ -47,12 +47,6 @@ function ReviewEditor({ review, onUpdated, onDeleted }: { review: AdminReview; o
     setLoading(true);
     try { await deleteAdminReview(form.id); onDeleted(form.id); } finally { setLoading(false); }
   };
-  const copyInvitation = async () => {
-    if (!form.invitation_token) return;
-    const url = `${window.location.origin}/${form.source_locale}/reviews?token=${encodeURIComponent(form.invitation_token)}`;
-    await navigator.clipboard.writeText(url);
-  };
-
   return (
     <details className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
       <summary className="flex cursor-pointer list-none flex-col gap-4 p-5 marker:content-none sm:flex-row sm:items-center sm:justify-between">
@@ -74,7 +68,7 @@ function ReviewEditor({ review, onUpdated, onDeleted }: { review: AdminReview; o
           <label className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold"><input type="checkbox" checked={form.is_verified} onChange={(event) => setForm((current) => ({ ...current, is_verified: event.target.checked }))} />Подтверждённый клиент</label>
           <label className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold"><input type="checkbox" checked={form.is_featured} onChange={(event) => setForm((current) => ({ ...current, is_featured: event.target.checked }))} />Показывать на главной</label>
           {form.property && <a href={`/ru/properties/${form.property.slug}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-primary"><ExternalLink className="h-4 w-4" />Открыть объект</a>}
-          {form.invitation_token && <button type="button" onClick={() => void copyInvitation()} className="inline-flex items-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-700"><Copy className="h-4 w-4" />Копировать приглашение</button>}
+          {form.has_active_invitation && <span className="inline-flex items-center rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-700">Активная ссылка-приглашение</span>}
         </div>
         <p className="text-xs text-slate-500">Контакт для проверки: {form.phone || form.email || 'не указан'}. Публично не показывается.</p>
         <div className="grid gap-5 xl:grid-cols-3">

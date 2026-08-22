@@ -74,6 +74,15 @@ class ContactRequest(Base):
 
 class LeadActivity(Base):
     __tablename__ = "lead_activities"
+    __table_args__ = (
+        Index(
+            "uq_lead_activities_external_message",
+            "event_type",
+            "external_message_id",
+            unique=True,
+            postgresql_where=text("external_message_id IS NOT NULL"),
+        ),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     contact_id: Mapped[int] = mapped_column(
@@ -83,6 +92,7 @@ class LeadActivity(Base):
     from_status: Mapped[str | None] = mapped_column(String(30), nullable=True)
     to_status: Mapped[str | None] = mapped_column(String(30), nullable=True)
     note: Mapped[str | None] = mapped_column(Text, nullable=True)
+    external_message_id: Mapped[str | None] = mapped_column(String(200), nullable=True)
     event_data: Mapped[dict[str, Any] | None] = mapped_column(
         JSON(), nullable=True
     )

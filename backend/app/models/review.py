@@ -1,3 +1,4 @@
+import builtins
 from datetime import datetime
 
 from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
@@ -31,7 +32,7 @@ class Review(Base):
     property = relationship("Property")
     contact = relationship("ContactRequest")
 
-    invitation_token: Mapped[str | None] = mapped_column(String(100), nullable=True, unique=True, index=True)
+    invitation_token_hash: Mapped[str | None] = mapped_column(String(64), nullable=True, unique=True, index=True)
     invitation_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
@@ -46,6 +47,10 @@ class Review(Base):
         lazy="selectin",
         order_by="ReviewTranslation.locale",
     )
+
+    @builtins.property
+    def has_active_invitation(self) -> bool:
+        return bool(self.invitation_token_hash and self.status == "invited")
 
 
 class ReviewTranslation(Base):

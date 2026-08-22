@@ -157,6 +157,7 @@ export interface ContactRequest {
   activities?: LeadActivity[];
   created_at?: string;
   updated_at?: string | null;
+  website?: string;
 }
 
 export interface LeadActivity {
@@ -324,7 +325,7 @@ export interface AdminReview {
   contact_id?: number | null;
   property?: { id: number; title: string; slug: string } | null;
   contact?: { id: number; name?: string | null; status: string; outcome?: string | null } | null;
-  invitation_token?: string | null;
+  has_active_invitation: boolean;
   invitation_expires_at?: string | null;
   published_at?: string | null;
   created_at: string;

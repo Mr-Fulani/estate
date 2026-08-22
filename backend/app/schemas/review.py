@@ -100,7 +100,7 @@ class ReviewAdminResponse(BaseModel):
     contact_id: int | None
     property: ReviewPropertySummary | None
     contact: ReviewContactSummary | None
-    invitation_token: str | None
+    has_active_invitation: bool
     invitation_expires_at: datetime | None
     published_at: datetime | None
     created_at: datetime

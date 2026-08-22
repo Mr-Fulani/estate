@@ -4,7 +4,7 @@ from sqlalchemy import select, func
 from pydantic import BaseModel
 from app.database import get_db
 from app.models.property import Property
-from app.models.contact import ContactRequest
+from app.models.contact import ContactRequest, LeadActivity
 from app.models.category import Category
 from app.models.review import Review
 from app.models.admin_user import AdminUser
@@ -68,7 +68,9 @@ async def get_admin_stats(
         )
     )
     messenger_clicks = res_messenger.scalar_one()
-    res_messages = await db.execute(select(func.count(ContactRequest.id)).where(ContactRequest.kind == "webhook"))
+    res_messages = await db.execute(
+        select(func.count(LeadActivity.id)).where(LeadActivity.event_type == "messenger_message")
+    )
     messenger_messages = res_messages.scalar_one()
 
     res_active_leads = await db.execute(

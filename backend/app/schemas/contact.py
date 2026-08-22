@@ -34,9 +34,12 @@ class ContactCreate(AttributionFields):
     property_id: Optional[int] = None
     kind: Literal["form"] = "form"
     channel: Literal["form"] = "form"
+    website: Optional[str] = Field(default=None, max_length=200)
 
     @model_validator(mode="after")
     def require_contact_method(self):
+        if self.website and self.website.strip():
+            raise ValueError("Invalid submission")
         if not self.email and not (self.phone and self.phone.strip()):
             raise ValueError("Phone or email is required")
         return self

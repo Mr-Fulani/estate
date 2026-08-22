@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { 
   LayoutDashboard, 
@@ -48,6 +48,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [user, setUser] = useState<AdminUser | null>(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -59,6 +60,15 @@ export default function AdminLayout({
     fetchCurrentAdmin().then(setUser).catch(() => undefined);
   }, [pathname]);
 
+  useEffect(() => {
+    const handleAuthExpired = (event: Event) => {
+      const returnTo = (event as CustomEvent<{ returnTo?: string }>).detail?.returnTo || '/admin';
+      router.replace(`/admin/login?reason=expired&returnTo=${encodeURIComponent(returnTo)}`);
+    };
+    window.addEventListener('estate:auth-expired', handleAuthExpired);
+    return () => window.removeEventListener('estate:auth-expired', handleAuthExpired);
+  }, [router]);
+
   if (pathname === '/admin/login') return <>{children}</>;
 
   const handleLogout = async () => {
@@ -66,7 +76,8 @@ export default function AdminLayout({
     try {
       await logoutAdmin();
     } finally {
-      window.location.assign('/admin/login');
+      router.replace('/admin/login');
+      router.refresh();
     }
   };
 

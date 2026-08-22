@@ -67,7 +67,7 @@ function adminReadOptions(adminCookie?: string): RequestInit {
 async function ensureAdminResponse(response: Response, fallback: string): Promise<Response> {
   if (response.status === 401 && typeof window !== 'undefined') {
     const returnTo = `${window.location.pathname}${window.location.search}`;
-    window.location.assign(`/admin/login?reason=expired&returnTo=${encodeURIComponent(returnTo)}`);
+    window.dispatchEvent(new CustomEvent('estate:auth-expired', { detail: { returnTo } }));
   }
   if (!response.ok) {
     const error = await response.json().catch(() => ({ detail: fallback }));

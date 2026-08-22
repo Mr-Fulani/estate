@@ -24,10 +24,13 @@ from app.schemas.review import (
 )
 from app.audit import add_audit_log
 from app.models.admin_user import AdminUser
-from app.security import require_permission
+from app.security import hash_token, require_permission
+from app.config import get_settings
+from app.rate_limit import enforce_rate_limit
 
 
 router = APIRouter(prefix="/api/v1/reviews", tags=["Reviews"])
+settings = get_settings()
 
 
 def _sync_review_translations(review: Review, translations: list[dict]) -> None:
@@ -109,7 +112,17 @@ async def list_reviews(
 
 @router.post("", include_in_schema=False)
 @router.post("/", response_model=ReviewSubmissionResponse, status_code=status.HTTP_201_CREATED)
-async def submit_review(payload: ReviewPublicCreate, db: AsyncSession = Depends(get_db)):
+async def submit_review(
+    payload: ReviewPublicCreate,
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+):
+    await enforce_rate_limit(
+        request,
+        action="review_submission",
+        limit=settings.PUBLIC_REVIEW_RATE_LIMIT,
+        window_minutes=settings.PUBLIC_REVIEW_RATE_WINDOW_MINUTES,
+    )
     if payload.website:
         raise HTTPException(status_code=422, detail="Invalid submission")
     if payload.property_id:
@@ -153,8 +166,20 @@ async def submit_review(payload: ReviewPublicCreate, db: AsyncSession = Depends(
 
 
 @router.get("/invitations/{token}", response_model=ReviewInvitationPublicResponse)
-async def get_review_invitation(token: str, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(_review_query().where(Review.invitation_token == token))
+async def get_review_invitation(
+    token: str,
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+):
+    await enforce_rate_limit(
+        request,
+        action="review_invitation_lookup",
+        limit=settings.PUBLIC_TRACK_RATE_LIMIT,
+        window_minutes=settings.PUBLIC_RATE_WINDOW_MINUTES,
+    )
+    result = await db.execute(
+        _review_query().where(Review.invitation_token_hash == hash_token(token))
+    )
     review = result.scalars().first()
     now = datetime.now(timezone.utc)
     if not review or review.status != "invited" or not review.invitation_expires_at:
@@ -173,11 +198,20 @@ async def get_review_invitation(token: str, db: AsyncSession = Depends(get_db)):
 async def submit_invited_review(
     token: str,
     payload: ReviewInvitationSubmit,
+    request: Request,
     db: AsyncSession = Depends(get_db),
 ):
+    await enforce_rate_limit(
+        request,
+        action="invited_review_submission",
+        limit=settings.PUBLIC_REVIEW_RATE_LIMIT,
+        window_minutes=settings.PUBLIC_REVIEW_RATE_WINDOW_MINUTES,
+    )
     if payload.website:
         raise HTTPException(status_code=422, detail="Invalid submission")
-    result = await db.execute(_review_query().where(Review.invitation_token == token))
+    result = await db.execute(
+        _review_query().where(Review.invitation_token_hash == hash_token(token))
+    )
     review = result.scalars().first()
     now = datetime.now(timezone.utc)
     if not review or review.status != "invited" or not review.invitation_expires_at:
@@ -191,7 +225,7 @@ async def submit_invited_review(
     review.status = "pending"
     review.is_verified = True
     review.consent_given = True
-    review.invitation_token = None
+    review.invitation_token_hash = None
     review.translations = [ReviewTranslation(
         locale=payload.locale,
         content=payload.content,
@@ -240,7 +274,7 @@ async def create_review_invitation(
     expires_at = datetime.now(timezone.utc) + timedelta(days=30)
     if existing:
         review = existing
-        review.invitation_token = token
+        review.invitation_token_hash = hash_token(token)
         review.invitation_expires_at = expires_at
         review.source_locale = payload.locale
     else:
@@ -253,7 +287,7 @@ async def create_review_invitation(
             is_verified=True,
             property_id=contact.property_id,
             contact_id=contact.id,
-            invitation_token=token,
+            invitation_token_hash=hash_token(token),
             invitation_expires_at=expires_at,
         )
         db.add(review)
