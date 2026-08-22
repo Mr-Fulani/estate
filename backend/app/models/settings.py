@@ -6,13 +6,13 @@ class SiteSetting(Base):
     __tablename__ = "site_settings"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, default=1)
-    phone: Mapped[str] = mapped_column(String(50), default="+7 (495) 123-45-67")
-    email: Mapped[str] = mapped_column(String(100), default="info@estate-agency.ru")
-    address: Mapped[str] = mapped_column(String(300), default="г. Москва, Пресненская набережная, 12, Башня Федерация")
+    phone: Mapped[str] = mapped_column(String(50), default="+90 (552) 123-00-00")
+    email: Mapped[str] = mapped_column(String(100), default="support@estate-agency.ru")
+    address: Mapped[str] = mapped_column(String(300), default="г. Стамбул, Бейликдюзю")
     working_hours: Mapped[str] = mapped_column(String(100), default="Ежедневно с 9:00 до 21:00")
     telegram: Mapped[str | None] = mapped_column(String(200), default="https://t.me/estate_agency", nullable=True)
-    whatsapp: Mapped[str | None] = mapped_column(String(200), default="https://wa.me/79991234567", nullable=True)
-    vk: Mapped[str | None] = mapped_column(String(200), default="https://vk.com/estate_agency", nullable=True)
+    whatsapp: Mapped[str | None] = mapped_column(String(200), default="https://wa.me/905521230000", nullable=True)
+    vk: Mapped[str | None] = mapped_column(String(200), default="", nullable=True)
     youtube: Mapped[str | None] = mapped_column(String(200), default="https://youtube.com/@estate_agency", nullable=True)
     instagram: Mapped[str | None] = mapped_column(String(200), default="", nullable=True)
     facebook: Mapped[str | None] = mapped_column(String(200), default="", nullable=True)

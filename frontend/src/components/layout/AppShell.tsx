@@ -8,8 +8,15 @@ import { SiteSettingsProvider } from '@/context/SiteSettingsContext';
 import { CurrencyProvider } from '@/context/CurrencyContext';
 import { cn } from '@/lib/utils';
 import { NavigationFeedback } from '@/components/layout/NavigationFeedback';
+import type { SiteSettings } from '@/types';
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+export function AppShell({
+  children,
+  siteSettings,
+}: {
+  children: React.ReactNode;
+  siteSettings: SiteSettings;
+}) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith('/admin');
 
@@ -17,7 +24,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <>
       <Suspense fallback={null}><NavigationFeedback /></Suspense>
       <CurrencyProvider>
-        <SiteSettingsProvider>
+        <SiteSettingsProvider initialSettings={siteSettings}>
           <Header />
           <main className={cn('flex-grow', !isAdmin && 'pt-16 md:pt-20')}>
             {children}

@@ -1,19 +1,8 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { SiteSettings } from '@/types';
-import { fetchSiteSettings } from '@/lib/api';
-
-const defaultSettings: SiteSettings = {
-  phone: '+7 (495) 123-45-67',
-  email: 'info@estate-agency.ru',
-  address: 'г. Москва, Пресненская набережная, 12, Башня Федерация',
-  working_hours: 'Ежедневно с 9:00 до 21:00',
-  telegram: 'https://t.me/estate_agency',
-  whatsapp: 'https://wa.me/79991234567',
-  vk: 'https://vk.com/estate_agency',
-  youtube: 'https://youtube.com/@estate_agency',
-};
+import { fallbackSiteSettings, fetchSiteSettings } from '@/lib/api';
 
 interface SiteSettingsContextType {
   settings: SiteSettings;
@@ -22,13 +11,19 @@ interface SiteSettingsContextType {
 }
 
 const SiteSettingsContext = createContext<SiteSettingsContextType>({
-  settings: defaultSettings,
+  settings: fallbackSiteSettings,
   refreshSettings: async () => {},
   updateLocalSettings: () => {},
 });
 
-export function SiteSettingsProvider({ children }: { children: React.ReactNode }) {
-  const [settings, setSettings] = useState<SiteSettings>(defaultSettings);
+export function SiteSettingsProvider({
+  children,
+  initialSettings,
+}: {
+  children: React.ReactNode;
+  initialSettings: SiteSettings;
+}) {
+  const [settings, setSettings] = useState<SiteSettings>(initialSettings);
 
   const refreshSettings = async () => {
     try {
@@ -42,10 +37,6 @@ export function SiteSettingsProvider({ children }: { children: React.ReactNode }
   const updateLocalSettings = (newSettings: SiteSettings) => {
     setSettings(newSettings);
   };
-
-  useEffect(() => {
-    refreshSettings();
-  }, []);
 
   return (
     <SiteSettingsContext.Provider value={{ settings, refreshSettings, updateLocalSettings }}>

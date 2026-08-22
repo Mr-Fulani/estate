@@ -6,6 +6,7 @@ import { NewsCard } from '@/components/news/NewsCard';
 import { isLocale, localizeHref } from '@/i18n/config';
 import { siteCopy } from '@/i18n/siteCopy';
 import { fetchNews } from '@/lib/api';
+import { localizedPageMetadata } from '@/lib/seo';
 
 type NewsListPageProps = {
   params: Promise<{ locale: string }>;
@@ -14,20 +15,15 @@ type NewsListPageProps = {
 
 export const dynamic = 'force-dynamic';
 
-export async function generateMetadata({ params }: Pick<NewsListPageProps, 'params'>): Promise<Metadata> {
-  const { locale } = await params;
+export async function generateMetadata({ params, searchParams }: NewsListPageProps): Promise<Metadata> {
+  const [{ locale }, query] = await Promise.all([params, searchParams]);
   if (!isLocale(locale)) return {};
   const copy = siteCopy[locale].news;
-  return {
-    title: copy.metaTitle,
-    description: copy.metaDescription,
-    alternates: {
-      canonical: `/${locale}/news`,
-      languages: { ru: '/ru/news', en: '/en/news', tr: '/tr/news' },
-    },
-    openGraph: { title: copy.metaTitle, description: copy.metaDescription, type: 'website' },
-    twitter: { card: 'summary', title: copy.metaTitle, description: copy.metaDescription },
-  };
+  const page = Math.max(1, Number.parseInt(query.page || '1', 10) || 1);
+  const title = page > 1 ? `${copy.metaTitle} — ${copy.page} ${page}` : copy.metaTitle;
+  return localizedPageMetadata(locale, '/news', title, copy.metaDescription, {
+    canonicalSuffix: page > 1 ? `?page=${page}` : '',
+  });
 }
 
 export default async function NewsListPage({ params, searchParams }: NewsListPageProps) {

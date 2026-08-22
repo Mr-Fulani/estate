@@ -14,6 +14,12 @@ type NewsArticlePageProps = { params: Promise<{ locale: string; slug: string }> 
 
 export const dynamic = 'force-dynamic';
 
+
+function absoluteUrl(value: string): string {
+  if (/^https?:\/\//i.test(value)) return value;
+  return new URL(value, process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').toString();
+}
+
 export async function generateMetadata({ params }: NewsArticlePageProps): Promise<Metadata> {
   const { locale, slug } = await params;
   if (!isLocale(locale)) return {};
@@ -22,17 +28,24 @@ export async function generateMetadata({ params }: NewsArticlePageProps): Promis
 
   const title = article.meta_title || article.title;
   const description = article.meta_description || article.excerpt;
-  const languages = { ru: `/ru/news/${slug}`, en: `/en/news/${slug}`, tr: `/tr/news/${slug}` };
-  const images = article.cover_image ? [{ url: article.cover_image, alt: article.title }] : [];
+  const hasRequestedLocale = article.locale === locale;
+  const canonicalLocale = hasRequestedLocale ? locale : article.locale;
+  const languages = Object.fromEntries([
+    ...article.available_locales.map((availableLocale) => [availableLocale, `/${availableLocale}/news/${slug}`]),
+    ['x-default', `/ru/news/${slug}`],
+  ]);
+  const images = article.cover_image ? [{ url: absoluteUrl(article.cover_image), alt: article.title }] : [];
 
   return {
     title,
     description,
-    alternates: { canonical: `/${locale}/news/${slug}`, languages },
+    alternates: { canonical: `/${canonicalLocale}/news/${slug}`, languages },
+    robots: hasRequestedLocale ? undefined : { index: false, follow: true },
     openGraph: {
       title,
       description,
       type: 'article',
+      url: absoluteUrl(`/${canonicalLocale}/news/${slug}`),
       publishedTime: article.published_at || undefined,
       authors: [article.author],
       images,
@@ -41,7 +54,7 @@ export async function generateMetadata({ params }: NewsArticlePageProps): Promis
       card: article.cover_image ? 'summary_large_image' : 'summary',
       title,
       description,
-      images: article.cover_image ? [article.cover_image] : [],
+      images: images.map((image) => image.url),
     },
   };
 }
@@ -59,8 +72,9 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
     '@type': 'Article',
     headline: article.title,
     description: article.excerpt,
-    image: [article.cover_image, ...(article.media ?? []).filter((item) => item.media_type === 'image').map((item) => item.url)].filter(Boolean),
+    image: [article.cover_image, ...(article.media ?? []).filter((item) => item.media_type === 'image').map((item) => item.url)].filter((item): item is string => Boolean(item)).map(absoluteUrl),
     datePublished: article.published_at || undefined,
+    mainEntityOfPage: absoluteUrl(`/${article.locale}/news/${article.slug}`),
     author: { '@type': 'Organization', name: article.author },
     inLanguage: article.locale,
   };

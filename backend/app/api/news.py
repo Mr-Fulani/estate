@@ -87,6 +87,11 @@ def _public_article(article: NewsArticle, locale: LocaleCode) -> NewsPublicRespo
         author=article.author,
         published_at=article.published_at,
         media=article.media,
+        available_locales=[
+            candidate
+            for candidate in ("ru", "en", "tr")
+            if candidate in by_locale
+        ],
     )
 
 

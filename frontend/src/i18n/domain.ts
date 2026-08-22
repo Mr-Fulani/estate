@@ -59,6 +59,23 @@ export function localizedPropertyTranslation(property: Property, locale: Locale)
 }
 
 
+export function hasPropertyLocale(property: Property, locale: Locale): boolean {
+  if (locale === 'ru') return true;
+  return Boolean(property.translations?.some(
+    (item) => item.locale === locale && item.title.trim(),
+  ));
+}
+
+
+export function propertyAvailableLocales(property: Property): Locale[] {
+  const available = new Set<Locale>(['ru']);
+  for (const translation of property.translations || []) {
+    if (translation.title.trim()) available.add(translation.locale);
+  }
+  return Array.from(available);
+}
+
+
 export function roomLabel(locale: Locale, rooms: number | null | undefined): string {
   if (rooms == null) return '—';
   if (locale === 'en') return `${rooms} ${rooms === 1 ? 'room' : 'rooms'}`;

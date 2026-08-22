@@ -70,6 +70,7 @@ export interface NewsArticle {
   author: string;
   published_at: string | null;
   media: NewsMedia[];
+  available_locales: Array<'ru' | 'en' | 'tr'>;
 }
 
 export type NewsMediaType = 'image' | 'youtube';

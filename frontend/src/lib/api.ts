@@ -80,6 +80,9 @@ function normalizeNewsArticle(article: NewsArticle): NewsArticle {
   return {
     ...article,
     media: Array.isArray(article.media) ? article.media : [],
+    available_locales: Array.isArray(article.available_locales)
+      ? article.available_locales
+      : [article.locale],
   };
 }
 
@@ -547,39 +550,35 @@ export async function deleteCategory(id: number): Promise<void> {
   await ensureAdminResponse(res, 'Не удалось удалить категорию');
 }
 
+export const fallbackSiteSettings: SiteSettings = {
+  phone: '+90 (552) 123-00-00',
+  email: 'support@estate-agency.ru',
+  address: 'г. Стамбул, Бейликдюзю',
+  working_hours: 'Ежедневно с 9:00 до 21:00',
+  telegram: 'https://t.me/estate_agency',
+  whatsapp: 'https://wa.me/905521230000',
+  vk: '',
+  youtube: 'https://youtube.com/@estate_agency',
+  instagram: '',
+  facebook: '',
+  max_messenger: '',
+};
+
 export async function fetchSiteSettings(): Promise<SiteSettings> {
   try {
     const baseUrl = getApiBaseUrl();
     const res = await fetch(`${baseUrl}/settings`, {
-      cache: 'no-store',
+      next: { revalidate: 300 },
     });
 
     if (!res.ok) {
-      return {
-        phone: '+7 (495) 123-45-67',
-        email: 'info@estate-agency.ru',
-        address: 'г. Москва, Пресненская набережная, 12, Башня Федерация',
-        working_hours: 'Ежедневно с 9:00 до 21:00',
-        telegram: 'https://t.me/estate_agency',
-        whatsapp: 'https://wa.me/79991234567',
-        vk: 'https://vk.com/estate_agency',
-        youtube: 'https://youtube.com/@estate_agency',
-      };
+      return fallbackSiteSettings;
     }
 
     return await res.json();
   } catch (error) {
     console.error('Failed to fetch site settings:', error);
-    return {
-      phone: '+7 (495) 123-45-67',
-      email: 'info@estate-agency.ru',
-      address: 'г. Москва, Пресненская набережная, 12, Башня Федерация',
-      working_hours: 'Ежедневно с 9:00 до 21:00',
-      telegram: 'https://t.me/estate_agency',
-      whatsapp: 'https://wa.me/79991234567',
-      vk: 'https://vk.com/estate_agency',
-      youtube: 'https://youtube.com/@estate_agency',
-    };
+    return fallbackSiteSettings;
   }
 }
 

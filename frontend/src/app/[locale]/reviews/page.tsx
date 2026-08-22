@@ -7,6 +7,7 @@ import { ReviewForm } from '@/components/reviews/ReviewForm';
 import { isLocale } from '@/i18n/config';
 import { siteCopy } from '@/i18n/siteCopy';
 import { fetchReviewInvitation, fetchReviews } from '@/lib/api';
+import { localizedPageMetadata } from '@/lib/seo';
 
 
 type ReviewsPageProps = {
@@ -18,18 +19,15 @@ type ReviewsPageProps = {
 export const dynamic = 'force-dynamic';
 
 
-export async function generateMetadata({ params }: ReviewsPageProps): Promise<Metadata> {
-  const { locale } = await params;
+export async function generateMetadata({ params, searchParams }: ReviewsPageProps): Promise<Metadata> {
+  const [{ locale }, query] = await Promise.all([params, searchParams]);
   if (!isLocale(locale)) return {};
   const copy = siteCopy[locale].reviews;
-  return {
-    title: copy.metaTitle,
-    description: copy.metaDescription,
-    alternates: {
-      canonical: `/${locale}/reviews`,
-      languages: { ru: '/ru/reviews', en: '/en/reviews', tr: '/tr/reviews', 'x-default': '/ru/reviews' },
-    },
-  };
+  const page = Math.max(1, Number(query.page) || 1);
+  const title = page > 1 ? `${copy.metaTitle} — ${page}` : copy.metaTitle;
+  return localizedPageMetadata(locale, '/reviews', title, copy.metaDescription, {
+    canonicalSuffix: page > 1 ? `?page=${page}` : '',
+  });
 }
 
 

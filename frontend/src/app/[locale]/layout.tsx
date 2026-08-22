@@ -38,7 +38,7 @@ export async function generateMetadata({
     description: copy.description,
     alternates: {
       canonical: `/${locale}`,
-      languages: { ru: '/ru', en: '/en', tr: '/tr' },
+      languages: { ru: '/ru', en: '/en', tr: '/tr', 'x-default': '/ru' },
     },
     openGraph: {
       title: copy.title,

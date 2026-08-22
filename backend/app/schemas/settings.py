@@ -2,13 +2,13 @@ from pydantic import BaseModel, ConfigDict
 from typing import Optional
 
 class SiteSettingsBase(BaseModel):
-    phone: str = "+7 (495) 123-45-67"
-    email: str = "info@estate-agency.ru"
-    address: str = "г. Москва, Пресненская набережная, 12, Башня Федерация"
+    phone: str = "+90 (552) 123-00-00"
+    email: str = "support@estate-agency.ru"
+    address: str = "г. Стамбул, Бейликдюзю"
     working_hours: str = "Ежедневно с 9:00 до 21:00"
     telegram: Optional[str] = "https://t.me/estate_agency"
-    whatsapp: Optional[str] = "https://wa.me/79991234567"
-    vk: Optional[str] = "https://vk.com/estate_agency"
+    whatsapp: Optional[str] = "https://wa.me/905521230000"
+    vk: Optional[str] = ""
     youtube: Optional[str] = "https://youtube.com/@estate_agency"
     instagram: Optional[str] = ""
     facebook: Optional[str] = ""

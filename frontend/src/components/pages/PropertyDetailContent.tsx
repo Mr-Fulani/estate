@@ -10,9 +10,10 @@ import { localizeHref } from '@/i18n/config';
 import { localizedProperty } from '@/i18n/domain';
 import { siteCopy } from '@/i18n/siteCopy';
 import { fetchProperty } from '@/lib/api';
+import type { Property } from '@/types';
 
-export async function PropertyDetailContent({ id, locale }: { id: string; locale: Locale }) {
-  const property = await fetchProperty(id);
+export async function PropertyDetailContent({ id, locale, initialProperty }: { id: string; locale: Locale; initialProperty?: Property }) {
+  const property = initialProperty || await fetchProperty(id);
   const copy = siteCopy[locale].property;
   if (!property) notFound();
   const localized = localizedProperty(property, locale);

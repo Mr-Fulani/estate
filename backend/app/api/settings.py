@@ -16,13 +16,13 @@ async def get_or_create_settings(db: AsyncSession) -> SiteSetting:
     if not setting:
         setting = SiteSetting(
             id=1,
-            phone="+7 (495) 123-45-67",
-            email="info@estate-agency.ru",
-            address="г. Москва, Пресненская набережная, 12, Башня Федерация",
+            phone="+90 (552) 123-00-00",
+            email="support@estate-agency.ru",
+            address="г. Стамбул, Бейликдюзю",
             working_hours="Ежедневно с 9:00 до 21:00",
             telegram="https://t.me/estate_agency",
-            whatsapp="https://wa.me/79991234567",
-            vk="https://vk.com/estate_agency",
+            whatsapp="https://wa.me/905521230000",
+            vk="",
             youtube="https://youtube.com/@estate_agency",
         )
         db.add(setting)

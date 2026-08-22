@@ -117,6 +117,7 @@ class NewsPublicResponse(BaseModel):
     author: str
     published_at: datetime | None
     media: list[NewsMediaResponse]
+    available_locales: list[LocaleCode]
 
 
 class NewsListResponse(BaseModel):

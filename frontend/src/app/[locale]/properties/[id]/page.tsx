@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 
 import { PropertyDetailContent } from '@/components/pages/PropertyDetailContent';
 import { isLocale } from '@/i18n/config';
-import { localizedProperty, localizedPropertyTranslation } from '@/i18n/domain';
+import { hasPropertyLocale, localizedProperty, localizedPropertyTranslation, propertyAvailableLocales } from '@/i18n/domain';
 import { fetchProperty } from '@/lib/api';
 
 
@@ -25,29 +25,34 @@ export async function generateMetadata({ params }: PropertyPageProps): Promise<M
 
   const property = localizedProperty(sourceProperty, locale);
   const translation = localizedPropertyTranslation(sourceProperty, locale);
+  const hasRequestedLocale = hasPropertyLocale(sourceProperty, locale);
+  const availableLocales = propertyAvailableLocales(sourceProperty);
   const location = [property.district, property.city].filter(Boolean).join(', ');
   const generatedTitle = `${property.title}${location ? ` — ${location}` : ''} | Estate`;
   const generatedDescription = property.description?.replace(/\s+/g, ' ').trim().slice(0, 160)
-    || `${property.title}. ${property.area ? `${property.area} м². ` : ''}${location}.`;
+    || `${property.title}. ${property.area ? `${property.area} ${locale === 'en' ? 'sq m' : 'm²'}. ` : ''}${location}.`;
   const title = translation?.meta_title?.trim() || generatedTitle;
   const description = translation?.meta_description?.trim() || generatedDescription;
-  const canonicalPath = `/${locale}/properties/${sourceProperty.slug}`;
+  const canonicalLocale = hasRequestedLocale ? locale : 'ru';
+  const canonicalPath = `/${canonicalLocale}/properties/${sourceProperty.slug}`;
   const images = sourceProperty.images?.[0]
     ? [{ url: absoluteUrl(sourceProperty.images[0]), alt: property.title }]
     : [];
-  const indexable = sourceProperty.is_active && sourceProperty.market_status !== 'archived';
+  const indexable = sourceProperty.is_active && sourceProperty.market_status !== 'archived' && hasRequestedLocale;
+  const languages = Object.fromEntries([
+    ...availableLocales.map((availableLocale) => [
+      availableLocale,
+      `/${availableLocale}/properties/${sourceProperty.slug}`,
+    ]),
+    ['x-default', `/ru/properties/${sourceProperty.slug}`],
+  ]);
 
   return {
     title,
     description,
     alternates: {
       canonical: canonicalPath,
-      languages: {
-        ru: `/ru/properties/${sourceProperty.slug}`,
-        en: `/en/properties/${sourceProperty.slug}`,
-        tr: `/tr/properties/${sourceProperty.slug}`,
-        'x-default': `/ru/properties/${sourceProperty.slug}`,
-      },
+      languages,
     },
     robots: { index: indexable, follow: indexable },
     openGraph: {
@@ -74,5 +79,10 @@ export default async function LocalizedPropertyDetailPage({
 }: PropertyPageProps) {
   const { locale, id } = await params;
   if (!isLocale(locale)) notFound();
-  return <PropertyDetailContent id={id} locale={locale} />;
+  const property = await fetchProperty(id);
+  if (!property) notFound();
+  if (!hasPropertyLocale(property, locale)) {
+    permanentRedirect(`/ru/properties/${property.slug}`);
+  }
+  return <PropertyDetailContent id={id} locale={locale} initialProperty={property} />;
 }
