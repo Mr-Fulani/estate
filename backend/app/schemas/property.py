@@ -5,7 +5,7 @@ from .category import CategoryResponse
 
 
 class PropertyTranslationInput(BaseModel):
-    locale: Literal["ru", "en", "tr"]
+    locale: Literal["ru", "en", "tr", "ar"]
     title: str = Field(min_length=1, max_length=200)
     description: Optional[str] = None
     city: Optional[str] = Field(default=None, max_length=100)
@@ -13,6 +13,7 @@ class PropertyTranslationInput(BaseModel):
     address: Optional[str] = Field(default=None, max_length=300)
     meta_title: Optional[str] = Field(default=None, max_length=240)
     meta_description: Optional[str] = Field(default=None, max_length=320)
+    status_badge: Optional[str] = Field(default=None, max_length=100)
 
 
 class PropertyTranslationResponse(PropertyTranslationInput):

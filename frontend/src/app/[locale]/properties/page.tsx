@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 
 import { PropertiesPageContent } from '@/components/pages/PropertiesPageContent';
 import { isLocale } from '@/i18n/config';
-import { staticPageMetadata } from '@/lib/seo';
+import { localizedAlternates, staticPageMetadata } from '@/lib/seo';
 
 
 export const dynamic = 'force-dynamic';
@@ -28,12 +28,7 @@ export async function generateMetadata({
     ...metadata,
     alternates: {
       canonical: `/${locale}/properties?page=${page}`,
-      languages: {
-        ru: `/ru/properties?page=${page}`,
-        en: `/en/properties?page=${page}`,
-        tr: `/tr/properties?page=${page}`,
-        'x-default': `/ru/properties?page=${page}`,
-      },
+      languages: localizedAlternates(`/properties?page=${page}`),
     },
   };
 }

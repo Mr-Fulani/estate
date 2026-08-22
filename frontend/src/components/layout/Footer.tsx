@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { Mail, MapPin, Phone } from 'lucide-react';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import { useLocale } from '@/context/LocaleContext';
-import { localizedOfficeAddress } from '@/i18n/domain';
+import { localizedSiteSettings } from '@/i18n/domain';
 import { siteCopy } from '@/i18n/siteCopy';
 import { TelegramIcon, WhatsappIcon, VkIcon, YoutubeIcon, InstagramIcon, FacebookIcon, MaxIcon } from '../ui/SocialIcons';
 import { TrackedContactLink } from '@/components/contact/TrackedContactLink';
@@ -17,7 +17,7 @@ export function Footer() {
   const { settings } = useSiteSettings();
   const { locale, href } = useLocale();
   const copy = siteCopy[locale].footer;
-  const address = localizedOfficeAddress(locale, settings.address);
+  const localizedSettings = localizedSiteSettings(settings, locale);
 
   if (pathname?.startsWith('/admin')) {
     return null;
@@ -99,21 +99,21 @@ export function Footer() {
             <ul className="space-y-4 text-sm">
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-secondary shrink-0 mt-0.5" />
-                <span>{address}</span>
+                <span dir="auto">{localizedSettings.address}</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-secondary shrink-0" />
-                <TrackedContactLink href={phoneTel} channel="phone" source="footer_phone" className="hover:text-white transition-colors">{settings.phone}</TrackedContactLink>
+                <TrackedContactLink href={phoneTel} channel="phone" source="footer_phone" className="hover:text-white transition-colors"><span dir="ltr">{settings.phone}</span></TrackedContactLink>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-secondary shrink-0" />
-                <TrackedContactLink href={`mailto:${settings.email}`} channel="email" source="footer_email" className="hover:text-white transition-colors">{settings.email}</TrackedContactLink>
+                <TrackedContactLink href={`mailto:${settings.email}`} channel="email" source="footer_email" className="hover:text-white transition-colors"><span dir="ltr">{settings.email}</span></TrackedContactLink>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-primary-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-center text-xs text-primary-300 md:text-left">
+        <div className="border-t border-primary-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-center text-xs text-primary-300 md:text-start">
           <p className="break-words">© {currentYear} Estate Agency. {copy.copyright}</p>
           <div className="flex flex-wrap justify-center gap-4 md:justify-end">
             <Link href={href('/privacy')} className="hover:text-white transition-colors">{copy.privacy}</Link>

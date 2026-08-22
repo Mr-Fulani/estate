@@ -8,6 +8,7 @@ import { Edit3, ExternalLink, Languages, Search, Trash2 } from 'lucide-react';
 import { deleteNewsArticle } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
 import type { NewsAdminArticle } from '@/types';
+import { locales as supportedLocales } from '@/i18n/config';
 
 function articleTitle(article: NewsAdminArticle): string {
   return article.translations.find((item) => item.locale === 'ru')?.title || article.slug;
@@ -71,7 +72,7 @@ export function NewsTable({ initialArticles }: { initialArticles: NewsAdminArtic
                   <p className="mt-1 truncate text-xs text-slate-400">/{article.slug}</p>
                   <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-slate-500">
                     <Languages className="h-4 w-4 text-primary" aria-hidden="true" />
-                    {(['ru', 'en', 'tr'] as const).map((locale) => <span key={locale} className={`rounded-md border px-2 py-0.5 uppercase ${locales.includes(locale) ? 'border-primary/20 bg-primary/5 text-primary' : 'border-slate-200 text-slate-300'}`}>{locale}</span>)}
+                    {supportedLocales.map((locale) => <span key={locale} className={`rounded-md border px-2 py-0.5 uppercase ${locales.includes(locale) ? 'border-primary/20 bg-primary/5 text-primary' : 'border-slate-200 text-slate-300'}`}>{locale}</span>)}
                   </div>
                 </div>
                 <div className="flex shrink-0 items-center gap-1 border-t border-slate-100 pt-3 sm:border-0 sm:pt-0">

@@ -6,9 +6,8 @@ import { BadgeCheck, ChevronDown, ExternalLink, Search, Star, Trash2 } from 'luc
 import { deleteAdminReview, updateAdminReview } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import type { AdminReview, ReviewTranslation } from '@/types';
+import { locales, type Locale } from '@/i18n/config';
 
-
-const locales = ['ru', 'en', 'tr'] as const;
 const statusLabels = { invited: 'Приглашение', pending: 'На модерации', published: 'Опубликован', rejected: 'Отклонён' } as const;
 const statusColors = { invited: 'bg-blue-100 text-blue-800', pending: 'bg-amber-100 text-amber-800', published: 'bg-emerald-100 text-emerald-800', rejected: 'bg-slate-200 text-slate-700' } as const;
 
@@ -21,7 +20,7 @@ function ReviewEditor({ review, onUpdated, onDeleted }: { review: AdminReview; o
   useEffect(() => setForm(review), [review]);
 
   const translations: ReviewTranslation[] = locales.map((locale) => form.translations.find((item) => item.locale === locale) || { locale, content: '', reviewer_role: '', company_response: '' });
-  const updateTranslation = (locale: 'ru' | 'en' | 'tr', field: 'content' | 'reviewer_role' | 'company_response', value: string) => {
+  const updateTranslation = (locale: Locale, field: 'content' | 'reviewer_role' | 'company_response', value: string) => {
     setForm((current) => ({ ...current, translations: translations.map((item) => item.locale === locale ? { ...item, [field]: value } : item) }));
   };
   const save = async () => {
@@ -71,8 +70,8 @@ function ReviewEditor({ review, onUpdated, onDeleted }: { review: AdminReview; o
           {form.has_active_invitation && <span className="inline-flex items-center rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-700">Активная ссылка-приглашение</span>}
         </div>
         <p className="text-xs text-slate-500">Контакт для проверки: {form.phone || form.email || 'не указан'}. Публично не показывается.</p>
-        <div className="grid gap-5 xl:grid-cols-3">
-          {translations.map((translation) => <fieldset key={translation.locale} className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5"><legend className="px-2 text-sm font-bold text-primary">{translation.locale.toUpperCase()}</legend><label className="block text-xs font-bold uppercase tracking-wider text-slate-600">Роль<input value={translation.reviewer_role || ''} onChange={(event) => updateTranslation(translation.locale, 'reviewer_role', event.target.value)} className="mt-2 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm font-normal normal-case tracking-normal outline-none focus:border-primary" /></label><label className="block text-xs font-bold uppercase tracking-wider text-slate-600">Отзыв<textarea rows={6} value={translation.content} onChange={(event) => updateTranslation(translation.locale, 'content', event.target.value)} className="mt-2 w-full rounded-xl border border-slate-200 p-3 text-sm font-normal leading-relaxed normal-case tracking-normal outline-none focus:border-primary" /></label><label className="block text-xs font-bold uppercase tracking-wider text-slate-600">Ответ Estate<textarea rows={3} value={translation.company_response || ''} onChange={(event) => updateTranslation(translation.locale, 'company_response', event.target.value)} className="mt-2 w-full rounded-xl border border-slate-200 p-3 text-sm font-normal leading-relaxed normal-case tracking-normal outline-none focus:border-primary" /></label></fieldset>)}
+        <div className="grid gap-5 xl:grid-cols-2">
+          {translations.map((translation) => <fieldset key={translation.locale} dir={translation.locale === 'ar' ? 'rtl' : 'ltr'} className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5"><legend className="px-2 text-sm font-bold text-primary">{translation.locale.toUpperCase()}</legend><label className="block text-xs font-bold uppercase tracking-wider text-slate-600">Роль<input value={translation.reviewer_role || ''} onChange={(event) => updateTranslation(translation.locale, 'reviewer_role', event.target.value)} className="mt-2 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm font-normal normal-case tracking-normal outline-none focus:border-primary" /></label><label className="block text-xs font-bold uppercase tracking-wider text-slate-600">Отзыв<textarea rows={6} value={translation.content} onChange={(event) => updateTranslation(translation.locale, 'content', event.target.value)} className="mt-2 w-full rounded-xl border border-slate-200 p-3 text-sm font-normal leading-relaxed normal-case tracking-normal outline-none focus:border-primary" /></label><label className="block text-xs font-bold uppercase tracking-wider text-slate-600">Ответ Estate<textarea rows={3} value={translation.company_response || ''} onChange={(event) => updateTranslation(translation.locale, 'company_response', event.target.value)} className="mt-2 w-full rounded-xl border border-slate-200 p-3 text-sm font-normal leading-relaxed normal-case tracking-normal outline-none focus:border-primary" /></label></fieldset>)}
         </div>
         <div className="flex flex-col-reverse justify-between gap-3 border-t border-slate-200 pt-5 sm:flex-row"><button type="button" onClick={() => void remove()} disabled={loading} className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-red-600 hover:bg-red-50"><Trash2 className="h-4 w-4" />Удалить</button><button type="button" onClick={() => void save()} disabled={loading} className="rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white hover:bg-primary-800 disabled:opacity-50">{loading ? 'Сохранение…' : 'Сохранить отзыв'}</button></div>
       </div>

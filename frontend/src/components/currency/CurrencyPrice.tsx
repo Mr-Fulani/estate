@@ -15,5 +15,5 @@ export function CurrencyPrice({
   locale: Locale;
 }) {
   const { currency, convert } = useCurrency();
-  return <>{formatPrice(convert(amount, sourceCurrency, currency), currency, locale)}</>;
+  return <bdi dir="ltr">{formatPrice(convert(amount, sourceCurrency, currency), currency, locale)}</bdi>;
 }

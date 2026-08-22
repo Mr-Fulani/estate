@@ -40,7 +40,7 @@ export async function LatestNews({ locale }: { locale: Locale }) {
             className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 self-start rounded-xl border border-white/20 bg-white/10 px-5 text-sm font-bold text-white transition hover:border-secondary/60 hover:bg-white/15 md:self-auto"
           >
             {copy.allArticles}
-            <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+            <ArrowUpRight className="h-4 w-4 rtl:-scale-x-100" aria-hidden="true" />
           </Link>
         </div>
 

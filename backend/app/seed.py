@@ -1,7 +1,7 @@
 import asyncio
 from sqlalchemy import func, select
 from app.database import AsyncSessionLocal
-from app.models.category import Category
+from app.models.category import Category, CategoryTranslation
 from app.models.property import Property
 from app.models.property_translation import PropertyTranslation
 from app.models.news import NewsArticle, NewsTranslation
@@ -14,11 +14,36 @@ async def seed_data():
             return
 
         # Categories
-        cat_flat = Category(name="Квартира", slug="kvartira", description="Городские квартиры")
-        cat_house = Category(name="Дом", slug="dom", description="Частные дома и коттеджи")
-        cat_land = Category(name="Участок", slug="uchastok", description="Земельные участки")
-        cat_comm = Category(name="Коммерция", slug="kommerciya", description="Коммерческая недвижимость")
-        cat_villa = Category(name="Вилла", slug="villa", description="Премиальные виллы и резиденции")
+        cat_flat = Category(name="Квартира", slug="kvartira", description="Городские квартиры", translations=[
+            CategoryTranslation(locale="ru", name="Квартира", description="Городские квартиры"),
+            CategoryTranslation(locale="en", name="Apartment", description="Urban apartments"),
+            CategoryTranslation(locale="tr", name="Daire", description="Şehir daireleri"),
+            CategoryTranslation(locale="ar", name="شقة", description="شقق داخل المدينة"),
+        ])
+        cat_house = Category(name="Дом", slug="dom", description="Частные дома и коттеджи", translations=[
+            CategoryTranslation(locale="ru", name="Дом", description="Частные дома и коттеджи"),
+            CategoryTranslation(locale="en", name="House", description="Private houses and cottages"),
+            CategoryTranslation(locale="tr", name="Ev", description="Müstakil evler"),
+            CategoryTranslation(locale="ar", name="منزل", description="منازل وبيوت مستقلة"),
+        ])
+        cat_land = Category(name="Участок", slug="uchastok", description="Земельные участки", translations=[
+            CategoryTranslation(locale="ru", name="Участок", description="Земельные участки"),
+            CategoryTranslation(locale="en", name="Land", description="Land plots"),
+            CategoryTranslation(locale="tr", name="Arsa", description="Arsalar"),
+            CategoryTranslation(locale="ar", name="أرض", description="قطع أراضٍ"),
+        ])
+        cat_comm = Category(name="Коммерция", slug="kommerciya", description="Коммерческая недвижимость", translations=[
+            CategoryTranslation(locale="ru", name="Коммерция", description="Коммерческая недвижимость"),
+            CategoryTranslation(locale="en", name="Commercial", description="Commercial property"),
+            CategoryTranslation(locale="tr", name="Ticari", description="Ticari gayrimenkul"),
+            CategoryTranslation(locale="ar", name="عقار تجاري", description="عقارات تجارية"),
+        ])
+        cat_villa = Category(name="Вилла", slug="villa", description="Премиальные виллы и резиденции", translations=[
+            CategoryTranslation(locale="ru", name="Вилла", description="Премиальные виллы и резиденции"),
+            CategoryTranslation(locale="en", name="Villa", description="Premium villas and residences"),
+            CategoryTranslation(locale="tr", name="Villa", description="Premium villalar ve rezidanslar"),
+            CategoryTranslation(locale="ar", name="فيلا", description="فلل ومساكن فاخرة"),
+        ])
         
         db.add_all([cat_flat, cat_house, cat_land, cat_comm, cat_villa])
         await db.commit()
@@ -107,10 +132,12 @@ async def seed_data():
             props[0].id: {
                 "en": ("Cozy two-bedroom apartment in the city centre", "A renovated apartment in a central location."),
                 "tr": ("Şehir merkezinde rahat iki odalı daire", "Merkezi konumda yenilenmiş ve ferah bir daire."),
+                "ar": ("شقة مريحة بغرفتي نوم في وسط المدينة", "شقة مجددة في موقع مركزي."),
             },
             props[1].id: {
                 "en": ("Country house with a swimming pool", "A spacious family home with a private pool."),
                 "tr": ("Havuzlu müstakil ev", "Özel havuzlu, geniş bir aile evi."),
+                "ar": ("منزل ريفي مع مسبح", "منزل عائلي واسع مع مسبح خاص."),
             },
         }
         for prop in props:
@@ -151,6 +178,14 @@ async def seed_data():
                     content="Başarılı bir satın alma ilan fotoğraflarıyla değil, net bir hedefle başlar.\n\nKapora vermeden önce bölgeyi, ulaşımı, belgeleri ve mülkiyet giderlerini inceleyin.",
                     meta_title="2026'da gayrimenkul seçimi — Estate",
                     meta_description="Doğru gayrimenkulü seçmek için Estate'in pratik rehberi.",
+                ),
+                NewsTranslation(
+                    locale="ar",
+                    title="كيف تختار عقاراً في عام 2026",
+                    excerpt="دليل موجز حول الموقع والمستندات والقيمة طويلة الأجل.",
+                    content="تبدأ عملية الشراء الناجحة بهدف واضح، لا بصور الإعلان.\n\nراجع الحي ووسائل النقل والمستندات وتكاليف التملك قبل دفع العربون.",
+                    meta_title="كيفية اختيار عقار في 2026 — Estate",
+                    meta_description="دليل Estate العملي لاختيار العقار المناسب.",
                 ),
             ],
         )

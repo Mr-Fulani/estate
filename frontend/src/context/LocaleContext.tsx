@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import { createContext, useContext, useEffect, useMemo } from 'react';
 
 import type { Locale } from '@/i18n/config';
-import { isLocale, localizeHref } from '@/i18n/config';
+import { isLocale, localeDirection, localizeHref } from '@/i18n/config';
 import { getMessages } from '@/i18n/messages';
 import type { LocalizedMessages } from '@/i18n/types';
 
@@ -35,6 +35,7 @@ export function LocaleProvider({
 
   useEffect(() => {
     document.documentElement.lang = activeLocale;
+    document.documentElement.dir = localeDirection(activeLocale);
   }, [activeLocale]);
 
   const value = useMemo<LocaleContextValue>(

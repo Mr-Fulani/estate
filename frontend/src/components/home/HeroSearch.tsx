@@ -36,6 +36,7 @@ export function HeroSearch() {
     const formatted = formatPrice(convert(amount, 'RUB', currency), currency, locale);
     if (locale === 'en') return `up to ${formatted}`;
     if (locale === 'tr') return `En fazla ${formatted}`;
+    if (locale === 'ar') return `حتى ${formatted}`;
     return `до ${formatted}`;
   };
 
@@ -97,7 +98,7 @@ export function HeroSearch() {
               )}
             >
               <Icon className="w-3.5 h-3.5" />
-              {localizedCategoryName(locale, cat.slug, cat.name)}
+              {localizedCategoryName(locale, cat.slug, cat.name, cat.translations)}
             </button>
           );
         })}

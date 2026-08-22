@@ -36,12 +36,12 @@ export function NewsCard({ article, locale }: { article: NewsArticle; locale: Lo
             {formatDate(article.published_at, locale)}
           </time>
         )}
-        <h2 className="mb-3 text-xl font-bold leading-snug text-slate-900 md:text-2xl">
+        <h2 dir="auto" className="mb-3 text-xl font-bold leading-snug text-slate-900 md:text-2xl">
           <Link href={articleHref} className="transition-colors hover:text-primary">{article.title}</Link>
         </h2>
-        <p className="mb-6 line-clamp-3 leading-relaxed text-slate-600">{article.excerpt}</p>
+        <p dir="auto" className="mb-6 line-clamp-3 leading-relaxed text-slate-600">{article.excerpt}</p>
         <Link href={articleHref} className="mt-auto inline-flex items-center gap-2 font-semibold text-primary transition-colors hover:text-secondary">
-          {copy.readMore}<ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+          {copy.readMore}<ArrowUpRight className="h-4 w-4 rtl:-scale-x-100" aria-hidden="true" />
         </Link>
       </div>
     </article>

@@ -4,7 +4,7 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
 
 
-LocaleCode = Literal["ru", "en", "tr"]
+LocaleCode = Literal["ru", "en", "tr", "ar"]
 ReviewStatus = Literal["invited", "pending", "published", "rejected"]
 
 

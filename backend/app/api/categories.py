@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.database import get_db
-from app.models.category import Category
+from app.models.category import Category, CategoryTranslation
 from app.schemas.category import CategoryResponse, CategoryCreate
 from app.audit import add_audit_log
 from app.models.admin_user import AdminUser
@@ -36,7 +36,19 @@ async def create_category(
     current: AdminUser = Depends(require_permission("categories:write", csrf=True)),
     db: AsyncSession = Depends(get_db),
 ):
-    new_cat = Category(**cat_data.model_dump())
+    data = cat_data.model_dump()
+    translations = data.pop("translations", [])
+    locales = [item["locale"] for item in translations]
+    if len(locales) != len(set(locales)):
+        raise HTTPException(status_code=422, detail="Each category locale can be provided only once")
+    if "ru" not in locales:
+        translations.append({
+            "locale": "ru",
+            "name": data["name"],
+            "description": data.get("description"),
+        })
+    new_cat = Category(**data)
+    new_cat.translations = [CategoryTranslation(**item) for item in translations]
     db.add(new_cat)
     await db.flush()
     add_audit_log(
@@ -44,6 +56,7 @@ async def create_category(
     )
     await db.commit()
     await db.refresh(new_cat)
+    await db.refresh(new_cat, attribute_names=["translations"])
     return new_cat
 
 @router.delete("/{category_id}")

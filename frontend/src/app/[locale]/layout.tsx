@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { isLocale, locales } from '@/i18n/config';
+import { isLocale, locales, openGraphLocales } from '@/i18n/config';
+import { localizedAlternates } from '@/lib/seo';
 
 
 const metadataByLocale = {
@@ -16,6 +17,10 @@ const metadataByLocale = {
   tr: {
     title: 'Estate — gayrimenkul danışmanlığı',
     description: 'Uçtan uca destekle gayrimenkul arama, satın alma ve satış hizmetleri.',
+  },
+  ar: {
+    title: 'Estate — وكالة عقارية',
+    description: 'البحث عن العقارات وشراؤها وبيعها مع دعم متكامل.',
   },
 } as const;
 
@@ -38,13 +43,13 @@ export async function generateMetadata({
     description: copy.description,
     alternates: {
       canonical: `/${locale}`,
-      languages: { ru: '/ru', en: '/en', tr: '/tr', 'x-default': '/ru' },
+      languages: localizedAlternates(''),
     },
     openGraph: {
       title: copy.title,
       description: copy.description,
       siteName: process.env.NEXT_PUBLIC_SITE_NAME || 'Estate',
-      locale: locale === 'ru' ? 'ru_RU' : locale === 'tr' ? 'tr_TR' : 'en_US',
+      locale: openGraphLocales[locale],
       type: 'website',
       images: [{ url: '/og.png', width: 1200, height: 630, alt: copy.title }],
     },

@@ -1,5 +1,6 @@
 import { 
-  Category, 
+  Category,
+  CategoryTranslation,
   ContactRequest, 
   Property, 
   PropertyFilter, 
@@ -536,7 +537,7 @@ export async function deleteContactRequest(id: number): Promise<void> {
   await ensureAdminResponse(res, 'Не удалось удалить обращение');
 }
 
-export async function createCategory(data: { name: string; slug: string; description?: string }): Promise<Category> {
+export async function createCategory(data: { name: string; slug: string; description?: string; translations?: CategoryTranslation[] }): Promise<Category> {
   const baseUrl = getApiBaseUrl();
   const res = await fetch(`${baseUrl}/categories`, {
     method: 'POST',
@@ -573,6 +574,12 @@ export const fallbackSiteSettings: SiteSettings = {
   instagram: '',
   facebook: '',
   max_messenger: '',
+  translations: [
+    { locale: 'ru', address: 'г. Стамбул, Бейликдюзю', working_hours: 'Ежедневно с 9:00 до 21:00' },
+    { locale: 'en', address: 'Istanbul, Beylikduzu', working_hours: 'Daily, 9:00–21:00' },
+    { locale: 'tr', address: 'İstanbul, Beylikdüzü', working_hours: 'Her gün 09:00–21:00' },
+    { locale: 'ar', address: 'إسطنبول، بيليك دوزو', working_hours: 'يومياً من 9:00 إلى 21:00' },
+  ],
 };
 
 export async function fetchSiteSettings(): Promise<SiteSettings> {

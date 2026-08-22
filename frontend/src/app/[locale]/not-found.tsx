@@ -14,7 +14,7 @@ export default function LocalizedNotFound() {
         <p className="mb-2 text-sm font-black uppercase tracking-[0.3em] text-secondary">404</p>
         <h1 className="mb-3 text-3xl font-bold text-slate-950 md:text-4xl">{messages.common.notFoundTitle}</h1>
         <p className="mb-7 text-slate-600">{messages.common.notFoundDescription}</p>
-        <Link href={href('/')} className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-5 font-semibold text-white transition hover:bg-primary-800"><ArrowLeft className="h-4 w-4" />{messages.navigation.home}</Link>
+        <Link href={href('/')} className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-5 font-semibold text-white transition hover:bg-primary-800"><ArrowLeft className="h-4 w-4 rtl:rotate-180" />{messages.navigation.home}</Link>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import { headers } from 'next/headers';
 import './globals.css';
 import { AppShell } from '@/components/layout/AppShell';
 import { LocaleProvider } from '@/context/LocaleContext';
-import { assertLocale } from '@/i18n/config';
+import { assertLocale, localeDirection } from '@/i18n/config';
 import { getMessages } from '@/i18n/messages';
 import { fetchSiteSettings } from '@/lib/api';
 
@@ -59,7 +59,7 @@ export default async function RootLayout({
   };
 
   return (
-    <html lang={locale} data-scroll-behavior="smooth">
+    <html lang={locale} dir={localeDirection(locale)} data-scroll-behavior="smooth">
       <body className="min-h-screen flex flex-col font-sans">
         <script
           type="application/ld+json"

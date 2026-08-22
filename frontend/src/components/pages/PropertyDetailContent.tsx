@@ -7,7 +7,7 @@ import { PropertyContactActions } from '@/components/contact/PropertyContactActi
 import { PropertyDetails } from '@/components/properties/PropertyDetails';
 import type { Locale } from '@/i18n/config';
 import { localizeHref } from '@/i18n/config';
-import { localizedProperty } from '@/i18n/domain';
+import { hasPropertyLocale, localizedProperty } from '@/i18n/domain';
 import { siteCopy } from '@/i18n/siteCopy';
 import { fetchProperty } from '@/lib/api';
 import type { Property } from '@/types';
@@ -64,7 +64,8 @@ export async function PropertyDetailContent({ id, locale, initialProperty }: { i
   return (
     <div className="container mx-auto min-h-screen bg-slate-50 px-4 py-8 md:px-6 md:py-12">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, '\\u003c') }} />
-      <Link href={localizeHref(locale, '/properties')} className="mb-6 inline-flex items-center text-primary transition-colors hover:text-primary-600"><ArrowLeft className="mr-2 h-4 w-4" />{copy.back}</Link>
+      <Link href={localizeHref(locale, '/properties')} className="mb-6 inline-flex items-center text-primary transition-colors hover:text-primary-600"><ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" />{copy.back}</Link>
+      {!hasPropertyLocale(property, locale) && <p className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-900">{copy.fallbackNotice}</p>}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2"><PropertyDetails property={property} locale={locale} /></div>
         <div className="lg:col-span-1"><div className="sticky top-24 rounded-xl border border-slate-200 bg-white p-6 shadow-sm md:p-8"><h3 className="mb-2 text-2xl font-bold text-slate-900">{copy.interested}</h3><p className="mb-6 text-slate-600">{copy.interestedDescription}</p><ContactForm propertyId={property.id} /><PropertyContactActions propertyId={property.id} /></div></div>

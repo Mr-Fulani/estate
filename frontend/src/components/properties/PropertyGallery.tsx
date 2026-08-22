@@ -59,10 +59,14 @@ export function PropertyGallery({
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setIsLightboxOpen(false);
       if (e.key === 'ArrowRight') {
-        setSelectedIndex((prev) => (prev + 1) % images.length);
+        setSelectedIndex((prev) => locale === 'ar'
+          ? (prev - 1 + images.length) % images.length
+          : (prev + 1) % images.length);
       }
       if (e.key === 'ArrowLeft') {
-        setSelectedIndex((prev) => (prev - 1 + images.length) % images.length);
+        setSelectedIndex((prev) => locale === 'ar'
+          ? (prev + 1) % images.length
+          : (prev - 1 + images.length) % images.length);
       }
       if (e.key === 'Tab' && dialogRef.current) {
         const focusable = Array.from(dialogRef.current.querySelectorAll<HTMLElement>('button:not([disabled]), a[href]'));
@@ -85,7 +89,7 @@ export function PropertyGallery({
       document.body.style.overflow = previousOverflow;
       previousFocus?.focus();
     };
-  }, [isLightboxOpen, images.length]);
+  }, [isLightboxOpen, images.length, locale]);
 
   const handlePrev = (e?: React.MouseEvent) => {
     e?.stopPropagation();
@@ -124,7 +128,7 @@ export function PropertyGallery({
         />
 
         {/* Badges Overlay */}
-        <div className="absolute top-4 left-4 flex flex-wrap gap-2 z-10 pointer-events-none">
+        <div className="absolute start-4 top-4 z-10 flex flex-wrap gap-2 pointer-events-none">
           {isFeatured && (
             <Badge variant="secondary" className="shadow-md font-semibold">
               {copy.recommended}
@@ -143,7 +147,7 @@ export function PropertyGallery({
         </div>
 
         {/* Counter and Zoom Button */}
-        <div className="absolute bottom-4 right-4 flex items-center gap-2 z-10">
+        <div className="absolute bottom-4 end-4 z-10 flex items-center gap-2">
           <span className="px-3 py-1 bg-black/60 backdrop-blur-md text-white text-xs font-semibold rounded-full">
             {selectedIndex + 1} / {images.length}
           </span>
@@ -163,18 +167,18 @@ export function PropertyGallery({
             <button
               type="button"
               onClick={handlePrev}
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 hover:bg-white text-slate-800 flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 focus:opacity-100 transition-opacity shadow-lg z-10 active:scale-95"
+              className="absolute start-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-slate-800 opacity-100 shadow-lg transition-opacity hover:bg-white focus:opacity-100 active:scale-95 md:opacity-0 md:group-hover:opacity-100"
               aria-label={copy.previousPhoto}
             >
-              <ChevronLeft className="w-6 h-6" />
+              <ChevronLeft className="h-6 w-6 rtl:rotate-180" />
             </button>
             <button
               type="button"
               onClick={handleNext}
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 hover:bg-white text-slate-800 flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 focus:opacity-100 transition-opacity shadow-lg z-10 active:scale-95"
+              className="absolute end-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-slate-800 opacity-100 shadow-lg transition-opacity hover:bg-white focus:opacity-100 active:scale-95 md:opacity-0 md:group-hover:opacity-100"
               aria-label={copy.nextPhoto}
             >
-              <ChevronRight className="w-6 h-6" />
+              <ChevronRight className="h-6 w-6 rtl:rotate-180" />
             </button>
           </>
         )}
@@ -208,7 +212,7 @@ export function PropertyGallery({
                   className="object-cover"
                 />
                 {idx === 0 && (
-                  <span className="absolute bottom-1 left-1 bg-primary text-white text-[8px] font-bold px-1 rounded">
+                  <span className="absolute bottom-1 start-1 rounded bg-primary px-1 text-[8px] font-bold text-white">
                     {copy.mainPhoto}
                   </span>
                 )}
@@ -262,17 +266,17 @@ export function PropertyGallery({
                   type="button"
                   onClick={handlePrev}
                   aria-label={copy.previousPhoto}
-                  className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center transition-colors shadow-lg active:scale-95"
+                  className="absolute start-2 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white shadow-lg transition-colors hover:bg-white/25 active:scale-95 md:start-6"
                 >
-                  <ChevronLeft className="w-7 h-7" />
+                  <ChevronLeft className="h-7 w-7 rtl:rotate-180" />
                 </button>
                 <button
                   type="button"
                   onClick={handleNext}
                   aria-label={copy.nextPhoto}
-                  className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center transition-colors shadow-lg active:scale-95"
+                  className="absolute end-2 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white shadow-lg transition-colors hover:bg-white/25 active:scale-95 md:end-6"
                 >
-                  <ChevronRight className="w-7 h-7" />
+                  <ChevronRight className="h-7 w-7 rtl:rotate-180" />
                 </button>
               </>
             )}

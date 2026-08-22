@@ -78,7 +78,7 @@ export default function ServicesPage() {
                       <li key={feature} className="flex items-start gap-2 text-sm text-slate-700"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" aria-hidden="true" /><span>{feature}</span></li>
                     ))}
                   </ul>
-                  <Link href={localizeHref(locale, '/contact')} className="mt-auto inline-flex items-center gap-2 font-semibold text-primary hover:text-secondary">{copy.consultation}<ArrowRight className="h-4 w-4" aria-hidden="true" /></Link>
+                  <Link href={localizeHref(locale, '/contact')} className="mt-auto inline-flex items-center gap-2 font-semibold text-primary hover:text-secondary">{copy.consultation}<ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden="true" /></Link>
                 </article>
               );
             })}

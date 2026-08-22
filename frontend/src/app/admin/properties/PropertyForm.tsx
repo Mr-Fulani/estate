@@ -23,6 +23,7 @@ import {
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { startNavigationFeedback } from '@/components/layout/NavigationFeedback';
+import { localeLabels, locales, type Locale } from '@/i18n/config';
 
 const sampleImages = [
   { name: 'Квартира премиум', url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80' },
@@ -32,7 +33,7 @@ const sampleImages = [
   { name: 'Офис / Коммерция', url: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80' },
 ];
 
-const propertyLocales = ['ru', 'en', 'tr'] as const;
+const propertyLocales = locales;
 
 export function PropertyForm({
   initialData,
@@ -76,6 +77,7 @@ export function PropertyForm({
         address: existing?.address || (locale === 'ru' ? initialData?.address || '' : ''),
         meta_title: existing?.meta_title || '',
         meta_description: existing?.meta_description || '',
+        status_badge: existing?.status_badge || (locale === 'ru' ? initialData?.status_badge || '' : ''),
       };
     }),
   });
@@ -108,8 +110,8 @@ export function PropertyForm({
   };
 
   const updateTranslation = (
-    locale: 'ru' | 'en' | 'tr',
-    field: 'title' | 'description' | 'city' | 'district' | 'address' | 'meta_title' | 'meta_description',
+    locale: Locale,
+    field: 'title' | 'description' | 'city' | 'district' | 'address' | 'meta_title' | 'meta_description' | 'status_badge',
     value: string,
   ) => {
     setFormData((prev) => ({
@@ -204,6 +206,7 @@ export function PropertyForm({
           item.address,
           item.meta_title,
           item.meta_description,
+          item.status_badge,
         ].some((value) => value?.trim())).map((item) => ({
           locale: item.locale,
           title: item.title.trim() || formData.title.trim(),
@@ -213,6 +216,7 @@ export function PropertyForm({
           address: item.address?.trim() || undefined,
           meta_title: item.meta_title?.trim() || undefined,
           meta_description: item.meta_description?.trim() || undefined,
+          status_badge: item.status_badge?.trim() || undefined,
         })),
       };
       if (isEditing && initialData) {
@@ -489,15 +493,15 @@ export function PropertyForm({
           <Languages className="h-5 w-5 text-primary" />
           <div>
             <h2 className="text-lg font-bold text-slate-900">Переводы карточки объекта</h2>
-            <p className="text-xs text-slate-500">Русская версия заполняется выше. Английский и турецкий необязательны; без них сайт покажет русский текст.</p>
+            <p className="text-xs text-slate-500">Русская версия заполняется выше. Остальные языки необязательны; для арабского сначала используется английский fallback, затем русский.</p>
           </div>
         </div>
-        <div className="grid gap-5 lg:grid-cols-2">
-          {(['en', 'tr'] as const).map((locale) => {
+        <div className="grid gap-5 xl:grid-cols-3">
+          {(['en', 'tr', 'ar'] as const).map((locale) => {
             const translation = formData.translations?.find((item) => item.locale === locale);
-            const label = locale === 'en' ? 'English' : 'Türkçe';
+            const label = localeLabels[locale];
             return (
-              <fieldset key={locale} className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-5">
+              <fieldset key={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'} className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-5">
                 <legend className="px-2 text-sm font-bold text-primary">{label}</legend>
                 <div>
                   <label htmlFor={`property-title-${locale}`} className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">Название</label>
@@ -515,7 +519,7 @@ export function PropertyForm({
                         id={`property-city-${locale}`}
                         value={translation?.city || ''}
                         onChange={(event) => updateTranslation(locale, 'city', event.target.value)}
-                        placeholder={locale === 'en' ? 'Istanbul' : 'İstanbul'}
+                        placeholder={locale === 'en' ? 'Istanbul' : locale === 'ar' ? 'إسطنبول' : 'İstanbul'}
                         className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm font-medium outline-none focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10"
                       />
                     </div>
@@ -525,7 +529,7 @@ export function PropertyForm({
                         id={`property-district-${locale}`}
                         value={translation?.district || ''}
                         onChange={(event) => updateTranslation(locale, 'district', event.target.value)}
-                        placeholder={locale === 'en' ? 'Beylikduzu' : 'Beylikdüzü'}
+                        placeholder={locale === 'en' ? 'Beylikduzu' : locale === 'ar' ? 'بيليك دوزو' : 'Beylikdüzü'}
                         className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm font-medium outline-none focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10"
                       />
                     </div>
@@ -535,7 +539,7 @@ export function PropertyForm({
                         id={`property-address-${locale}`}
                         value={translation?.address || ''}
                         onChange={(event) => updateTranslation(locale, 'address', event.target.value)}
-                        placeholder={locale === 'en' ? 'Sahil St.' : 'Sahil Mah.'}
+                        placeholder={locale === 'en' ? 'Sahil St.' : locale === 'ar' ? 'شارع الساحل' : 'Sahil Mah.'}
                         className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm font-medium outline-none focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10"
                       />
                     </div>
@@ -544,6 +548,10 @@ export function PropertyForm({
                 <div>
                   <label htmlFor={`property-description-${locale}`} className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">Описание</label>
                   <textarea id={`property-description-${locale}`} rows={6} value={translation?.description || ''} onChange={(event) => updateTranslation(locale, 'description', event.target.value)} className="w-full rounded-xl border border-slate-200 bg-white p-4 text-sm leading-relaxed outline-none focus:border-primary focus:ring-2 focus:ring-primary/10" />
+                </div>
+                <div>
+                  <label htmlFor={`property-status-${locale}`} className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">Маркетинговый статус</label>
+                  <input id={`property-status-${locale}`} value={translation?.status_badge || ''} onChange={(event) => updateTranslation(locale, 'status_badge', event.target.value)} placeholder={locale === 'ar' ? 'عرض خاص' : ''} className="h-11 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium outline-none focus:border-primary focus:ring-2 focus:ring-primary/10" />
                 </div>
               </fieldset>
             );
@@ -585,11 +593,11 @@ export function PropertyForm({
         <div className="grid min-w-0 gap-5 xl:grid-cols-2 2xl:grid-cols-3">
           {propertyLocales.map((locale) => {
             const translation = formData.translations?.find((item) => item.locale === locale);
-            const localeLabel = locale === 'ru' ? 'Русский' : locale === 'en' ? 'English' : 'Türkçe';
+            const localeLabel = localeLabels[locale];
             const titleLength = translation?.meta_title?.length || 0;
             const descriptionLength = translation?.meta_description?.length || 0;
             return (
-              <fieldset key={`seo-${locale}`} className="min-w-0 space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-5">
+              <fieldset key={`seo-${locale}`} dir={locale === 'ar' ? 'rtl' : 'ltr'} className="min-w-0 space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-5">
                 <legend className="px-2 text-sm font-bold text-primary">{localeLabel}</legend>
                 <div>
                   <div className="mb-1.5 flex items-center justify-between gap-3">

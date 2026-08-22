@@ -38,8 +38,8 @@ export function NewsMediaGallery({
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setSelectedImage(null);
-      if (event.key === 'ArrowLeft') setSelectedImage((current) => current === null ? null : (current - 1 + images.length) % images.length);
-      if (event.key === 'ArrowRight') setSelectedImage((current) => current === null ? null : (current + 1) % images.length);
+      if (event.key === 'ArrowLeft') setSelectedImage((current) => current === null ? null : locale === 'ar' ? (current + 1) % images.length : (current - 1 + images.length) % images.length);
+      if (event.key === 'ArrowRight') setSelectedImage((current) => current === null ? null : locale === 'ar' ? (current - 1 + images.length) % images.length : (current + 1) % images.length);
       if (event.key === 'Tab' && dialogRef.current) {
         const focusable = Array.from(dialogRef.current.querySelectorAll<HTMLElement>('button:not([disabled]), a[href]'));
         if (!focusable.length) return;
@@ -60,7 +60,7 @@ export function NewsMediaGallery({
       document.body.style.overflow = previousOverflow;
       previousFocus?.focus();
     };
-  }, [images.length, selectedImage]);
+  }, [images.length, locale, selectedImage]);
 
   if (!orderedMedia.length) return null;
 
@@ -101,11 +101,11 @@ export function NewsMediaGallery({
               type="button"
               onClick={() => setSelectedImage(imageIndex)}
               aria-label={`${copy.openImage}: ${imageIndex + 1}`}
-              className="group relative aspect-[16/10] overflow-hidden rounded-3xl border border-slate-200 bg-slate-100 text-left shadow-sm focus:outline-none focus:ring-4 focus:ring-primary/20"
+              className="group relative aspect-[16/10] overflow-hidden rounded-3xl border border-slate-200 bg-slate-100 text-start shadow-sm focus:outline-none focus:ring-4 focus:ring-primary/20"
             >
               <Image src={item.url} alt={`${title} — ${copy.photo} ${imageIndex + 1}`} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover transition duration-500 group-hover:scale-[1.03]" />
               <span className="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-transparent opacity-70" />
-              <span className="absolute bottom-4 left-4 inline-flex items-center gap-2 rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-slate-800 shadow-sm backdrop-blur"><Maximize2 className="h-3.5 w-3.5" aria-hidden="true" />{copy.photo} {imageIndex + 1}</span>
+              <span className="absolute bottom-4 start-4 inline-flex items-center gap-2 rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-slate-800 shadow-sm backdrop-blur"><Maximize2 className="h-3.5 w-3.5" aria-hidden="true" />{copy.photo} {imageIndex + 1}</span>
             </button>
           );
         })}
@@ -113,12 +113,12 @@ export function NewsMediaGallery({
 
       {selectedImage !== null && images[selectedImage] && (
         <div ref={dialogRef} role="dialog" aria-modal="true" aria-label={copy.openImage} className="fixed inset-0 z-[220] flex items-center justify-center bg-slate-950/95 p-4 backdrop-blur-md" onMouseDown={(event) => { if (event.target === event.currentTarget) setSelectedImage(null); }}>
-          <button ref={closeButtonRef} type="button" onClick={() => setSelectedImage(null)} aria-label={copy.closeMedia} className="absolute right-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 md:right-8 md:top-8"><X className="h-6 w-6" /></button>
-          {images.length > 1 && <button type="button" onClick={() => setSelectedImage((selectedImage - 1 + images.length) % images.length)} aria-label={copy.previousImage} className="absolute left-3 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 md:left-8"><ChevronLeft className="h-7 w-7" /></button>}
+          <button ref={closeButtonRef} type="button" onClick={() => setSelectedImage(null)} aria-label={copy.closeMedia} className="absolute end-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 md:end-8 md:top-8"><X className="h-6 w-6" /></button>
+          {images.length > 1 && <button type="button" onClick={() => setSelectedImage((selectedImage - 1 + images.length) % images.length)} aria-label={copy.previousImage} className="absolute start-3 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 md:start-8"><ChevronLeft className="h-7 w-7 rtl:rotate-180" /></button>}
           <div className="relative h-[80vh] w-[min(1200px,88vw)]">
             <Image src={images[selectedImage].url} alt={`${title} — ${copy.photo} ${selectedImage + 1}`} fill sizes="100vw" className="object-contain" />
           </div>
-          {images.length > 1 && <button type="button" onClick={() => setSelectedImage((selectedImage + 1) % images.length)} aria-label={copy.nextImage} className="absolute right-3 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 md:right-8"><ChevronRight className="h-7 w-7" /></button>}
+          {images.length > 1 && <button type="button" onClick={() => setSelectedImage((selectedImage + 1) % images.length)} aria-label={copy.nextImage} className="absolute end-3 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 md:end-8"><ChevronRight className="h-7 w-7 rtl:rotate-180" /></button>}
           <span className="absolute bottom-5 rounded-full bg-white/10 px-3 py-1.5 text-sm font-semibold text-white">{selectedImage + 1} / {images.length}</span>
         </div>
       )}

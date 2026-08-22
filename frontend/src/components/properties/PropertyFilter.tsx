@@ -148,9 +148,10 @@ export function PropertyFilter({ categories }: { categories: Category[] }) {
               onChange={handleChange}
               placeholder={copy.keywordPlaceholder}
               aria-label={copy.keyword}
-              className="w-full h-11 rounded-xl border border-slate-200 bg-slate-50 px-3.5 pl-9 text-sm text-slate-800 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+              dir="auto"
+              className="w-full h-11 rounded-xl border border-slate-200 bg-slate-50 px-3.5 ps-9 text-sm text-slate-800 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
             />
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-slate-400 absolute start-3 top-1/2 -translate-y-1/2" />
           </div>
         </div>
 
@@ -164,16 +165,16 @@ export function PropertyFilter({ categories }: { categories: Category[] }) {
               name="category_id"
               value={filters.category_id}
               onChange={handleChange}
-              className="w-full h-11 appearance-none rounded-xl border border-slate-200 bg-slate-50 px-3.5 pr-8 text-sm text-slate-800 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer"
+              className="w-full h-11 appearance-none rounded-xl border border-slate-200 bg-slate-50 px-3.5 pe-8 text-sm text-slate-800 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer"
             >
               <option value="">{copy.allCategories}</option>
               {categories.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {localizedCategoryName(locale, c.slug, c.name)}
+                  {localizedCategoryName(locale, c.slug, c.name, c.translations)}
                 </option>
               ))}
             </select>
-            <Building2 className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <Building2 className="w-4 h-4 text-slate-400 absolute end-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
         </div>
 
@@ -190,9 +191,10 @@ export function PropertyFilter({ categories }: { categories: Category[] }) {
               onChange={handleChange}
               placeholder={copy.locationPlaceholder}
               aria-label={copy.location}
-              className="w-full h-11 rounded-xl border border-slate-200 bg-slate-50 px-3.5 pl-9 text-sm text-slate-800 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+              dir="auto"
+              className="w-full h-11 rounded-xl border border-slate-200 bg-slate-50 px-3.5 ps-9 text-sm text-slate-800 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
             />
-            <MapPin className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <MapPin className="w-4 h-4 text-slate-400 absolute start-3 top-1/2 -translate-y-1/2" />
           </div>
         </div>
 

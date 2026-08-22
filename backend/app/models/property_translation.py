@@ -22,5 +22,6 @@ class PropertyTranslation(Base):
     address: Mapped[str | None] = mapped_column(String(300), nullable=True)
     meta_title: Mapped[str | None] = mapped_column(String(240), nullable=True)
     meta_description: Mapped[str | None] = mapped_column(String(320), nullable=True)
+    status_badge: Mapped[str | None] = mapped_column(String(100), nullable=True)
 
     property = relationship("Property", back_populates="translations")

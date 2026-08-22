@@ -30,6 +30,11 @@ REVIEWS = [
                 "reviewer_role": "Demo yorum · Daire alımı",
                 "content": "Ekip İstanbul’daki farklı bölgeleri karşılaştırmamıza yardımcı oldu; belgeler ve masraflar arasındaki farkları sakin ve anlaşılır biçimde anlattı. Sonunda bütçemize ve yaşam tarzımıza gerçekten uyan bir daire seçtik.",
             },
+            {
+                "locale": "ar",
+                "reviewer_role": "تقييم تجريبي · شراء شقة",
+                "content": "ساعدنا الفريق على مقارنة عدة مناطق في إسطنبول وشرح الفروق في المستندات وتكاليف التملك بوضوح. وفي النهاية اخترنا شقة تناسب ميزانيتنا وأسلوب حياتنا فعلاً.",
+            },
         ],
     },
     {
@@ -54,6 +59,11 @@ REVIEWS = [
                 "reviewer_role": "Demo yorum · Aile konutu",
                 "content": "Beylikdüzü’nde ailemiz için bir ev arıyorduk. Ekip yalnızca daireleri göstermedi; ulaşımı, okulları, aylık giderleri ve gerçek manzarayı da kontrol etti. Bu yaklaşım karar vermemizi çok kolaylaştırdı.",
             },
+            {
+                "locale": "ar",
+                "reviewer_role": "تقييم تجريبي · منزل عائلي",
+                "content": "كنا نبحث عن منزل لعائلتنا في بيليك دوزو. لم يكتفِ الفريق بعرض العقارات، بل تحقق أيضاً من المواصلات والمدارس والرسوم الشهرية والإطلالات الفعلية. وقد سهّل ذلك قرارنا كثيراً.",
+            },
         ],
     },
     {
@@ -77,6 +87,11 @@ REVIEWS = [
                 "locale": "tr",
                 "reviewer_role": "Demo yorum · Yatırım amaçlı alım",
                 "content": "Yalnızca güzel sunumlar değil; toplam maliyet, gerçekçi kira beklentisi ve yeniden satış riskleri de açıkça gösterildi. İletişim hızlı, öneriler ise somut ve anlaşılırdı.",
+            },
+            {
+                "locale": "ar",
+                "reviewer_role": "تقييم تجريبي · شراء استثماري",
+                "content": "أعجبني أن العرض لم يقتصر على الصور الجميلة، بل شمل أيضاً التكاليف الكاملة والإيجار الواقعي ومخاطر إعادة البيع. كان التواصل سريعاً والتوصيات محددة وواضحة.",
             },
         ],
     },
@@ -105,6 +120,12 @@ REVIEWS = [
                 "content": "Portföy seçimi ve gösterimler iyi organize edildi, sözleşme ayrıntılı biçimde açıklandı. Bir belgenin çevirisi beklediğimden biraz uzun sürdü ancak danışman iletişimi kesmeden süreci tamamladı.",
                 "company_response": "Geri bildiriminiz için teşekkür ederiz. Sonraki işlemlerin daha hızlı ilerlemesi için belge çeviri sürecimizi güncelledik.",
             },
+            {
+                "locale": "ar",
+                "reviewer_role": "تقييم تجريبي · إيجار طويل الأجل",
+                "content": "تم تنظيم القائمة المختصرة والمعاينات جيداً، وشرح العقد بالتفصيل. استغرقت ترجمة إحدى الوثائق وقتاً أطول قليلاً من المتوقع، لكن المستشار بقي على تواصل حتى اكتملت العملية.",
+                "company_response": "شكراً لملاحظتك. لقد حسّنا آلية ترجمة المستندات لدينا لتسريع المراحل المقبلة.",
+            },
         ],
     },
     {
@@ -128,6 +149,11 @@ REVIEWS = [
                 "locale": "tr",
                 "reviewer_role": "Demo yorum · Gayrimenkul satışı",
                 "content": "Satış süreci baştan itibaren şeffaftı. Konumlandırmayı birlikte belirledik, tanıtım materyalleri hazırlandı ve talepler filtrelendi. Her aşamada ne olduğunu biliyor, uygun olmayan gösterimlerle vakit kaybetmiyordum.",
+            },
+            {
+                "locale": "ar",
+                "reviewer_role": "تقييم تجريبي · بيع عقار",
+                "content": "كانت عملية البيع شفافة منذ البداية. اتفقنا على التموضع وأُعدّت المواد التسويقية وفُرزت الطلبات. كنت أعرف ما يحدث في كل مرحلة ولم أضيّع وقتي في معاينات غير مناسبة.",
             },
         ],
     },

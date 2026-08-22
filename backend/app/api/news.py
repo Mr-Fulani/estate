@@ -69,7 +69,10 @@ def _sync_media(article: NewsArticle, media: list[NewsMediaBase]) -> None:
 
 def _public_article(article: NewsArticle, locale: LocaleCode) -> NewsPublicResponse:
     by_locale = {translation.locale: translation for translation in article.translations}
-    translation = by_locale.get(locale) or by_locale.get("ru")
+    translation = by_locale.get(locale)
+    if translation is None and locale == "ar":
+        translation = by_locale.get("en")
+    translation = translation or by_locale.get("ru")
     if translation is None:
         raise HTTPException(status_code=500, detail="News translation is missing")
 
@@ -89,7 +92,7 @@ def _public_article(article: NewsArticle, locale: LocaleCode) -> NewsPublicRespo
         media=article.media,
         available_locales=[
             candidate
-            for candidate in ("ru", "en", "tr")
+            for candidate in ("ru", "en", "tr", "ar")
             if candidate in by_locale
         ],
     )

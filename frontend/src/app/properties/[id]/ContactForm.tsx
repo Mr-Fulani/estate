@@ -85,6 +85,7 @@ export function ContactForm({ propertyId }: { propertyId?: number }) {
         onChange={handleChange}
         placeholder={copy.namePlaceholder}
         autoComplete="name"
+        dir="auto"
       />
       
       <Input
@@ -97,6 +98,7 @@ export function ContactForm({ propertyId }: { propertyId?: number }) {
         onChange={handleChange}
         placeholder="+7 (999) 000-00-00"
         autoComplete="tel"
+        dir="ltr"
       />
       
       <Input
@@ -108,6 +110,7 @@ export function ContactForm({ propertyId }: { propertyId?: number }) {
         onChange={handleChange}
         placeholder="ivan@example.com"
         autoComplete="email"
+        dir="ltr"
       />
       
       <Textarea
@@ -118,6 +121,7 @@ export function ContactForm({ propertyId }: { propertyId?: number }) {
         value={formData.message}
         onChange={handleChange}
         placeholder={copy.messagePlaceholder}
+        dir="auto"
       />
       
       <Button type="submit" className="w-full" disabled={loading}>

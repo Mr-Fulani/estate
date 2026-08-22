@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Category } from '@/types';
+import { Category, CategoryTranslation } from '@/types';
 import { createCategory, deleteCategory } from '@/lib/api';
 import { Plus, Trash2, Building, Home, Trees, Briefcase, type LucideIcon } from 'lucide-react';
 
@@ -23,6 +23,7 @@ export function CategoriesManager({
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
   const [description, setDescription] = useState('');
+  const [translatedNames, setTranslatedNames] = useState<Record<'en' | 'tr' | 'ar', string>>({ en: '', tr: '', ar: '' });
   const [loading, setLoading] = useState(false);
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -35,11 +36,18 @@ export function CategoriesManager({
         name: name.trim(),
         slug: generatedSlug,
         description: description.trim() || undefined,
+        translations: [
+          { locale: 'ru', name: name.trim(), description: description.trim() || undefined },
+          ...(['en', 'tr', 'ar'] as const)
+            .filter((locale) => translatedNames[locale].trim())
+            .map((locale): CategoryTranslation => ({ locale, name: translatedNames[locale].trim() })),
+        ],
       });
       setCategories((prev) => [...prev, newCat]);
       setName('');
       setSlug('');
       setDescription('');
+      setTranslatedNames({ en: '', tr: '', ar: '' });
       router.refresh();
     } catch {
       alert('Ошибка при создании категории');
@@ -84,6 +92,7 @@ export function CategoriesManager({
                           <Icon className="w-4 h-4" />
                         </div>
                         <span className="font-bold text-slate-900">{cat.name}</span>
+                        <span className="text-[10px] font-bold uppercase text-slate-400">{(cat.translations || []).map((item) => item.locale).join(' · ')}</span>
                       </div>
                     </td>
                     <td className="py-3.5 px-4 text-xs text-slate-500 font-mono">
@@ -130,6 +139,25 @@ export function CategoriesManager({
               placeholder="Например: Пентхаусы"
               className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-medium"
             />
+          </div>
+
+          <div className="space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+            <p className="text-xs font-bold uppercase tracking-wider text-slate-600">Переводы названия</p>
+            {([
+              ['en', 'English'],
+              ['tr', 'Türkçe'],
+              ['ar', 'العربية'],
+            ] as const).map(([locale, label]) => (
+              <label key={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'} className="block text-xs font-semibold text-slate-600">
+                {label}
+                <input
+                  type="text"
+                  value={translatedNames[locale]}
+                  onChange={(event) => setTranslatedNames((current) => ({ ...current, [locale]: event.target.value }))}
+                  className="mt-1.5 h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-medium outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                />
+              </label>
+            ))}
           </div>
 
           <div className="flex flex-col gap-1.5">

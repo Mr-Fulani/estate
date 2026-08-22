@@ -1,8 +1,18 @@
+import type { Locale } from '@/i18n/config';
+
+export interface CategoryTranslation {
+  id?: number;
+  locale: Locale;
+  name: string;
+  description?: string | null;
+}
+
 export interface Category {
   id: number;
   name: string;
   slug: string;
   description: string | null;
+  translations?: CategoryTranslation[];
   created_at: string;
 }
 
@@ -47,7 +57,7 @@ export interface Property {
 
 export interface PropertyTranslation {
   id?: number;
-  locale: 'ru' | 'en' | 'tr';
+  locale: Locale;
   title: string;
   description?: string | null;
   city?: string | null;
@@ -55,12 +65,13 @@ export interface PropertyTranslation {
   address?: string | null;
   meta_title?: string | null;
   meta_description?: string | null;
+  status_badge?: string | null;
 }
 
 export interface NewsArticle {
   id: number;
   slug: string;
-  locale: 'ru' | 'en' | 'tr';
+  locale: Locale;
   title: string;
   excerpt: string;
   content: string;
@@ -70,7 +81,7 @@ export interface NewsArticle {
   author: string;
   published_at: string | null;
   media: NewsMedia[];
-  available_locales: Array<'ru' | 'en' | 'tr'>;
+  available_locales: Locale[];
 }
 
 export type NewsMediaType = 'image' | 'youtube';
@@ -91,7 +102,7 @@ export interface NewsListResponse {
 
 export interface NewsTranslation {
   id?: number;
-  locale: 'ru' | 'en' | 'tr';
+  locale: Locale;
   title: string;
   excerpt: string;
   content: string;
@@ -133,7 +144,7 @@ export interface ContactRequest {
   kind?: 'form' | 'click' | 'manual' | 'webhook';
   channel?: 'form' | 'phone' | 'email' | 'whatsapp' | 'telegram' | 'max' | 'instagram' | 'facebook' | 'vk';
   source?: string;
-  locale?: 'ru' | 'en' | 'tr' | null;
+  locale?: Locale | null;
   page_url?: string | null;
   referrer?: string | null;
   utm_source?: string | null;
@@ -173,7 +184,7 @@ export interface LeadActivity {
 
 export interface ContactAttribution {
   property_id?: number | null;
-  locale?: 'ru' | 'en' | 'tr';
+  locale?: Locale;
   source: string;
   page_url?: string;
   referrer?: string;
@@ -280,11 +291,19 @@ export interface SiteSettings {
   instagram?: string | null;
   facebook?: string | null;
   max_messenger?: string | null;
+  translations?: SiteSettingsTranslation[];
+}
+
+export interface SiteSettingsTranslation {
+  id?: number;
+  locale: Locale;
+  address: string;
+  working_hours: string;
 }
 
 export interface ReviewTranslation {
   id?: number;
-  locale: 'ru' | 'en' | 'tr';
+  locale: Locale;
   content: string;
   reviewer_role?: string | null;
   company_response?: string | null;
@@ -294,7 +313,7 @@ export interface PublicReview {
   id: number;
   reviewer_name: string;
   rating: number;
-  locale: 'ru' | 'en' | 'tr';
+  locale: Locale;
   content: string;
   reviewer_role?: string | null;
   company_response?: string | null;
@@ -316,7 +335,7 @@ export interface AdminReview {
   email?: string | null;
   phone?: string | null;
   rating?: number | null;
-  source_locale: 'ru' | 'en' | 'tr';
+  source_locale: Locale;
   status: 'invited' | 'pending' | 'published' | 'rejected';
   is_verified: boolean;
   is_featured: boolean;
@@ -339,7 +358,7 @@ export interface ReviewSubmissionData {
   email?: string;
   phone?: string;
   rating: number;
-  locale: 'ru' | 'en' | 'tr';
+  locale: Locale;
   content: string;
   reviewer_role?: string;
   property_id?: number;
@@ -350,7 +369,7 @@ export interface ReviewSubmissionData {
 export interface ReviewInvitation {
   reviewer_name?: string | null;
   property_title?: string | null;
-  locale: 'ru' | 'en' | 'tr';
+  locale: Locale;
   expires_at: string;
 }
 

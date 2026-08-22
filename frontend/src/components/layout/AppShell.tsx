@@ -21,13 +21,19 @@ export function AppShell({
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith('/admin');
   const { locale } = useLocale();
-  const skipLabel = locale === 'en' ? 'Skip to content' : locale === 'tr' ? 'İçeriğe geç' : 'Перейти к содержанию';
+  const skipLabel = locale === 'en'
+    ? 'Skip to content'
+    : locale === 'tr'
+      ? 'İçeriğe geç'
+      : locale === 'ar'
+        ? 'الانتقال إلى المحتوى'
+        : 'Перейти к содержанию';
 
   return (
     <>
       <a
         href="#main-content"
-        className="fixed left-3 top-3 z-[300] -translate-y-24 rounded-lg bg-primary px-4 py-2 font-semibold text-white shadow-lg transition-transform focus:translate-y-0"
+        className="fixed start-3 top-3 z-[300] -translate-y-24 rounded-lg bg-primary px-4 py-2 font-semibold text-white shadow-lg transition-transform focus:translate-y-0"
       >
         {skipLabel}
       </a>

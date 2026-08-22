@@ -7,7 +7,7 @@ import { Coins, Globe2, Menu, X, Phone } from 'lucide-react';
 import { useState } from 'react';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import { useLocale } from '@/context/LocaleContext';
-import { localeLabels, locales, localizeHref, type Locale } from '@/i18n/config';
+import { localeLabels, locales, localeTags, localizeHref, type Locale } from '@/i18n/config';
 import { TelegramIcon, WhatsappIcon, VkIcon, YoutubeIcon, InstagramIcon, FacebookIcon, MaxIcon } from '../ui/SocialIcons';
 import { TrackedContactLink } from '@/components/contact/TrackedContactLink';
 import type { ContactTrackData } from '@/types';
@@ -34,7 +34,7 @@ export function Header() {
   const { locale, messages, href } = useLocale();
   const { currency, setCurrency, effectiveDate, isReady, error } = useCurrency();
   const formattedRateDate = effectiveDate
-    ? new Intl.DateTimeFormat(locale === 'en' ? 'en-GB' : locale === 'tr' ? 'tr-TR' : 'ru-RU', {
+    ? new Intl.DateTimeFormat(localeTags[locale], {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
@@ -81,7 +81,7 @@ export function Header() {
   ].filter((s) => s.url && typeof s.url === 'string' && s.url.trim() !== '');
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm transition-all duration-200">
+    <header className="fixed inset-x-0 top-0 z-[100] bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm transition-all duration-200">
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
@@ -109,7 +109,7 @@ export function Header() {
                 >
                   {item.label}
                   {isActive && (
-                    <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full" />
+                    <span className="absolute -bottom-1 inset-x-0 h-0.5 bg-primary rounded-full" />
                   )}
                 </Link>
               );
@@ -137,12 +137,12 @@ export function Header() {
             )}
 
             <label className="relative flex items-center text-slate-500" title={messages.navigation.language}>
-              <Globe2 className="w-4 h-4 absolute left-2.5 pointer-events-none" aria-hidden="true" />
+              <Globe2 className="w-4 h-4 absolute start-2.5 pointer-events-none" aria-hidden="true" />
               <span className="sr-only">{messages.navigation.language}</span>
               <select
                 value={locale}
                 onChange={(event) => switchLocale(event.target.value as Locale)}
-                className="h-9 rounded-lg border border-slate-200 bg-white pl-8 pr-2 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+                className="h-9 rounded-lg border border-slate-200 bg-white ps-8 pe-2 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
                 aria-label={messages.navigation.language}
               >
                 {locales.map((item) => <option key={item} value={item}>{item.toUpperCase()}</option>)}
@@ -150,13 +150,13 @@ export function Header() {
             </label>
 
             <label className="relative flex items-center text-slate-500" title={currencyTitle}>
-              <Coins className="w-4 h-4 absolute left-2.5 pointer-events-none" aria-hidden="true" />
+              <Coins className="w-4 h-4 absolute start-2.5 pointer-events-none" aria-hidden="true" />
               <span className="sr-only">{messages.navigation.currency}</span>
               <select
                 value={currency}
                 onChange={(event) => setCurrency(event.target.value as CurrencyCode)}
                 disabled={!isReady}
-                className="h-9 rounded-lg border border-slate-200 bg-white pl-8 pr-2 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-60"
+                className="h-9 rounded-lg border border-slate-200 bg-white ps-8 pe-2 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-60"
                 aria-label={messages.navigation.currency}
               >
                 {currencyCodes.map((item) => <option key={item} value={item}>{currencyLabels[item]}</option>)}
@@ -168,7 +168,7 @@ export function Header() {
               <div className="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center text-secondary">
                 <Phone className="w-4 h-4" />
               </div>
-              <span>{settings.phone}</span>
+              <span dir="ltr">{settings.phone}</span>
             </TrackedContactLink>
 
             <Link href={href('/contact')} className="bg-primary text-white hover:bg-primary-800 px-4 py-2 rounded-xl text-sm font-medium transition-all shadow-sm active:scale-95">
@@ -249,7 +249,7 @@ export function Header() {
             </div>
             <TrackedContactLink href={phoneToTel(settings.phone)} channel="phone" source="mobile_header_phone" className="flex items-center gap-2.5 text-slate-800 font-medium py-1.5">
               <Phone className="w-4 h-4 text-secondary" />
-              <span>{settings.phone}</span>
+              <span dir="ltr">{settings.phone}</span>
             </TrackedContactLink>
 
             {/* Social Links in Mobile */}

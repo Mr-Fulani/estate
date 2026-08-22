@@ -65,7 +65,7 @@ export function LoginForm({ returnTo, reason }: { returnTo?: string; reason?: st
               Все объекты, обращения и сделки — в одном месте.
             </h1>
             <p className="mt-6 max-w-lg text-base leading-7 text-slate-300">
-              Управляйте каталогом на трёх языках, контролируйте воронку продаж, модерируйте отзывы и следите за результатом команды.
+              Управляйте каталогом на четырёх языках, контролируйте воронку продаж, модерируйте отзывы и следите за результатом команды.
             </p>
             <div className="mt-10 grid max-w-lg gap-4 sm:grid-cols-2">
               {[

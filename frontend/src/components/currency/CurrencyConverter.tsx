@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { ArrowLeftRight, BadgeCheck, RefreshCw, Sparkles } from 'lucide-react';
 
 import { currencyCodes, useCurrency } from '@/context/CurrencyContext';
-import type { Locale } from '@/i18n/config';
+import { localeTags, type Locale } from '@/i18n/config';
 import { siteCopy } from '@/i18n/siteCopy';
 import type { CurrencyCode } from '@/types';
 
@@ -15,13 +15,6 @@ const currencyLabels: Record<CurrencyCode, string> = {
   EUR: '€  EUR',
   TRY: '₺  TRY',
 };
-
-const localeTags: Record<Locale, string> = {
-  ru: 'ru-RU',
-  en: 'en-GB',
-  tr: 'tr-TR',
-};
-
 
 function parseAmount(value: string): number {
   const parsed = Number(value.replace(/\s/g, '').replace(',', '.'));
@@ -86,7 +79,7 @@ export function CurrencyConverter({ locale }: { locale: Locale }) {
 
           <div className="relative grid min-w-0 items-center gap-8 lg:grid-cols-[0.82fr_1.18fr] lg:gap-14">
             <div className="min-w-0 max-w-xl">
-              <div className="mb-5 inline-flex max-w-full items-center gap-2 rounded-full border border-secondary/25 bg-secondary/10 px-3.5 py-2 text-left text-[0.6875rem] font-bold uppercase leading-4 tracking-[0.14em] text-secondary-300 sm:text-xs sm:tracking-[0.16em]">
+              <div className="mb-5 inline-flex max-w-full items-center gap-2 rounded-full border border-secondary/25 bg-secondary/10 px-3.5 py-2 text-start text-[0.6875rem] font-bold uppercase leading-4 tracking-[0.14em] text-secondary-300 sm:text-xs sm:tracking-[0.16em]">
                 <Sparkles className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 {copy.eyebrow}
               </div>
@@ -134,6 +127,7 @@ export function CurrencyConverter({ locale }: { locale: Locale }) {
                       onChange={(event) => setAmount(event.target.value.replace(/[^\d.,\s]/g, ''))}
                       inputMode="decimal"
                       autoComplete="off"
+                      dir="ltr"
                       aria-label={copy.amount}
                       className="min-w-0 max-w-full bg-transparent text-xl font-bold tracking-tight text-slate-900 outline-none sm:text-2xl"
                     />
@@ -141,6 +135,7 @@ export function CurrencyConverter({ locale }: { locale: Locale }) {
                       value={fromCurrency}
                       onChange={(event) => setFromCurrency(event.target.value as CurrencyCode)}
                       aria-label={`${copy.amount}: ${copy.rate}`}
+                      dir="ltr"
                       className="h-11 min-w-0 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-primary outline-none focus:ring-2 focus:ring-primary"
                     >
                       {currencyCodes.map((currency) => <option key={currency} value={currency}>{currencyLabels[currency]}</option>)}
@@ -166,13 +161,14 @@ export function CurrencyConverter({ locale }: { locale: Locale }) {
                     {copy.result}
                   </div>
                   <div className="flex min-w-0 flex-col items-stretch gap-3">
-                    <output className="block min-w-0 max-w-full break-all text-xl font-bold tracking-tight text-primary-900 sm:text-2xl" aria-live="polite">
+                    <output dir="ltr" className="block min-w-0 max-w-full break-all text-xl font-bold tracking-tight text-primary-900 sm:text-2xl" aria-live="polite">
                       {convertedAmount === null ? '—' : formatMoney(convertedAmount, toCurrency, locale)}
                     </output>
                     <select
                       value={toCurrency}
                       onChange={(event) => setToCurrency(event.target.value as CurrencyCode)}
                       aria-label={`${copy.result}: ${copy.rate}`}
+                      dir="ltr"
                       className="h-11 min-w-0 w-full rounded-xl border border-primary-100 bg-white px-3 text-sm font-bold text-primary outline-none focus:ring-2 focus:ring-primary"
                     >
                       {currencyCodes.map((currency) => <option key={currency} value={currency}>{currencyLabels[currency]}</option>)}
@@ -184,7 +180,7 @@ export function CurrencyConverter({ locale }: { locale: Locale }) {
               <div className="mt-5 rounded-2xl border border-slate-200 bg-white px-4 py-3.5">
                 <div className="flex flex-col justify-between gap-2 text-sm sm:flex-row sm:items-center">
                   <span className="font-medium text-slate-500">{copy.rate}</span>
-                  <strong className="max-w-full break-all text-left text-slate-900 sm:text-right">
+                  <strong dir="ltr" className="max-w-full break-all text-start text-slate-900 sm:text-end">
                     {unitRate === null
                       ? (error ? copy.unavailable : copy.loading)
                       : `1 ${fromCurrency} = ${new Intl.NumberFormat(localeTags[locale], { maximumFractionDigits: 6 }).format(unitRate)} ${toCurrency}`}

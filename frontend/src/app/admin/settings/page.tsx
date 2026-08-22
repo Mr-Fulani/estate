@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { SiteSettings } from '@/types';
+import { SiteSettings, SiteSettingsTranslation } from '@/types';
 import { fetchSiteSettings, updateSiteSettings } from '@/lib/api';
 import {
   Settings,
@@ -14,6 +14,9 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { TelegramIcon, WhatsappIcon, VkIcon, YoutubeIcon, InstagramIcon, FacebookIcon, MaxIcon } from '@/components/ui/SocialIcons';
+import { localeLabels } from '@/i18n/config';
+
+const translatedLocales = ['en', 'tr', 'ar'] as const;
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<SiteSettings | null>(null);
@@ -37,6 +40,24 @@ export default function AdminSettingsPage() {
     setSaved(false);
   };
 
+  const handleTranslationChange = (
+    locale: SiteSettingsTranslation['locale'],
+    field: 'address' | 'working_hours',
+    value: string,
+  ) => {
+    if (!settings) return;
+    const translations = [...(settings.translations || [])];
+    const index = translations.findIndex((item) => item.locale === locale);
+    const current = index >= 0
+      ? translations[index]
+      : { locale, address: '', working_hours: '' };
+    const next = { ...current, [field]: value };
+    if (index >= 0) translations[index] = next;
+    else translations.push(next);
+    setSettings({ ...settings, translations });
+    setSaved(false);
+  };
+
   const handleSave = async () => {
     if (!settings) return;
     setSaving(true);
@@ -44,7 +65,12 @@ export default function AdminSettingsPage() {
     setSaved(false);
 
     try {
-      const updated = await updateSiteSettings(settings);
+      const updated = await updateSiteSettings({
+        ...settings,
+        translations: (settings.translations || []).filter(
+          (item) => item.address.trim() && item.working_hours.trim(),
+        ),
+      });
       setSettings(updated);
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
@@ -146,6 +172,34 @@ export default function AdminSettingsPage() {
               className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="mb-5 flex items-center gap-2 border-b border-slate-100 pb-3">
+          <MapPin className="h-5 w-5 text-primary" />
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">Переводы адреса и часов работы</h2>
+            <p className="text-xs text-slate-500">Пустой перевод не отправляется; публичный сайт использует английский, затем русский fallback.</p>
+          </div>
+        </div>
+        <div className="grid gap-4 xl:grid-cols-3">
+          {translatedLocales.map((locale) => {
+            const translation = settings.translations?.find((item) => item.locale === locale);
+            return (
+              <fieldset key={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'} className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <legend className="px-2 text-sm font-bold text-primary">{localeLabels[locale]}</legend>
+                <label className="block text-xs font-semibold text-slate-600">
+                  Адрес офиса
+                  <input value={translation?.address || ''} onChange={(event) => handleTranslationChange(locale, 'address', event.target.value)} className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-medium outline-none focus:border-primary" />
+                </label>
+                <label className="block text-xs font-semibold text-slate-600">
+                  Часы работы
+                  <input value={translation?.working_hours || ''} onChange={(event) => handleTranslationChange(locale, 'working_hours', event.target.value)} className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-medium outline-none focus:border-primary" />
+                </label>
+              </fieldset>
+            );
+          })}
         </div>
       </div>
 

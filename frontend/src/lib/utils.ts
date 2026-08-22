@@ -1,13 +1,17 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
+import { localeTags, type Locale } from '@/i18n/config';
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatPrice(price: number, currency: string = '₽', locale: string = 'ru'): string {
-  if (price == null) return 'По запросу';
-  const localeTag = locale === 'en' ? 'en-GB' : locale === 'tr' ? 'tr-TR' : 'ru-RU';
+export function formatPrice(price: number | null | undefined, currency: string = '₽', locale: string = 'ru'): string {
+  const localeTag = localeTags[locale as Locale] || localeTags.ru;
+  if (price == null) {
+    return ({ ru: 'По запросу', en: 'On request', tr: 'Fiyat için iletişime geçin', ar: 'السعر عند الطلب' } as Record<Locale, string>)[locale as Locale] || 'По запросу';
+  }
   return new Intl.NumberFormat(localeTag, {
     style: 'currency',
     currency: currency === '₽' || currency === 'RUB' ? 'RUB' : currency,
@@ -22,10 +26,9 @@ export function formatArea(area: number | null | undefined): string {
   return `${area} м²`;
 }
 
-export function formatDate(value: string | null, locale: 'ru' | 'en' | 'tr'): string {
+export function formatDate(value: string | null, locale: Locale): string {
   if (!value) return '';
-  const localeTag = { ru: 'ru-RU', en: 'en-GB', tr: 'tr-TR' }[locale];
-  return new Intl.DateTimeFormat(localeTag, {
+  return new Intl.DateTimeFormat(localeTags[locale], {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -51,10 +54,10 @@ export function pluralize(n: number | null | undefined, forms: [string, string, 
 export function getStatusBadgeVariant(badgeText?: string | null): 'success' | 'warning' | 'danger' | 'purple' | 'secondary' | 'primary' | 'outline' {
   if (!badgeText) return 'outline';
   const lower = badgeText.toLowerCase();
-  if (lower.includes('акт') || lower.includes('свобод')) return 'success';
-  if (lower.includes('брон') || lower.includes('ожидан')) return 'warning';
-  if (lower.includes('продан') || lower.includes('архив') || lower.includes('снят')) return 'danger';
-  if (lower.includes('спец') || lower.includes('горяч') || lower.includes('скид') || lower.includes('рассроч')) return 'purple';
-  if (lower.includes('эксклюзив') || lower.includes('рекоменд')) return 'secondary';
+  if (['акт', 'свобод', 'available', 'satışta', 'متاح'].some((value) => lower.includes(value))) return 'success';
+  if (['брон', 'ожидан', 'reserved', 'rezerve', 'محجوز'].some((value) => lower.includes(value))) return 'warning';
+  if (['продан', 'архив', 'снят', 'sold', 'rented', 'archived', 'satıldı', 'kiralandı', 'arşiv', 'تم البيع', 'تم التأجير', 'مؤرشف'].some((value) => lower.includes(value))) return 'danger';
+  if (['спец', 'горяч', 'скид', 'рассроч', 'special', 'hot price', 'instalment', 'fırsat', 'taksit', 'عرض خاص', 'سعر مميز', 'تقسيط'].some((value) => lower.includes(value))) return 'purple';
+  if (['эксклюзив', 'рекоменд', 'exclusive', 'featured', 'özel', 'حصري', 'موصى'].some((value) => lower.includes(value))) return 'secondary';
   return 'primary';
 }

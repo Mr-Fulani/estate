@@ -14,7 +14,7 @@ DealCurrency = Literal["RUB", "USD", "EUR", "TRY"]
 
 
 class AttributionFields(BaseModel):
-    locale: Optional[Literal["ru", "en", "tr"]] = None
+    locale: Optional[Literal["ru", "en", "tr", "ar"]] = None
     source: str = Field(default="contact_form", max_length=80)
     page_url: Optional[str] = Field(default=None, max_length=2000)
     referrer: Optional[str] = Field(default=None, max_length=2000)
@@ -61,7 +61,7 @@ class ContactWebhookCreate(BaseModel):
     phone: Optional[str] = Field(default=None, max_length=20)
     message: str = Field(min_length=1, max_length=5000)
     property_id: Optional[int] = None
-    locale: Optional[Literal["ru", "en", "tr"]] = None
+    locale: Optional[Literal["ru", "en", "tr", "ar"]] = None
     source: str = Field(default="messenger_webhook", max_length=80)
 
 

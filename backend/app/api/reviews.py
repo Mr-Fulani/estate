@@ -67,6 +67,8 @@ async def _get_review(review_id: int, db: AsyncSession) -> Review:
 
 def _public_review(review: Review, locale: str) -> ReviewPublicResponse:
     translation = next((item for item in review.translations if item.locale == locale), None)
+    if translation is None and locale == "ar":
+        translation = next((item for item in review.translations if item.locale == "en"), None)
     translation = translation or next((item for item in review.translations if item.locale == review.source_locale), None)
     translation = translation or next((item for item in review.translations if item.locale == "ru"), None)
     translation = translation or (review.translations[0] if review.translations else None)
@@ -89,7 +91,7 @@ def _public_review(review: Review, locale: str) -> ReviewPublicResponse:
 @router.get("", include_in_schema=False)
 @router.get("/", response_model=ReviewListResponse)
 async def list_reviews(
-    locale: str = Query("ru", pattern="^(ru|en|tr)$"),
+    locale: str = Query("ru", pattern="^(ru|en|tr|ar)$"),
     featured: bool = Query(False),
     page: int = Query(1, ge=1),
     per_page: int = Query(12, ge=1, le=50),

@@ -1,5 +1,20 @@
-from pydantic import BaseModel, ConfigDict
-from typing import Optional
+from pydantic import BaseModel, ConfigDict, Field
+from typing import Literal, Optional
+
+
+LocaleCode = Literal["ru", "en", "tr", "ar"]
+
+
+class SiteSettingsTranslationInput(BaseModel):
+    locale: LocaleCode
+    address: str = Field(min_length=1, max_length=300)
+    working_hours: str = Field(min_length=1, max_length=100)
+
+
+class SiteSettingsTranslationResponse(SiteSettingsTranslationInput):
+    id: int
+
+    model_config = ConfigDict(from_attributes=True)
 
 class SiteSettingsBase(BaseModel):
     phone: str = "+90 (552) 123-00-00"
@@ -26,8 +41,10 @@ class SiteSettingsUpdate(BaseModel):
     instagram: Optional[str] = None
     facebook: Optional[str] = None
     max_messenger: Optional[str] = None
+    translations: Optional[list[SiteSettingsTranslationInput]] = None
 
 class SiteSettingsResponse(SiteSettingsBase):
     id: int
+    translations: list[SiteSettingsTranslationResponse] = Field(default_factory=list)
 
     model_config = ConfigDict(from_attributes=True)

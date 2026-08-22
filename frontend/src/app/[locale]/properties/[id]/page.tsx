@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { PropertyDetailContent } from '@/components/pages/PropertyDetailContent';
-import { isLocale } from '@/i18n/config';
+import { isLocale, openGraphLocales } from '@/i18n/config';
 import { hasPropertyLocale, localizedProperty, localizedPropertyTranslation, propertyAvailableLocales } from '@/i18n/domain';
 import { fetchProperty } from '@/lib/api';
 
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: PropertyPageProps): Promise<M
   const translation = localizedPropertyTranslation(sourceProperty, locale);
   const hasRequestedLocale = hasPropertyLocale(sourceProperty, locale);
   const availableLocales = propertyAvailableLocales(sourceProperty);
-  const canonicalLocale = hasRequestedLocale ? locale : 'ru';
+  const canonicalLocale = hasRequestedLocale ? locale : (translation?.locale || 'ru');
   const location = [property.district, property.city].filter(Boolean).join(', ');
   const generatedTitle = `${property.title}${location ? ` — ${location}` : ''} | Estate`;
   const generatedDescription = property.description?.replace(/\s+/g, ' ').trim().slice(0, 160)
@@ -60,7 +60,7 @@ export async function generateMetadata({ params }: PropertyPageProps): Promise<M
       description,
       url: absoluteUrl(canonicalPath),
       siteName: process.env.NEXT_PUBLIC_SITE_NAME || 'Estate',
-      locale: canonicalLocale === 'ru' ? 'ru_RU' : canonicalLocale === 'tr' ? 'tr_TR' : 'en_US',
+      locale: openGraphLocales[canonicalLocale],
       type: 'website',
       images,
     },

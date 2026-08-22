@@ -1,4 +1,4 @@
-export const locales = ['ru', 'en', 'tr'] as const;
+export const locales = ['ru', 'en', 'tr', 'ar'] as const;
 
 export type Locale = (typeof locales)[number];
 
@@ -8,7 +8,26 @@ export const localeLabels: Record<Locale, string> = {
   ru: 'Русский',
   en: 'English',
   tr: 'Türkçe',
+  ar: 'العربية',
 };
+
+export const localeTags: Record<Locale, string> = {
+  ru: 'ru-RU',
+  en: 'en-GB',
+  tr: 'tr-TR',
+  ar: 'ar-AE-u-nu-latn',
+};
+
+export const openGraphLocales: Record<Locale, string> = {
+  ru: 'ru_RU',
+  en: 'en_US',
+  tr: 'tr_TR',
+  ar: 'ar_AE',
+};
+
+export function localeDirection(locale: Locale): 'ltr' | 'rtl' {
+  return locale === 'ar' ? 'rtl' : 'ltr';
+}
 
 export function isLocale(value: string): value is Locale {
   return locales.includes(value as Locale);
@@ -30,4 +49,3 @@ export function localizeHref(locale: Locale, href: string): string {
 
   return `/${locale}${href}`;
 }
-

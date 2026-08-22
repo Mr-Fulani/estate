@@ -19,14 +19,14 @@ export function PropertyDetails({ property: sourceProperty, locale }: { property
           images={property.images || []}
           title={property.title}
           isFeatured={property.is_featured}
-          categoryName={localizedCategoryName(locale, property.category?.slug, property.category?.name)}
+          categoryName={localizedCategoryName(locale, property.category?.slug, property.category?.name, property.category?.translations)}
           isActive={property.is_active}
           statusBadge={property.status_badge}
         />
       </div>
 
       <div className="p-6 md:p-8">
-        <h1 className="text-2xl md:text-4xl font-bold text-slate-900 mb-3">
+        <h1 dir="auto" className="text-2xl md:text-4xl font-bold text-slate-900 mb-3">
           {property.title}
         </h1>
         
@@ -36,7 +36,7 @@ export function PropertyDetails({ property: sourceProperty, locale }: { property
 
         <div className="flex items-start text-slate-600 mb-8 text-base md:text-lg gap-2 bg-slate-50 p-4 rounded-xl border border-slate-100">
           <MapPin className="w-5 h-5 shrink-0 mt-0.5 text-primary" />
-          <span>{location}</span>
+          <span dir="auto">{location}</span>
         </div>
 
         {/* Characteristics Grid */}
@@ -49,7 +49,7 @@ export function PropertyDetails({ property: sourceProperty, locale }: { property
               </div>
               <div>
                 <div className="text-xs text-slate-500 font-medium">{copy.area}</div>
-                <div className="text-sm md:text-base font-bold text-slate-900">{formatArea(property.area)}</div>
+                <div className="text-sm md:text-base font-bold text-slate-900"><bdi dir="ltr">{formatArea(property.area)}</bdi></div>
               </div>
             </div>
 
@@ -59,7 +59,7 @@ export function PropertyDetails({ property: sourceProperty, locale }: { property
               </div>
               <div>
                 <div className="text-xs text-slate-500 font-medium">{copy.rooms}</div>
-                <div className="text-sm md:text-base font-bold text-slate-900">
+                <div className="text-sm md:text-base font-bold text-slate-900" dir="auto">
                   {property.rooms ? roomLabel(locale, property.rooms) : copy.freePlan}
                 </div>
               </div>
@@ -72,7 +72,7 @@ export function PropertyDetails({ property: sourceProperty, locale }: { property
               <div>
                 <div className="text-xs text-slate-500 font-medium">{copy.floor}</div>
                 <div className="text-sm md:text-base font-bold text-slate-900">
-                  {property.floor ? `${property.floor} / ${property.total_floors || '?'}` : '-'}
+                  <bdi dir="ltr">{property.floor ? `${property.floor} / ${property.total_floors || '?'}` : '-'}</bdi>
                 </div>
               </div>
             </div>
@@ -83,7 +83,7 @@ export function PropertyDetails({ property: sourceProperty, locale }: { property
               </div>
               <div>
                 <div className="text-xs text-slate-500 font-medium">{copy.year}</div>
-                <div className="text-sm md:text-base font-bold text-slate-900">{property.year_built || copy.unspecified}</div>
+                <div className="text-sm md:text-base font-bold text-slate-900"><bdi dir="auto">{property.year_built || copy.unspecified}</bdi></div>
               </div>
             </div>
           </div>
@@ -95,7 +95,7 @@ export function PropertyDetails({ property: sourceProperty, locale }: { property
           <div className="max-w-none space-y-4 text-sm leading-relaxed text-slate-700 md:text-base">
             {property.description ? (
               property.description.split('\n').map((paragraph, i) => (
-                <p key={i}>{paragraph}</p>
+                <p dir="auto" key={i}>{paragraph}</p>
               ))
             ) : (
               <p className="text-slate-400 italic">{copy.noDescription}</p>

@@ -99,6 +99,38 @@ const messages: Record<Locale, LocalizedMessages> = {
       notFoundDescription: 'Bağlantı güncel olmayabilir veya sayfa taşınmış olabilir.',
     },
   },
+  ar: {
+    locale: 'ar',
+    navigation: {
+      home: 'الرئيسية',
+      properties: 'العقارات',
+      services: 'الخدمات',
+      news: 'الأخبار',
+      reviews: 'آراء العملاء',
+      about: 'من نحن',
+      contact: 'تواصل معنا',
+      request: 'أرسل طلباً',
+      openMenu: 'فتح القائمة',
+      closeMenu: 'إغلاق القائمة',
+      language: 'اللغة',
+      currency: 'العملة',
+      currencyRate: 'سعر صرف البنك المركزي الروسي',
+      currencyUnavailable: 'أسعار الصرف غير متاحة مؤقتاً',
+    },
+    common: {
+      loading: 'جارٍ التحميل…',
+      retry: 'إعادة المحاولة',
+      back: 'رجوع',
+      readMore: 'اقرأ المزيد',
+      noResults: 'لا توجد نتائج',
+      previous: 'السابق',
+      next: 'التالي',
+      errorTitle: 'تعذر تحميل الصفحة',
+      errorDescription: 'الخدمة غير متاحة مؤقتاً. يرجى المحاولة مرة أخرى بعد قليل.',
+      notFoundTitle: 'الصفحة غير موجودة',
+      notFoundDescription: 'قد يكون الرابط قديماً أو ربما نُقلت الصفحة.',
+    },
+  },
 };
 
 

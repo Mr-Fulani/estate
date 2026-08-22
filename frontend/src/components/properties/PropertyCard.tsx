@@ -47,18 +47,18 @@ export function PropertyCard({ property: sourceProperty, locale }: PropertyCardP
             </div>
           )}
           
-          <div className="absolute top-3.5 left-3.5 flex flex-wrap gap-1.5 z-10">
+          <div className="absolute start-3.5 top-3.5 flex flex-wrap gap-1.5 z-10">
             {property.is_featured && (
               <Badge variant="secondary" className="shadow-md font-semibold">{copy.recommended}</Badge>
             )}
             {property.category && (
-              <Badge variant="primary" className="shadow-md">{localizedCategoryName(locale, property.category.slug, property.category.name)}</Badge>
+              <Badge variant="primary" className="shadow-md">{localizedCategoryName(locale, property.category.slug, property.category.name, property.category.translations)}</Badge>
             )}
           </div>
 
           {/* Status Badge in Top Right */}
           {statusBadgeText && (
-            <div className="absolute top-3.5 right-3.5 z-10">
+            <div className="absolute end-3.5 top-3.5 z-10">
               <Badge variant={statusBadgeVariant} className="shadow-md bg-white/95 backdrop-blur-sm font-semibold">
                 {statusBadgeText}
               </Badge>
@@ -71,27 +71,27 @@ export function PropertyCard({ property: sourceProperty, locale }: PropertyCardP
             <CurrencyPrice amount={property.price} sourceCurrency={property.currency} locale={locale} />
           </div>
           
-          <h3 className="text-lg font-semibold text-slate-800 mb-2 line-clamp-1 group-hover:text-primary transition-colors">
+          <h3 dir="auto" className="text-lg font-semibold text-slate-800 mb-2 line-clamp-1 group-hover:text-primary transition-colors">
             {property.title}
           </h3>
           
           <div className="flex items-start text-slate-500 mb-4 text-sm gap-1.5 line-clamp-2">
             <MapPin className="w-4 h-4 shrink-0 mt-0.5" />
-            <span>{location}</span>
+            <span dir="auto">{location}</span>
           </div>
 
           <div className="mt-auto grid grid-cols-3 gap-2 border-t border-slate-100 pt-4">
             <div className="flex flex-col items-center justify-center text-slate-600 gap-1">
               <Bed className="w-4 h-4 text-primary-400" />
-              <span className="text-xs font-medium">{roomLabel(locale, property.rooms)}</span>
+              <span className="text-xs font-medium" dir="auto">{roomLabel(locale, property.rooms)}</span>
             </div>
             <div className="flex flex-col items-center justify-center text-slate-600 gap-1 border-x border-slate-100">
               <Maximize className="w-4 h-4 text-primary-400" />
-              <span className="text-xs font-medium">{formatArea(property.area)}</span>
+              <bdi dir="ltr" className="text-xs font-medium">{formatArea(property.area)}</bdi>
             </div>
             <div className="flex flex-col items-center justify-center text-slate-600 gap-1">
               <Layers className="w-4 h-4 text-primary-400" />
-              <span className="text-xs font-medium">{property.floor ? `${property.floor} ${copy.floor.toLowerCase()}` : '—'}</span>
+              <span className="text-xs font-medium" dir="auto">{property.floor ? `${property.floor} ${copy.floor.toLowerCase()}` : '—'}</span>
             </div>
           </div>
         </div>

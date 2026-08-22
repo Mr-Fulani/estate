@@ -4,7 +4,7 @@ import { ContactForm } from '@/app/properties/[id]/ContactForm';
 import { MapPin, Phone, Mail, Clock, MessageSquare } from 'lucide-react';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import { useLocale } from '@/context/LocaleContext';
-import { localizedOfficeAddress } from '@/i18n/domain';
+import { localizedSiteSettings } from '@/i18n/domain';
 import { siteCopy } from '@/i18n/siteCopy';
 import {
   TelegramIcon,
@@ -22,7 +22,7 @@ export default function ContactPage() {
   const { settings } = useSiteSettings();
   const { locale } = useLocale();
   const copy = siteCopy[locale].contact;
-  const address = localizedOfficeAddress(locale, settings.address);
+  const localizedSettings = localizedSiteSettings(settings, locale);
 
   const phoneTel = 'tel:' + (settings.phone || '').replace(/[\s\-\(\)]/g, '');
 
@@ -60,8 +60,8 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold mb-1 text-white/90">{copy.office}</h3>
-                    <p className="text-primary-100 leading-relaxed text-sm md:text-base">
-                      {address}
+                    <p dir="auto" className="text-primary-100 leading-relaxed text-sm md:text-base">
+                      {localizedSettings.address}
                     </p>
                   </div>
                 </div>
@@ -74,7 +74,7 @@ export default function ContactPage() {
                   <div>
                     <h3 className="text-lg font-semibold mb-1 text-white/90">{copy.phone}</h3>
                     <TrackedContactLink href={phoneTel} channel="phone" source="contact_page_phone" className="text-primary-100 hover:text-white font-semibold text-base md:text-lg transition-colors inline-block">
-                      {settings.phone}
+                      <span dir="ltr">{settings.phone}</span>
                     </TrackedContactLink>
                   </div>
                 </div>
@@ -87,7 +87,7 @@ export default function ContactPage() {
                   <div>
                     <h3 className="text-lg font-semibold mb-1 text-white/90">{copy.email}</h3>
                     <TrackedContactLink href={`mailto:${settings.email}`} channel="email" source="contact_page_email" className="text-primary-100 hover:text-white transition-colors text-sm md:text-base">
-                      {settings.email}
+                      <span dir="ltr">{settings.email}</span>
                     </TrackedContactLink>
                   </div>
                 </div>
@@ -99,8 +99,8 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold mb-1 text-white/90">{copy.hours}</h3>
-                    <p className="text-primary-100 text-sm md:text-base">
-                      {settings.working_hours}
+                    <p dir="auto" className="text-primary-100 text-sm md:text-base">
+                      {localizedSettings.working_hours}
                     </p>
                   </div>
                 </div>

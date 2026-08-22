@@ -67,6 +67,16 @@
   filter: blur(4px);
 }
 
+html[dir='rtl'] .navigation-progress__bar {
+  transform-origin: right center;
+  background: linear-gradient(270deg, #d4a746, #f4d98a 68%, #ffffff);
+}
+
+html[dir='rtl'] .navigation-progress__glow {
+  right: auto;
+  left: 0;
+}
+
 @keyframes estate-navigation-progress {
   0% { transform: scaleX(0.04); }
   12% { transform: scaleX(0.28); }

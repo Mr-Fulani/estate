@@ -10,10 +10,10 @@ import { startNavigationFeedback } from '@/components/layout/NavigationFeedback'
 import { cn } from '@/lib/utils';
 import { getYouTubeThumbnail, getYouTubeVideoId } from '@/lib/youtube';
 import type { NewsAdminArticle, NewsFormData, NewsMediaType, NewsTranslation } from '@/types';
+import { localeLabels, locales, type Locale } from '@/i18n/config';
 
-const localeLabels = { ru: 'Русский', en: 'English', tr: 'Türkçe' } as const;
-const newsLocales = ['ru', 'en', 'tr'] as const;
-type NewsLocale = (typeof newsLocales)[number];
+const newsLocales = locales;
+type NewsLocale = Locale;
 
 function emptyTranslation(locale: NewsLocale): NewsTranslation {
   return { locale, title: '', excerpt: '', content: '', meta_title: '', meta_description: '' };
@@ -219,7 +219,7 @@ export function NewsForm({ initialData }: { initialData?: NewsAdminArticle }) {
             ))}
           </div>
 
-          <div role="tabpanel" className="space-y-5">
+          <div role="tabpanel" dir={activeLocale === 'ar' ? 'rtl' : 'ltr'} className="space-y-5">
             <div><label htmlFor={`news-title-${activeLocale}`} className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">Заголовок {activeLocale === 'ru' && '*'}</label><input id={`news-title-${activeLocale}`} required={activeLocale === 'ru'} value={translation.title} onChange={(event) => setTranslation(activeLocale, 'title', event.target.value)} maxLength={240} className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 font-semibold outline-none transition focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10" /></div>
             <div><label htmlFor={`news-excerpt-${activeLocale}`} className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">Краткий анонс {activeLocale === 'ru' && '*'}</label><textarea id={`news-excerpt-${activeLocale}`} required={activeLocale === 'ru'} rows={3} value={translation.excerpt} onChange={(event) => setTranslation(activeLocale, 'excerpt', event.target.value)} maxLength={500} className="w-full rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm leading-relaxed outline-none transition focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10" /><p className="mt-1 text-right text-xs text-slate-400">{translation.excerpt.length}/500</p></div>
             <div><label htmlFor={`news-content-${activeLocale}`} className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">Текст статьи {activeLocale === 'ru' && '*'}</label><textarea id={`news-content-${activeLocale}`} required={activeLocale === 'ru'} rows={16} value={translation.content} onChange={(event) => setTranslation(activeLocale, 'content', event.target.value)} className="w-full rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm leading-7 outline-none transition focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10" /><p className="mt-1 text-xs text-slate-400">Разделяйте абзацы пустой строкой.</p></div>

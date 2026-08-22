@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation';
 import { ArrowLeft, CalendarDays, UserRound } from 'lucide-react';
 
 import { NewsMediaGallery } from '@/components/news/NewsMediaGallery';
-import { isLocale, localizeHref } from '@/i18n/config';
+import { isLocale, localizeHref, openGraphLocales } from '@/i18n/config';
 import { siteCopy } from '@/i18n/siteCopy';
 import { fetchNewsArticle } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
@@ -46,6 +46,7 @@ export async function generateMetadata({ params }: NewsArticlePageProps): Promis
       description,
       type: 'article',
       url: absoluteUrl(`/${canonicalLocale}/news/${slug}`),
+      locale: openGraphLocales[canonicalLocale],
       publishedTime: article.published_at || undefined,
       authors: [article.author],
       images,
@@ -86,13 +87,13 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
         <header className="border-b border-slate-200 bg-slate-50">
           <div className="container mx-auto max-w-5xl px-4 py-10 md:px-6 md:py-14">
             <Link href={localizeHref(locale, '/news')} className="mb-8 inline-flex items-center gap-2 font-semibold text-primary transition-colors hover:text-secondary">
-              <ArrowLeft className="h-4 w-4" aria-hidden="true" />{copy.back}
+              <ArrowLeft className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />{copy.back}
             </Link>
             {article.locale !== locale && (
               <p className="mb-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-900">{copy.fallbackNotice}</p>
             )}
-            <h1 className="mb-6 max-w-4xl text-4xl font-bold leading-tight text-slate-950 md:text-6xl">{article.title}</h1>
-            <p className="mb-7 max-w-3xl text-lg leading-relaxed text-slate-600 md:text-xl">{article.excerpt}</p>
+            <h1 dir="auto" className="mb-6 max-w-4xl text-4xl font-bold leading-tight text-slate-950 md:text-6xl">{article.title}</h1>
+            <p dir="auto" className="mb-7 max-w-3xl text-lg leading-relaxed text-slate-600 md:text-xl">{article.excerpt}</p>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm font-medium text-slate-500">
               {article.published_at && <time dateTime={article.published_at} className="inline-flex items-center gap-2"><CalendarDays className="h-4 w-4 text-secondary" aria-hidden="true" />{formatDate(article.published_at, locale)}</time>}
               <span className="inline-flex items-center gap-2"><UserRound className="h-4 w-4 text-secondary" aria-hidden="true" />{copy.by}: {article.author}</span>
@@ -107,7 +108,7 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
             </div>
           )}
           <div className="mx-auto max-w-3xl space-y-6 text-lg leading-8 text-slate-700">
-            {paragraphs.map((paragraph, index) => <p key={`${index}-${paragraph.slice(0, 24)}`}>{paragraph}</p>)}
+            {paragraphs.map((paragraph, index) => <p dir="auto" key={`${index}-${paragraph.slice(0, 24)}`}>{paragraph}</p>)}
           </div>
           <NewsMediaGallery media={article.media ?? []} title={article.title} locale={locale} coverImage={article.cover_image} />
         </div>

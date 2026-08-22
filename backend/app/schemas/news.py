@@ -6,7 +6,7 @@ from urllib.parse import parse_qs, urlparse
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
-LocaleCode = Literal["ru", "en", "tr"]
+LocaleCode = Literal["ru", "en", "tr", "ar"]
 MediaType = Literal["image", "youtube"]
 YOUTUBE_ID_PATTERN = re.compile(r"^[A-Za-z0-9_-]{11}$")
 
