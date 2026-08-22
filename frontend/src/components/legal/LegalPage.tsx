@@ -22,7 +22,7 @@ export function LegalPage({ locale, type }: { locale: Locale; type: 'privacy' | 
   const localeCopy = legalCopy[locale];
   const copy = localeCopy[type];
   return (
-    <main className="min-h-screen bg-slate-50 py-12 md:py-16">
+    <div className="min-h-screen bg-slate-50 py-12 md:py-16">
       <article className="container mx-auto max-w-4xl px-4 md:px-6">
         <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-10">
           <p className="mb-3 text-sm font-semibold text-secondary-700">{localeCopy.updated}</p>
@@ -33,6 +33,6 @@ export function LegalPage({ locale, type }: { locale: Locale; type: 'privacy' | 
           </div>
         </div>
       </article>
-    </main>
+    </div>
   );
 }

@@ -80,7 +80,7 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
   };
 
   return (
-    <main className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, '\\u003c') }} />
       <article>
         <header className="border-b border-slate-200 bg-slate-50">
@@ -103,7 +103,7 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
         <div className="container mx-auto max-w-5xl px-4 py-10 md:px-6 md:py-14">
           {article.cover_image && (
             <div className="relative mb-10 aspect-[16/9] overflow-hidden rounded-3xl bg-slate-100 shadow-sm md:mb-14">
-              <Image src={article.cover_image} alt={article.title} fill priority sizes="(max-width: 1024px) 100vw, 1024px" className="object-cover" />
+              <Image src={article.cover_image} alt={article.title} fill preload loading="eager" sizes="(max-width: 1024px) 100vw, 1024px" className="object-cover" />
             </div>
           )}
           <div className="mx-auto max-w-3xl space-y-6 text-lg leading-8 text-slate-700">
@@ -112,6 +112,6 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
           <NewsMediaGallery media={article.media ?? []} title={article.title} locale={locale} coverImage={article.cover_image} />
         </div>
       </article>
-    </main>
+    </div>
   );
 }

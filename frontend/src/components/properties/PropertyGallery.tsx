@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { 
   ChevronLeft, 
@@ -112,10 +113,14 @@ export function PropertyGallery({
         onClick={() => setIsLightboxOpen(true)}
         className="relative w-full aspect-[16/10] md:aspect-[16/9] bg-slate-900 rounded-2xl overflow-hidden cursor-zoom-in group shadow-sm border border-slate-200"
       >
-        <img
+        <Image
           src={currentImage!}
           alt={`${title} — ${copy.photo} ${selectedIndex + 1}`}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          fill
+          preload
+          loading="eager"
+          sizes="(max-width: 1024px) 100vw, 66vw"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
 
         {/* Badges Overlay */}
@@ -158,7 +163,7 @@ export function PropertyGallery({
             <button
               type="button"
               onClick={handlePrev}
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 hover:bg-white text-slate-800 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg z-10 active:scale-95"
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 hover:bg-white text-slate-800 flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 focus:opacity-100 transition-opacity shadow-lg z-10 active:scale-95"
               aria-label={copy.previousPhoto}
             >
               <ChevronLeft className="w-6 h-6" />
@@ -166,7 +171,7 @@ export function PropertyGallery({
             <button
               type="button"
               onClick={handleNext}
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 hover:bg-white text-slate-800 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg z-10 active:scale-95"
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 hover:bg-white text-slate-800 flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 focus:opacity-100 transition-opacity shadow-lg z-10 active:scale-95"
               aria-label={copy.nextPhoto}
             >
               <ChevronRight className="w-6 h-6" />
@@ -194,10 +199,13 @@ export function PropertyGallery({
                 aria-label={`${copy.photo} ${idx + 1}`}
                 aria-current={isSelected ? 'true' : undefined}
               >
-                <img
+                <Image
                   src={imgUrl}
                   alt={`${copy.photo} ${idx + 1}`}
-                  className="w-full h-full object-cover"
+                  fill
+                  loading={idx === 0 ? 'eager' : 'lazy'}
+                  sizes="96px"
+                  className="object-cover"
                 />
                 {idx === 0 && (
                   <span className="absolute bottom-1 left-1 bg-primary text-white text-[8px] font-bold px-1 rounded">
@@ -239,10 +247,12 @@ export function PropertyGallery({
 
           {/* Central Image View */}
           <div className="relative flex-1 w-full max-h-[80vh] flex items-center justify-center my-auto" onClick={(e) => e.stopPropagation()}>
-            <img
+            <Image
               src={currentImage!}
               alt={`${title} — ${copy.photo} ${selectedIndex + 1}`}
-              className="max-h-[80vh] max-w-full object-contain rounded-xl shadow-2xl transition-all"
+              fill
+              sizes="100vw"
+              className="object-contain rounded-xl shadow-2xl transition-all"
             />
 
             {/* Left & Right Arrows in Lightbox */}
@@ -277,7 +287,7 @@ export function PropertyGallery({
                   type="button"
                   onClick={() => setSelectedIndex(idx)}
                   className={cn(
-                    'w-16 h-12 rounded-lg overflow-hidden flex-shrink-0 transition-all border',
+                    'relative w-16 h-12 rounded-lg overflow-hidden flex-shrink-0 transition-all border',
                     selectedIndex === idx
                       ? 'ring-2 ring-white border-transparent scale-105 opacity-100'
                       : 'border-white/20 opacity-50 hover:opacity-80'
@@ -285,7 +295,7 @@ export function PropertyGallery({
                   aria-label={`${copy.photo} ${idx + 1}`}
                   aria-current={selectedIndex === idx ? 'true' : undefined}
                 >
-                  <img src={imgUrl} alt="" className="w-full h-full object-cover" />
+                  <Image src={imgUrl} alt="" fill sizes="64px" className="object-cover" />
                 </button>
               ))}
             </div>

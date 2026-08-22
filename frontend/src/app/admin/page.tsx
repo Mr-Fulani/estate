@@ -23,7 +23,7 @@ export default async function AdminDashboardPage() {
   const adminCookie = await getAdminCookieHeader();
   const [stats, leads, recentProps] = await Promise.all([
     fetchAdminStats(adminCookie),
-    fetchContactRequests(undefined, adminCookie),
+    fetchContactRequests(undefined, adminCookie, { limit: 5 }),
     fetchProperties({ per_page: 5, sort_by: 'created_at', order: 'desc' }),
   ]);
   const dealCurrencyBreakdown = Object.entries(stats.deal_totals_by_currency)

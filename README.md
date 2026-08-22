@@ -24,7 +24,7 @@
 | Слой | Технологии |
 |---|---|
 | Backend | FastAPI, SQLAlchemy Async, Pydantic, Alembic, PostgreSQL |
-| Frontend | Next.js 15.5, React 19.2, TypeScript, Tailwind CSS |
+| Frontend | Next.js 16.3, React 19.2, TypeScript, Tailwind CSS |
 | Запуск | Docker Compose или локально |
 
 ## Быстрый старт в Docker
@@ -42,8 +42,8 @@ docker compose up --build
 
 - сайт: [http://localhost:3000/ru](http://localhost:3000/ru);
 - админка: [http://localhost:3000/admin](http://localhost:3000/admin);
-- Swagger: [http://localhost:8000/docs](http://localhost:8000/docs);
-- ReDoc: [http://localhost:8000/redoc](http://localhost:8000/redoc).
+- Swagger (только development): [http://localhost:8000/docs](http://localhost:8000/docs);
+- ReDoc (только development): [http://localhost:8000/redoc](http://localhost:8000/redoc).
 
 Перед первым входом создайте founder-аккаунт. Команда интерактивно запросит пароль и не сохранит его в истории терминала:
 
@@ -110,7 +110,7 @@ alembic stamp 20260822_0001
 alembic upgrade head
 ```
 
-Ревизия `20260822_0002` добавит новости, переводы объектов и сделает email обращения необязательным. Ревизия `20260822_0003` добавит SEO-поля объектов, коммерческие статусы, атрибуцию обращений, воронку сделок и журнал истории. Ревизия `20260822_0004` добавит отзывы, переводы и персональные приглашения клиентов. Ревизия `20260822_0005` добавит аккаунты админки, роли, сессии, защиту входа и аудит. Ревизия `20260822_0006` добавит уникальные логины с сохранением входа по email.
+Последующие ревизии добавляют новости и переводы, SEO и CRM, отзывы, аккаунты и роли, курсы валют, локализованные адреса, медиагалереи, финансовую целостность сделок, идемпотентность webhook, хеширование приглашений и постоянные лимиты публичных запросов. Проверить состояние схемы можно командой `docker compose exec api alembic check`.
 
 ## Авторизация админки
 
@@ -155,7 +155,7 @@ X-CRM-Webhook-Secret: значение CRM_WEBHOOK_SECRET
 - После успешной сделки в CRM доступна кнопка создания персональной ссылки. Такой отзыв помечается подтверждённым, но всё равно проходит модерацию.
 - Контакты автора используются только для проверки и не входят в публичный API.
 
-Публичная форма содержит скрытое honeypot-поле, требует согласие на публикацию и ограничивает повторную отправку с одного контакта в течение часа. На production рекомендуется дополнительно включить rate limiting или CAPTCHA на reverse proxy.
+Публичная форма содержит скрытое honeypot-поле, требует согласие на публикацию и защищена постоянным лимитом запросов в PostgreSQL. На production можно дополнительно включить CAPTCHA на reverse proxy при появлении реального бот-трафика.
 
 ## Основные API блога
 
@@ -175,8 +175,13 @@ X-CRM-Webhook-Secret: значение CRM_WEBHOOK_SECRET
 ## Проверки
 
 ```bash
-python3 -m compileall -q backend/app backend/alembic
-cd frontend && npm run build
+docker compose exec -T api python -m unittest discover -s tests -v
+docker compose exec -T api alembic check
+cd frontend
+npm run lint
+npx tsc --noEmit
+npm run build
+npm audit --omit=dev
 ```
 
-Перед публичным развёртыванием также рекомендуется ограничить доступ к Swagger/ReDoc на reverse proxy и настроить резервное копирование базы.
+Перед публичным развёртыванием настройте резервное копирование базы, HTTPS, длинные отдельные `SECRET_KEY` и `CRM_WEBHOOK_SECRET`, `AUTH_COOKIE_SECURE=true`, точные `ALLOWED_HOSTS`, `CORS_ORIGINS`, `NEXT_PUBLIC_SITE_URL` и доверенные сети reverse proxy. В production документация API отключается приложением автоматически.

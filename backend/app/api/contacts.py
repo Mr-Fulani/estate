@@ -147,6 +147,7 @@ async def list_contacts(
     status_filter: Optional[str] = Query(None, alias="status"),
     channel: Optional[str] = Query(None),
     property_id: Optional[int] = Query(None),
+    limit: Optional[int] = Query(None, ge=1, le=200),
     _: AdminUser = Depends(require_permission("leads:view")),
     db: AsyncSession = Depends(get_db),
 ):
@@ -157,6 +158,8 @@ async def list_contacts(
         query = query.where(ContactRequest.channel == channel)
     if property_id:
         query = query.where(ContactRequest.property_id == property_id)
+    if limit:
+        query = query.limit(limit)
     result = await db.execute(query)
     return result.scalars().unique().all()
 

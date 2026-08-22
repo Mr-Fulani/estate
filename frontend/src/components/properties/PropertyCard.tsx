@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Property } from '@/types';
 import { Card } from '../ui/Card';
 import { Badge } from '../ui/Badge';
@@ -33,10 +34,12 @@ export function PropertyCard({ property: sourceProperty, locale }: PropertyCardP
       <Card hoverable className="h-full flex flex-col">
         <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-200">
           {imageUrl ? (
-            <img 
-              src={imageUrl} 
-              alt={property.title} 
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            <Image
+              src={imageUrl}
+              alt={property.title}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center text-primary-400">

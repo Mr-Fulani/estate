@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { notFound, permanentRedirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 
 import { PropertyDetailContent } from '@/components/pages/PropertyDetailContent';
 import { isLocale } from '@/i18n/config';
@@ -27,13 +27,13 @@ export async function generateMetadata({ params }: PropertyPageProps): Promise<M
   const translation = localizedPropertyTranslation(sourceProperty, locale);
   const hasRequestedLocale = hasPropertyLocale(sourceProperty, locale);
   const availableLocales = propertyAvailableLocales(sourceProperty);
+  const canonicalLocale = hasRequestedLocale ? locale : 'ru';
   const location = [property.district, property.city].filter(Boolean).join(', ');
   const generatedTitle = `${property.title}${location ? ` — ${location}` : ''} | Estate`;
   const generatedDescription = property.description?.replace(/\s+/g, ' ').trim().slice(0, 160)
-    || `${property.title}. ${property.area ? `${property.area} ${locale === 'en' ? 'sq m' : 'm²'}. ` : ''}${location}.`;
+    || `${property.title}. ${property.area ? `${property.area} ${canonicalLocale === 'en' ? 'sq m' : 'm²'}. ` : ''}${location}.`;
   const title = translation?.meta_title?.trim() || generatedTitle;
   const description = translation?.meta_description?.trim() || generatedDescription;
-  const canonicalLocale = hasRequestedLocale ? locale : 'ru';
   const canonicalPath = `/${canonicalLocale}/properties/${sourceProperty.slug}`;
   const images = sourceProperty.images?.[0]
     ? [{ url: absoluteUrl(sourceProperty.images[0]), alt: property.title }]
@@ -54,13 +54,13 @@ export async function generateMetadata({ params }: PropertyPageProps): Promise<M
       canonical: canonicalPath,
       languages,
     },
-    robots: { index: indexable, follow: indexable },
+    robots: { index: indexable, follow: true },
     openGraph: {
       title,
       description,
       url: absoluteUrl(canonicalPath),
       siteName: process.env.NEXT_PUBLIC_SITE_NAME || 'Estate',
-      locale: locale === 'ru' ? 'ru_RU' : locale === 'tr' ? 'tr_TR' : 'en_US',
+      locale: canonicalLocale === 'ru' ? 'ru_RU' : canonicalLocale === 'tr' ? 'tr_TR' : 'en_US',
       type: 'website',
       images,
     },
@@ -81,8 +81,5 @@ export default async function LocalizedPropertyDetailPage({
   if (!isLocale(locale)) notFound();
   const property = await fetchProperty(id);
   if (!property) notFound();
-  if (!hasPropertyLocale(property, locale)) {
-    permanentRedirect(`/ru/properties/${property.slug}`);
-  }
   return <PropertyDetailContent id={id} locale={locale} initialProperty={property} />;
 }

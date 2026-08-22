@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, desc, asc, or_
 from sqlalchemy.orm import selectinload
-from typing import Optional
+from typing import Literal, Optional
 from app.database import get_db
 from app.models.property import Property
 from app.models.property_translation import PropertyTranslation
@@ -53,8 +53,8 @@ async def list_properties(
     include_inactive: bool = Query(False),
     page: int = Query(1, ge=1),
     per_page: int = Query(12, ge=1, le=100),
-    sort_by: str = Query("created_at"),
-    order: str = Query("desc"),
+    sort_by: Literal["created_at", "updated_at", "price", "area", "rooms"] = Query("created_at"),
+    order: Literal["asc", "desc"] = Query("desc"),
     db: AsyncSession = Depends(get_db),
     auth_context: AuthContext | None = Depends(get_optional_auth_context),
 ):
@@ -122,8 +122,15 @@ async def list_properties(
         count_query = count_query.where(Property.area <= max_area)
 
     # Sorting
+    sort_columns = {
+        "created_at": Property.created_at,
+        "updated_at": Property.updated_at,
+        "price": Property.price,
+        "area": Property.area,
+        "rooms": Property.rooms,
+    }
     order_func = desc if order == "desc" else asc
-    sort_column = getattr(Property, sort_by, Property.created_at)
+    sort_column = sort_columns[sort_by]
     query = query.order_by(order_func(sort_column))
 
     # Pagination

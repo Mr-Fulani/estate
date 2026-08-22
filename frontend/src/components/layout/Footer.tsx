@@ -52,7 +52,7 @@ export function Footer() {
 
             {/* Social Icons */}
             {socialLinks.length > 0 && (
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 {socialLinks.map((social) => (
                   social.channel ? (
                     <TrackedContactLink key={social.label} href={social.url!} target="_blank" channel={social.channel as ContactTrackData['channel']} source={`footer_${social.channel}`} className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-slate-300 transition-all hover:bg-secondary hover:text-white" title={social.label}>
@@ -113,9 +113,9 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-primary-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-primary-300">
-          <p>© {currentYear} Estate Agency. {copy.copyright}</p>
-          <div className="flex gap-4">
+        <div className="border-t border-primary-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-center text-xs text-primary-300 md:text-left">
+          <p className="break-words">© {currentYear} Estate Agency. {copy.copyright}</p>
+          <div className="flex flex-wrap justify-center gap-4 md:justify-end">
             <Link href={href('/privacy')} className="hover:text-white transition-colors">{copy.privacy}</Link>
             <Link href={href('/terms')} className="hover:text-white transition-colors">{copy.terms}</Link>
           </div>

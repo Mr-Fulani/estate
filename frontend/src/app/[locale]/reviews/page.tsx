@@ -43,7 +43,7 @@ export default async function ReviewsPage({ params, searchParams }: ReviewsPageP
   const totalPages = Math.ceil(reviewsResult.total / reviewsResult.per_page);
 
   return (
-    <main className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50">
       <section className="border-b border-slate-200 bg-white py-10 sm:py-14 md:py-20">
         <div className="container mx-auto min-w-0 max-w-4xl px-3 text-center sm:px-4 md:px-6">
           <p className="mb-3 text-sm font-bold uppercase tracking-[0.2em] text-secondary">Estate</p>
@@ -68,6 +68,6 @@ export default async function ReviewsPage({ params, searchParams }: ReviewsPageP
           </aside>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

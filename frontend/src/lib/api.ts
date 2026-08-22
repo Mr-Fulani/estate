@@ -147,7 +147,10 @@ export async function fetchFeaturedProperties(): Promise<Property[]> {
 export async function fetchProperty(id: number | string, adminCookie?: string): Promise<Property | null> {
   try {
     const baseUrl = getApiBaseUrl();
-    const res = await fetch(`${baseUrl}/properties/${id}`, adminReadOptions(adminCookie));
+    const res = await fetch(
+      `${baseUrl}/properties/${id}`,
+      adminCookie ? adminReadOptions(adminCookie) : { next: { revalidate: 60 } },
+    );
 
     if (res.status === 404) return null;
     if (!res.ok) throw new ApiError('Failed to fetch property', res.status);
@@ -163,7 +166,7 @@ export async function fetchCategories(): Promise<Category[]> {
   try {
     const baseUrl = getApiBaseUrl();
     const res = await fetch(`${baseUrl}/categories`, {
-      cache: 'no-store',
+      next: { revalidate: 300 },
     });
 
     if (!res.ok) {
@@ -459,10 +462,18 @@ export async function deleteProperty(id: number | string): Promise<void> {
   await ensureAdminResponse(res, 'Не удалось удалить объект');
 }
 
-export async function fetchContactRequests(status?: string, adminCookie?: string): Promise<ContactRequest[]> {
+export async function fetchContactRequests(
+  status?: string,
+  adminCookie?: string,
+  options: { limit?: number } = {},
+): Promise<ContactRequest[]> {
   try {
     const baseUrl = getApiBaseUrl();
-    const url = status ? `${baseUrl}/contacts?status=${status}` : `${baseUrl}/contacts`;
+    const params = new URLSearchParams();
+    if (status) params.set('status', status);
+    if (options.limit) params.set('limit', String(options.limit));
+    const query = params.toString();
+    const url = query ? `${baseUrl}/contacts?${query}` : `${baseUrl}/contacts`;
     const res = await fetch(url, adminReadOptions(adminCookie));
 
     if (!res.ok) {

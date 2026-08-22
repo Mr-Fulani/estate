@@ -26,6 +26,7 @@ export function NewsMediaGallery({
     .filter((item) => item.media_type !== 'image' || item.url !== coverImage);
   const images = orderedMedia.filter((item) => item.media_type === 'image');
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -39,6 +40,19 @@ export function NewsMediaGallery({
       if (event.key === 'Escape') setSelectedImage(null);
       if (event.key === 'ArrowLeft') setSelectedImage((current) => current === null ? null : (current - 1 + images.length) % images.length);
       if (event.key === 'ArrowRight') setSelectedImage((current) => current === null ? null : (current + 1) % images.length);
+      if (event.key === 'Tab' && dialogRef.current) {
+        const focusable = Array.from(dialogRef.current.querySelectorAll<HTMLElement>('button:not([disabled]), a[href]'));
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => {
@@ -69,6 +83,7 @@ export function NewsMediaGallery({
                     src={embedUrl}
                     title={`${title} — ${copy.video} ${index + 1}`}
                     className="absolute inset-0 h-full w-full"
+                    loading="lazy"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     referrerPolicy="strict-origin-when-cross-origin"
                     allowFullScreen
@@ -97,11 +112,11 @@ export function NewsMediaGallery({
       </div>
 
       {selectedImage !== null && images[selectedImage] && (
-        <div role="dialog" aria-modal="true" aria-label={copy.openImage} className="fixed inset-0 z-[220] flex items-center justify-center bg-slate-950/95 p-4 backdrop-blur-md" onMouseDown={(event) => { if (event.target === event.currentTarget) setSelectedImage(null); }}>
+        <div ref={dialogRef} role="dialog" aria-modal="true" aria-label={copy.openImage} className="fixed inset-0 z-[220] flex items-center justify-center bg-slate-950/95 p-4 backdrop-blur-md" onMouseDown={(event) => { if (event.target === event.currentTarget) setSelectedImage(null); }}>
           <button ref={closeButtonRef} type="button" onClick={() => setSelectedImage(null)} aria-label={copy.closeMedia} className="absolute right-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 md:right-8 md:top-8"><X className="h-6 w-6" /></button>
           {images.length > 1 && <button type="button" onClick={() => setSelectedImage((selectedImage - 1 + images.length) % images.length)} aria-label={copy.previousImage} className="absolute left-3 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 md:left-8"><ChevronLeft className="h-7 w-7" /></button>}
           <div className="relative h-[80vh] w-[min(1200px,88vw)]">
-            <Image src={images[selectedImage].url} alt={`${title} — ${copy.photo} ${selectedImage + 1}`} fill sizes="100vw" className="object-contain" priority />
+            <Image src={images[selectedImage].url} alt={`${title} — ${copy.photo} ${selectedImage + 1}`} fill sizes="100vw" className="object-contain" />
           </div>
           {images.length > 1 && <button type="button" onClick={() => setSelectedImage((selectedImage + 1) % images.length)} aria-label={copy.nextImage} className="absolute right-3 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 md:right-8"><ChevronRight className="h-7 w-7" /></button>}
           <span className="absolute bottom-5 rounded-full bg-white/10 px-3 py-1.5 text-sm font-semibold text-white">{selectedImage + 1} / {images.length}</span>

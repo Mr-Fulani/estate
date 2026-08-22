@@ -137,13 +137,17 @@ REVIEWS = [
 async def seed_reviews() -> None:
     now = datetime.now(timezone.utc)
     created = 0
+    normalized = 0
 
     async with AsyncSessionLocal() as db:
         for item in REVIEWS:
             existing = await db.scalar(
-                select(Review.id).where(Review.reviewer_name == item["reviewer_name"])
+                select(Review).where(Review.reviewer_name == item["reviewer_name"])
             )
             if existing:
+                if existing.is_verified:
+                    existing.is_verified = False
+                    normalized += 1
                 print(f"Skipped existing review: {item['reviewer_name']}")
                 continue
 
@@ -166,7 +170,7 @@ async def seed_reviews() -> None:
 
         await db.commit()
 
-    print(f"Review seed complete. Created: {created}")
+    print(f"Review seed complete. Created: {created}; normalized demo reviews: {normalized}")
 
 
 if __name__ == "__main__":

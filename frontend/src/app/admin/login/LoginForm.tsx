@@ -42,7 +42,7 @@ export function LoginForm({ returnTo, reason }: { returnTo?: string; reason?: st
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
+    <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(27,93,71,0.35),transparent_34%),radial-gradient(circle_at_85%_82%,rgba(200,158,85,0.18),transparent_30%)]" />
       <div className="absolute left-[12%] top-24 h-72 w-72 rounded-full border border-white/5" />
       <div className="absolute -bottom-36 -right-20 h-96 w-96 rounded-full border border-secondary/10" />
@@ -172,6 +172,6 @@ export function LoginForm({ returnTo, reason }: { returnTo?: string; reason?: st
           </div>
         </section>
       </div>
-    </main>
+    </div>
   );
 }

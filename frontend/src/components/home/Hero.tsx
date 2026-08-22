@@ -1,4 +1,4 @@
-import { Building, Shield, Users } from 'lucide-react';
+import Image from 'next/image';
 import { HeroSearch } from './HeroSearch';
 import type { Locale } from '@/i18n/config';
 import { siteCopy } from '@/i18n/siteCopy';
@@ -10,9 +10,14 @@ export function Hero({ locale }: { locale: Locale }) {
       {/* Background image with overlay */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-r from-primary-900/95 via-primary-900/85 to-primary-900/60 z-10" />
-        <div 
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2075&q=80")' }}
+        <Image
+          src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2075&q=80"
+          alt=""
+          fill
+          preload
+          loading="eager"
+          sizes="100vw"
+          className="object-cover object-center"
         />
       </div>
 
@@ -31,38 +36,6 @@ export function Hero({ locale }: { locale: Locale }) {
           {/* Interactive Search Component */}
           <HeroSearch />
 
-          {/* Stats Badges */}
-          <div className="mt-12 grid grid-cols-3 gap-6 text-white/90 max-w-xl">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-secondary backdrop-blur-sm">
-                <Building className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="text-xl md:text-2xl font-bold text-white">500+</div>
-                <div className="text-xs text-primary-200">{copy.stats[0]}</div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-secondary backdrop-blur-sm">
-                <Shield className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="text-xl md:text-2xl font-bold text-white">10+</div>
-                <div className="text-xs text-primary-200">{copy.stats[1]}</div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-secondary backdrop-blur-sm">
-                <Users className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="text-xl md:text-2xl font-bold text-white">1000+</div>
-                <div className="text-xs text-primary-200">{copy.stats[2]}</div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

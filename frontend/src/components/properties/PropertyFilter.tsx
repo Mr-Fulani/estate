@@ -3,7 +3,6 @@
 import { useCallback, useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Category } from '@/types';
-import { fetchCategories } from '@/lib/api';
 import { Search, RotateCcw, SlidersHorizontal, Building2, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLocale } from '@/context/LocaleContext';
@@ -12,13 +11,12 @@ import { localizedCategoryName } from '@/i18n/domain';
 import { useCurrency } from '@/context/CurrencyContext';
 import { startNavigationFeedback } from '@/components/layout/NavigationFeedback';
 
-export function PropertyFilter() {
+export function PropertyFilter({ categories }: { categories: Category[] }) {
   const router = useRouter();
   const { locale, href } = useLocale();
   const copy = siteCopy[locale].catalog;
   const { currency, convert } = useCurrency();
   const searchParams = useSearchParams();
-  const [categories, setCategories] = useState<Category[]>([]);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const displayPrice = useCallback((value: string) => value
@@ -42,10 +40,6 @@ export function PropertyFilter() {
     min_area: searchParams.get('min_area') || '',
     max_area: searchParams.get('max_area') || '',
   });
-
-  useEffect(() => {
-    fetchCategories().then(setCategories).catch(console.error);
-  }, []);
 
   // Sync state with URL if URL changes
   useEffect(() => {

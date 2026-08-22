@@ -70,7 +70,8 @@ export function NavigationFeedback() {
   if (phase === 'idle') return null;
 
   return (
-    <div className="navigation-progress" data-phase={phase} role="status" aria-label="Loading">
+    <div className="navigation-progress" data-phase={phase} role="status" aria-live="polite" aria-label="Loading">
+      <span className="sr-only">Loading</span>
       <div className="navigation-progress__bar">
         <span className="navigation-progress__glow" />
       </div>
