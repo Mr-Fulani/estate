@@ -21,6 +21,7 @@ import {
   updateAdminUser,
 } from '@/lib/api';
 import type { AdminAuditLog, AdminRole, AdminUser } from '@/types';
+import { AdminActionSpinner } from '@/components/admin/AdminActionSpinner';
 
 
 const roleLabels: Record<AdminRole, string> = {
@@ -58,6 +59,10 @@ const actionLabels: Record<string, string> = {
   'category.created': 'Создана категория',
   'category.deleted': 'Удалена категория',
   'settings.updated': 'Изменены настройки сайта',
+  'telegram.link_requested': 'Запрошена привязка Telegram',
+  'telegram.connected': 'Подключён Telegram',
+  'telegram.preferences_updated': 'Изменены Telegram-уведомления',
+  'telegram.disconnected': 'Отключён Telegram',
 };
 
 
@@ -66,6 +71,7 @@ export default function SecurityPage() {
   const [logs, setLogs] = useState<AdminAuditLog[]>([]);
   const [tab, setTab] = useState<'users' | 'audit'>('users');
   const [loading, setLoading] = useState(true);
+  const [creating, setCreating] = useState(false);
   const [savingId, setSavingId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showCreate, setShowCreate] = useState(false);
@@ -101,6 +107,7 @@ export default function SecurityPage() {
 
   const handleCreate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setCreating(true);
     setError(null);
     try {
       const user = await createAdminUser(form);
@@ -111,6 +118,8 @@ export default function SecurityPage() {
       setLogs(audit.items);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : 'Не удалось создать аккаунт');
+    } finally {
+      setCreating(false);
     }
   };
 
@@ -194,7 +203,7 @@ export default function SecurityPage() {
                 <label className="text-sm font-semibold text-slate-700">Роль<select value={form.role} onChange={(event) => setForm({ ...form, role: event.target.value as AdminRole })} className="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 font-normal outline-none focus:border-primary focus:ring-4 focus:ring-primary/10">{Object.entries(roleLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
                 <label className="text-sm font-semibold text-slate-700">Временный пароль<input required type="password" minLength={12} value={form.password} onChange={(event) => setForm({ ...form, password: event.target.value })} className="mt-2 h-11 w-full rounded-xl border border-slate-200 px-3 font-normal outline-none focus:border-primary focus:ring-4 focus:ring-primary/10" placeholder="Минимум 12 символов" /></label>
               </div>
-              <div className="mt-5 flex justify-end gap-3"><button type="button" onClick={() => setShowCreate(false)} className="h-10 rounded-xl border border-slate-200 px-4 text-sm font-semibold text-slate-600">Отмена</button><button type="submit" className="h-10 rounded-xl bg-primary px-5 text-sm font-bold text-white">Создать аккаунт</button></div>
+              <div className="mt-5 flex justify-end gap-3"><button type="button" onClick={() => setShowCreate(false)} disabled={creating} className="h-10 rounded-xl border border-slate-200 px-4 text-sm font-semibold text-slate-600">Отмена</button><button type="submit" disabled={creating} aria-busy={creating} className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-bold text-white disabled:opacity-50">{creating && <AdminActionSpinner />}{creating ? 'Создание…' : 'Создать аккаунт'}</button></div>
             </form>
           )}
 
@@ -203,16 +212,16 @@ export default function SecurityPage() {
               <article key={user.id} className={`rounded-2xl border bg-white p-5 shadow-sm ${user.is_active ? 'border-slate-200' : 'border-slate-200 opacity-70'}`}>
                 <div className="flex items-start gap-4">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"><UserCog className="h-5 w-5" /></div>
-                  <div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><h3 className="font-bold text-slate-900">{user.full_name}</h3><span className={`rounded-full px-2 py-1 text-[10px] font-bold uppercase tracking-wide ${user.is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>{user.is_active ? 'Активен' : 'Отключён'}</span></div><p className="mt-1 truncate text-sm text-slate-500">@{user.username} · {user.email}</p></div>
+                  <div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><h3 className="font-bold text-slate-900">{user.full_name}</h3><span className={`rounded-full px-2 py-1 text-[10px] font-bold uppercase tracking-wide ${user.is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>{user.is_active ? 'Активен' : 'Отключён'}</span>{savingId === user.id && <span role="status" className="inline-flex items-center gap-1 text-[10px] font-bold text-primary"><AdminActionSpinner className="h-3 w-3" />Сохранение…</span>}</div><p className="mt-1 truncate text-sm text-slate-500">@{user.username} · {user.email}</p></div>
                 </div>
                 <div className="mt-5 grid gap-3 sm:grid-cols-[1fr_auto]">
                   <label className="text-xs font-bold uppercase tracking-wide text-slate-500">Роль<select value={user.role} disabled={savingId === user.id} onChange={(event) => patchUser(user.id, { role: event.target.value as AdminRole })} className="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold normal-case tracking-normal text-slate-700 outline-none focus:border-primary">{Object.entries(roleLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
-                  <button type="button" disabled={savingId === user.id} onClick={() => patchUser(user.id, { is_active: !user.is_active })} className={`self-end h-10 rounded-xl px-4 text-sm font-semibold transition ${user.is_active ? 'border border-slate-200 text-slate-600 hover:bg-slate-50' : 'bg-emerald-600 text-white hover:bg-emerald-700'}`}>{user.is_active ? 'Отключить' : 'Включить'}</button>
+                  <button type="button" disabled={savingId === user.id} aria-busy={savingId === user.id} onClick={() => patchUser(user.id, { is_active: !user.is_active })} className={`self-end inline-flex h-10 items-center justify-center gap-2 rounded-xl px-4 text-sm font-semibold transition disabled:opacity-50 ${user.is_active ? 'border border-slate-200 text-slate-600 hover:bg-slate-50' : 'bg-emerald-600 text-white hover:bg-emerald-700'}`}>{savingId === user.id && <AdminActionSpinner />}{savingId === user.id ? 'Сохранение…' : user.is_active ? 'Отключить' : 'Включить'}</button>
                 </div>
                 <p className="mt-3 text-xs text-slate-400">{roleDescriptions[user.role]}</p>
                 <div className="mt-4 border-t border-slate-100 pt-4">
                   {resetUserId === user.id ? (
-                    <div className="flex flex-col gap-2 sm:flex-row"><input type="password" value={resetPassword} onChange={(event) => setResetPassword(event.target.value)} className="h-10 flex-1 rounded-xl border border-slate-200 px-3 text-sm outline-none focus:border-primary" placeholder="Новый пароль, минимум 12 символов" /><button type="button" onClick={() => handlePasswordReset(user.id)} className="h-10 rounded-xl bg-primary px-4 text-sm font-bold text-white">Сохранить</button><button type="button" onClick={() => { setResetUserId(null); setResetPassword(''); }} className="h-10 rounded-xl px-3 text-sm font-semibold text-slate-500">Отмена</button></div>
+                    <div className="flex flex-col gap-2 sm:flex-row"><input type="password" value={resetPassword} onChange={(event) => setResetPassword(event.target.value)} disabled={savingId === user.id} className="h-10 flex-1 rounded-xl border border-slate-200 px-3 text-sm outline-none focus:border-primary" placeholder="Новый пароль, минимум 12 символов" /><button type="button" onClick={() => handlePasswordReset(user.id)} disabled={savingId === user.id} aria-busy={savingId === user.id} className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-bold text-white disabled:opacity-50">{savingId === user.id && <AdminActionSpinner />}{savingId === user.id ? 'Сохранение…' : 'Сохранить'}</button><button type="button" disabled={savingId === user.id} onClick={() => { setResetUserId(null); setResetPassword(''); }} className="h-10 rounded-xl px-3 text-sm font-semibold text-slate-500">Отмена</button></div>
                   ) : (
                     <button type="button" onClick={() => setResetUserId(user.id)} className="inline-flex items-center gap-2 text-xs font-semibold text-primary hover:text-primary-800"><KeyRound className="h-3.5 w-3.5" />Сменить пароль</button>
                   )}

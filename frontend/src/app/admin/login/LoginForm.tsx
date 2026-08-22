@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 
 import { loginAdmin } from '@/lib/api';
+import { AdminActionSpinner } from '@/components/admin/AdminActionSpinner';
 
 
 export function LoginForm({ returnTo, reason }: { returnTo?: string; reason?: string }) {
@@ -158,8 +159,10 @@ export function LoginForm({ returnTo, reason }: { returnTo?: string; reason?: st
                 <button
                   type="submit"
                   disabled={loading}
+                  aria-busy={loading}
                   className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60"
                 >
+                  {loading && <AdminActionSpinner />}
                   {loading ? 'Проверяем…' : 'Войти в панель'}
                   {!loading && <ArrowRight className="h-4 w-4" />}
                 </button>

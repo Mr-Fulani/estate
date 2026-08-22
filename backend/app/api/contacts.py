@@ -2,7 +2,7 @@ from datetime import date, datetime, timedelta, timezone
 import secrets
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, status
+from fastapi import APIRouter, BackgroundTasks, Depends, Header, HTTPException, Query, Request, status
 from sqlalchemy import desc, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -25,6 +25,7 @@ from app.models.admin_user import AdminUser
 from app.security import require_permission
 from app.services.currency import convert_amount_to_rub, get_exchange_rates
 from app.rate_limit import enforce_rate_limit
+from app.telegram_notifications import new_lead_message, queue_admin_notification
 
 
 router = APIRouter(prefix="/api/v1/contacts", tags=["Contacts"])
@@ -169,6 +170,7 @@ async def list_contacts(
 async def create_contact(
     contact: ContactCreate,
     request: Request,
+    background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
 ):
     await enforce_rate_limit(
@@ -193,6 +195,18 @@ async def create_contact(
         )
     )
     await db.commit()
+    await queue_admin_notification(
+        db,
+        background_tasks,
+        "new_lead",
+        new_lead_message(
+            lead_id=new_contact.id,
+            name=new_contact.name,
+            phone=new_contact.phone,
+            email=new_contact.email,
+            message=new_contact.message,
+        ),
+    )
     return await _get_lead(new_contact.id, db)
 
 

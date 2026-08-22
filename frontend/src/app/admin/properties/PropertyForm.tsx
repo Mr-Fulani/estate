@@ -20,6 +20,7 @@ import {
   Languages,
   SearchCheck,
 } from 'lucide-react';
+import { AdminActionSpinner } from '@/components/admin/AdminActionSpinner';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { startNavigationFeedback } from '@/components/layout/NavigationFeedback';
@@ -875,9 +876,10 @@ export function PropertyForm({
         <button
           type="submit"
           disabled={loading}
+          aria-busy={loading}
           className="px-8 py-3 bg-primary hover:bg-primary-800 text-white rounded-xl text-sm font-bold flex items-center gap-2 transition-all shadow-md active:scale-95 disabled:opacity-50"
         >
-          <Save className="w-4 h-4" />
+          {loading ? <AdminActionSpinner /> : <Save className="w-4 h-4" />}
           {loading ? 'Сохранение...' : isEditing ? 'Сохранить изменения' : 'Создать объект'}
         </button>
       </div>

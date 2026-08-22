@@ -386,6 +386,24 @@ export interface AdminUser {
   created_at: string;
 }
 
+export interface AdminTelegramSettings {
+  configured: boolean;
+  linked: boolean;
+  bot_username?: string | null;
+  telegram_username?: string | null;
+  linked_at?: string | null;
+  notifications_enabled: boolean;
+  can_notify_new_leads: boolean;
+  can_notify_new_reviews: boolean;
+  notify_new_leads: boolean;
+  notify_new_reviews: boolean;
+}
+
+export interface AdminTelegramLink {
+  url: string;
+  expires_at: string;
+}
+
 export interface AdminAuditLog {
   id: number;
   action: string;

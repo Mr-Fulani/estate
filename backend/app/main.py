@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.staticfiles import StaticFiles
 from app.config import get_settings
-from app.api import auth, properties, categories, contacts, currency, admin, news, reviews, uploads, settings as settings_api
+from app.api import auth, properties, categories, contacts, currency, admin, news, reviews, telegram, uploads, settings as settings_api
 
 settings = get_settings()
 
@@ -58,6 +58,7 @@ app.include_router(reviews.router)
 app.include_router(auth.router)
 app.include_router(currency.router)
 app.include_router(uploads.router)
+app.include_router(telegram.router)
 
 @app.get("/")
 async def root():

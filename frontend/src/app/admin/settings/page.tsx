@@ -14,6 +14,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { TelegramIcon, WhatsappIcon, VkIcon, YoutubeIcon, InstagramIcon, FacebookIcon, MaxIcon } from '@/components/ui/SocialIcons';
+import { AdminActionSpinner } from '@/components/admin/AdminActionSpinner';
 import { localeLabels } from '@/i18n/config';
 
 const translatedLocales = ['en', 'tr', 'ar'] as const;
@@ -347,9 +348,10 @@ export default function AdminSettingsPage() {
           type="button"
           onClick={handleSave}
           disabled={saving}
+          aria-busy={saving}
           className="px-8 py-3 bg-primary hover:bg-primary-800 text-white rounded-xl text-sm font-bold flex items-center gap-2 transition-all shadow-md active:scale-95 disabled:opacity-50"
         >
-          <Save className="w-4 h-4" />
+          {saving ? <AdminActionSpinner /> : <Save className="w-4 h-4" />}
           {saving ? 'Сохранение...' : 'Сохранить настройки'}
         </button>
       </div>

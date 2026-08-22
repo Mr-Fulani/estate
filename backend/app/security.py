@@ -29,6 +29,7 @@ ROLE_PERMISSIONS: dict[str, set[str]] = {
         "categories:write",
         "settings:write",
         "audit:view",
+        "profile:write",
     },
     "manager": {
         "dashboard:view",
@@ -37,8 +38,9 @@ ROLE_PERMISSIONS: dict[str, set[str]] = {
         "leads:write",
         "reviews:write",
         "categories:write",
+        "profile:write",
     },
-    "editor": {"dashboard:view", "properties:write", "news:write", "reviews:write"},
+    "editor": {"dashboard:view", "properties:write", "news:write", "reviews:write", "profile:write"},
 }
 
 

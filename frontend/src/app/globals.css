@@ -347,6 +347,16 @@ html[dir='rtl'] .navigation-progress__glow {
   50% { transform: translateY(-5px); opacity: 1; }
 }
 
+/* Immediate tactile response for every native action in the admin area. */
+.admin-shell button:not(:disabled):active {
+  scale: 0.97;
+  filter: brightness(0.96);
+}
+
+.admin-shell button:disabled[aria-busy='true'] {
+  cursor: wait;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

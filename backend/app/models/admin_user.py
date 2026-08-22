@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, DateTime, ForeignKey, Index, Integer, JSON, String, Text, UniqueConstraint
+from sqlalchemy import BigInteger, Boolean, DateTime, ForeignKey, Index, Integer, JSON, String, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
@@ -13,6 +13,12 @@ class AdminUser(Base):
         UniqueConstraint("email", name="admin_users_email_key"),
         Index("ix_admin_users_username", "username", unique=True),
         Index("ix_admin_users_email", "email", unique=True),
+        Index("uq_admin_users_telegram_chat_id", "telegram_chat_id", unique=True),
+        Index(
+            "uq_admin_users_telegram_link_token_hash",
+            "telegram_link_token_hash",
+            unique=True,
+        ),
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -25,6 +31,14 @@ class AdminUser(Base):
     failed_login_attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     locked_until: Mapped[str | None] = mapped_column(DateTime(timezone=True), nullable=True)
     last_login_at: Mapped[str | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    telegram_chat_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    telegram_username: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    telegram_link_token_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    telegram_link_expires_at: Mapped[str | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    telegram_linked_at: Mapped[str | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    telegram_notifications_enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    telegram_notify_new_leads: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    telegram_notify_new_reviews: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     created_at: Mapped[str] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[str | None] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()

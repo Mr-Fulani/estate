@@ -23,6 +23,7 @@ import {
 import { cn } from '@/lib/utils';
 import { fetchCurrentAdmin, logoutAdmin } from '@/lib/api';
 import type { AdminRole, AdminUser } from '@/types';
+import { AdminActionSpinner } from '@/components/admin/AdminActionSpinner';
 
 const adminNavItems = [
   { href: '/admin', label: 'Дашборд', icon: LayoutDashboard, roles: ['founder', 'admin', 'manager', 'editor'] },
@@ -86,7 +87,7 @@ export default function AdminLayout({
   );
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col md:flex-row">
+    <div className="admin-shell min-h-screen bg-slate-100 flex flex-col md:flex-row">
       {/* Admin Sidebar */}
       <aside className="w-full bg-slate-900 text-white flex-shrink-0 flex flex-col justify-between md:sticky md:top-0 md:h-screen md:w-64">
         <div>
@@ -156,7 +157,7 @@ export default function AdminLayout({
         <div className={cn('p-4 border-t border-slate-800', !isMenuOpen && 'hidden md:block')}>
           {user && (
             <div className="mb-3 rounded-xl border border-slate-700 bg-slate-800/70 p-3">
-              <div className="flex items-center gap-2.5">
+              <Link href="/admin/profile" className="group/profile flex items-center gap-2.5 rounded-lg outline-none transition hover:bg-slate-700/70 focus-visible:ring-2 focus-visible:ring-secondary/70">
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary-700 text-white">
                   <UserRound className="h-4 w-4" />
                 </div>
@@ -164,14 +165,16 @@ export default function AdminLayout({
                   <p className="truncate text-sm font-semibold text-white">{user.full_name}</p>
                   <p className="truncate text-[11px] text-slate-400">@{user.username} · {roleLabels[user.role]}</p>
                 </div>
-              </div>
+                <ChevronRight className="ml-auto h-4 w-4 shrink-0 text-slate-500 transition group-hover/profile:translate-x-0.5 group-hover/profile:text-secondary" />
+              </Link>
               <button
                 type="button"
                 onClick={handleLogout}
                 disabled={isLoggingOut}
+                aria-busy={isLoggingOut}
                 className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-300 transition hover:border-slate-600 hover:bg-slate-700 hover:text-white disabled:opacity-50"
               >
-                <LogOut className="h-3.5 w-3.5" />
+                {isLoggingOut ? <AdminActionSpinner className="h-3.5 w-3.5" /> : <LogOut className="h-3.5 w-3.5" />}
                 {isLoggingOut ? 'Выходим…' : 'Выйти'}
               </button>
             </div>

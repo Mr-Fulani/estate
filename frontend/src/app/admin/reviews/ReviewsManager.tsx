@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { BadgeCheck, ChevronDown, ExternalLink, Search, Star, Trash2 } from 'lucide-react';
+import { BadgeCheck, Check, ChevronDown, ExternalLink, Search, Star, Trash2 } from 'lucide-react';
 
+import { AdminActionSpinner } from '@/components/admin/AdminActionSpinner';
 import { deleteAdminReview, updateAdminReview } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import type { AdminReview, ReviewTranslation } from '@/types';
@@ -14,7 +15,8 @@ const statusColors = { invited: 'bg-blue-100 text-blue-800', pending: 'bg-amber-
 
 function ReviewEditor({ review, onUpdated, onDeleted }: { review: AdminReview; onUpdated: (review: AdminReview) => void; onDeleted: (id: number) => void }) {
   const [form, setForm] = useState(review);
-  const [loading, setLoading] = useState(false);
+  const [pendingAction, setPendingAction] = useState<'save' | 'delete' | null>(null);
+  const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => setForm(review), [review]);
@@ -24,7 +26,7 @@ function ReviewEditor({ review, onUpdated, onDeleted }: { review: AdminReview; o
     setForm((current) => ({ ...current, translations: translations.map((item) => item.locale === locale ? { ...item, [field]: value } : item) }));
   };
   const save = async () => {
-    setLoading(true); setError('');
+    setPendingAction('save'); setSaved(false); setError('');
     try {
       const updated = await updateAdminReview(form.id, {
         reviewer_name: form.reviewer_name,
@@ -37,14 +39,21 @@ function ReviewEditor({ review, onUpdated, onDeleted }: { review: AdminReview; o
         translations: translations.filter((item) => item.content.trim()).map((item) => ({ ...item, content: item.content.trim(), reviewer_role: item.reviewer_role?.trim() || null, company_response: item.company_response?.trim() || null })),
       });
       onUpdated(updated);
+      setSaved(true);
+      window.setTimeout(() => setSaved(false), 2400);
     } catch (saveError) {
       setError(saveError instanceof Error ? saveError.message : 'Не удалось сохранить отзыв');
-    } finally { setLoading(false); }
+    } finally { setPendingAction(null); }
   };
   const remove = async () => {
     if (!confirm('Удалить отзыв без возможности восстановления?')) return;
-    setLoading(true);
-    try { await deleteAdminReview(form.id); onDeleted(form.id); } finally { setLoading(false); }
+    setPendingAction('delete'); setError('');
+    try {
+      await deleteAdminReview(form.id);
+      onDeleted(form.id);
+    } catch (removeError) {
+      setError(removeError instanceof Error ? removeError.message : 'Не удалось удалить отзыв');
+    } finally { setPendingAction(null); }
   };
   return (
     <details className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -73,7 +82,16 @@ function ReviewEditor({ review, onUpdated, onDeleted }: { review: AdminReview; o
         <div className="grid gap-5 xl:grid-cols-2">
           {translations.map((translation) => <fieldset key={translation.locale} dir={translation.locale === 'ar' ? 'rtl' : 'ltr'} className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5"><legend className="px-2 text-sm font-bold text-primary">{translation.locale.toUpperCase()}</legend><label className="block text-xs font-bold uppercase tracking-wider text-slate-600">Роль<input value={translation.reviewer_role || ''} onChange={(event) => updateTranslation(translation.locale, 'reviewer_role', event.target.value)} className="mt-2 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm font-normal normal-case tracking-normal outline-none focus:border-primary" /></label><label className="block text-xs font-bold uppercase tracking-wider text-slate-600">Отзыв<textarea rows={6} value={translation.content} onChange={(event) => updateTranslation(translation.locale, 'content', event.target.value)} className="mt-2 w-full rounded-xl border border-slate-200 p-3 text-sm font-normal leading-relaxed normal-case tracking-normal outline-none focus:border-primary" /></label><label className="block text-xs font-bold uppercase tracking-wider text-slate-600">Ответ Rahat Home<textarea rows={3} value={translation.company_response || ''} onChange={(event) => updateTranslation(translation.locale, 'company_response', event.target.value)} className="mt-2 w-full rounded-xl border border-slate-200 p-3 text-sm font-normal leading-relaxed normal-case tracking-normal outline-none focus:border-primary" /></label></fieldset>)}
         </div>
-        <div className="flex flex-col-reverse justify-between gap-3 border-t border-slate-200 pt-5 sm:flex-row"><button type="button" onClick={() => void remove()} disabled={loading} className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-red-600 hover:bg-red-50"><Trash2 className="h-4 w-4" />Удалить</button><button type="button" onClick={() => void save()} disabled={loading} className="rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white hover:bg-primary-800 disabled:opacity-50">{loading ? 'Сохранение…' : 'Сохранить отзыв'}</button></div>
+        <div className="flex flex-col-reverse justify-between gap-3 border-t border-slate-200 pt-5 sm:flex-row">
+          <button type="button" onClick={() => void remove()} disabled={pendingAction !== null} aria-busy={pendingAction === 'delete'} className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-red-600 transition hover:bg-red-50 disabled:opacity-50">
+            {pendingAction === 'delete' ? <AdminActionSpinner /> : <Trash2 className="h-4 w-4" />}
+            {pendingAction === 'delete' ? 'Удаление…' : 'Удалить'}
+          </button>
+          <button type="button" onClick={() => void save()} disabled={pendingAction !== null} aria-busy={pendingAction === 'save'} className="inline-flex min-w-44 items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white transition hover:bg-primary-800 disabled:opacity-50">
+            {pendingAction === 'save' ? <AdminActionSpinner /> : saved ? <Check className="h-4 w-4" /> : null}
+            {pendingAction === 'save' ? 'Сохранение…' : saved ? 'Сохранено' : 'Сохранить отзыв'}
+          </button>
+        </div>
       </div>
     </details>
   );

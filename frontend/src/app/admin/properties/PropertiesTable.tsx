@@ -15,6 +15,9 @@ import {
   EyeOff, 
   Search,
 } from 'lucide-react';
+import { AdminActionSpinner } from '@/components/admin/AdminActionSpinner';
+
+type PendingPropertyAction = 'delete' | 'featured' | 'active' | 'market-status';
 
 export function PropertiesTable({
   initialProperties,
@@ -27,7 +30,7 @@ export function PropertiesTable({
   const [properties, setProperties] = useState<Property[]>(initialProperties);
   const [search, setSearch] = useState('');
   const [selectedCat, setSelectedCat] = useState('');
-  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [pendingAction, setPendingAction] = useState<{ id: number; action: PendingPropertyAction } | null>(null);
 
   useEffect(() => {
     setProperties(initialProperties);
@@ -46,7 +49,7 @@ export function PropertiesTable({
 
   const handleDelete = async (id: number, title: string) => {
     if (!confirm(`Вы действительно хотите удалить объект "${title}"?`)) return;
-    setDeletingId(id);
+    setPendingAction({ id, action: 'delete' });
     try {
       await deleteProperty(id);
       setProperties((prev) => prev.filter((p) => p.id !== id));
@@ -54,34 +57,43 @@ export function PropertiesTable({
     } catch {
       alert('Ошибка при удалении объекта');
     } finally {
-      setDeletingId(null);
+      setPendingAction(null);
     }
   };
 
   const toggleFeatured = async (p: Property) => {
+    setPendingAction({ id: p.id, action: 'featured' });
     try {
       const updated = await updateProperty(p.id, { is_featured: !p.is_featured });
       setProperties((prev) => prev.map((item) => (item.id === p.id ? { ...item, is_featured: updated.is_featured } : item)));
     } catch {
       alert('Ошибка при обновлении статуса');
+    } finally {
+      setPendingAction(null);
     }
   };
 
   const toggleActive = async (p: Property) => {
+    setPendingAction({ id: p.id, action: 'active' });
     try {
       const updated = await updateProperty(p.id, { is_active: !p.is_active });
       setProperties((prev) => prev.map((item) => (item.id === p.id ? { ...item, is_active: updated.is_active } : item)));
     } catch {
       alert('Ошибка при обновлении активности');
+    } finally {
+      setPendingAction(null);
     }
   };
 
   const changeMarketStatus = async (p: Property, marketStatus: Property['market_status']) => {
+    setPendingAction({ id: p.id, action: 'market-status' });
     try {
       const updated = await updateProperty(p.id, { market_status: marketStatus });
       setProperties((prev) => prev.map((item) => item.id === p.id ? { ...item, market_status: updated.market_status } : item));
     } catch {
       alert('Ошибка при обновлении коммерческого статуса');
+    } finally {
+      setPendingAction(null);
     }
   };
 
@@ -185,7 +197,7 @@ export function PropertiesTable({
 
                       {/* Active Status */}
                       <td className="py-3.5 px-4 text-center space-y-2">
-                        <select value={p.market_status} onChange={(event) => void changeMarketStatus(p, event.target.value as Property['market_status'])} className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-bold text-slate-700 outline-none focus:border-primary" aria-label={`Коммерческий статус ${p.title}`}>
+                        <select value={p.market_status} disabled={pendingAction?.id === p.id} onChange={(event) => void changeMarketStatus(p, event.target.value as Property['market_status'])} className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-bold text-slate-700 outline-none focus:border-primary disabled:cursor-wait disabled:opacity-60" aria-label={`Коммерческий статус ${p.title}`} aria-busy={pendingAction?.id === p.id && pendingAction.action === 'market-status'}>
                           <option value="available">Доступен</option>
                           <option value="reserved">В брони</option>
                           <option value="sold">Продан</option>
@@ -196,6 +208,8 @@ export function PropertiesTable({
                         <button
                           type="button"
                           onClick={() => toggleActive(p)}
+                          disabled={pendingAction?.id === p.id}
+                          aria-busy={pendingAction?.id === p.id && pendingAction.action === 'active'}
                           className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${
                             p.is_active
                               ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
@@ -203,7 +217,9 @@ export function PropertiesTable({
                           }`}
                           title="Нажмите, чтобы изменить статус"
                         >
-                          {p.is_active ? (
+                          {pendingAction?.id === p.id && pendingAction.action === 'active' ? (
+                            <><AdminActionSpinner className="h-3 w-3" />Обновление…</>
+                          ) : p.is_active ? (
                             <>
                               <Eye className="w-3 h-3 text-emerald-600" />
                               Активен
@@ -223,6 +239,8 @@ export function PropertiesTable({
                         <button
                           type="button"
                           onClick={() => toggleFeatured(p)}
+                          disabled={pendingAction?.id === p.id}
+                          aria-busy={pendingAction?.id === p.id && pendingAction.action === 'featured'}
                           className={`p-1.5 rounded-lg transition-all ${
                             p.is_featured
                               ? 'text-amber-500 bg-amber-50 hover:bg-amber-100'
@@ -230,7 +248,7 @@ export function PropertiesTable({
                           }`}
                           title={p.is_featured ? 'В избранном на главной' : 'Добавить на главную'}
                         >
-                          <Sparkles className="w-4 h-4" />
+                          {pendingAction?.id === p.id && pendingAction.action === 'featured' ? <AdminActionSpinner /> : <Sparkles className="w-4 h-4" />}
                         </button>
                       </td>
 
@@ -257,11 +275,12 @@ export function PropertiesTable({
                           <button
                             type="button"
                             onClick={() => handleDelete(p.id, p.title)}
-                            disabled={deletingId === p.id}
+                            disabled={pendingAction?.id === p.id}
+                            aria-busy={pendingAction?.id === p.id && pendingAction.action === 'delete'}
                             className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
                             title="Удалить объект"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            {pendingAction?.id === p.id && pendingAction.action === 'delete' ? <AdminActionSpinner /> : <Trash2 className="w-4 h-4" />}
                           </button>
                         </div>
                       </td>

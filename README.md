@@ -17,7 +17,7 @@
 - защищённая админка с персональными аккаунтами, ролями, серверными сессиями и журналом действий;
 - состояния загрузки, ошибок, 404 и адаптивная навигация.
 
-Архитектурный контракт локализации и блога описан в [docs/architecture-i18n-news.md](docs/architecture-i18n-news.md), SEO и CRM — в [docs/seo-crm.md](docs/seo-crm.md), отзывы — в [docs/reviews.md](docs/reviews.md).
+Архитектурный контракт локализации и блога описан в [docs/architecture-i18n-news.md](docs/architecture-i18n-news.md), SEO и CRM — в [docs/seo-crm.md](docs/seo-crm.md), отзывы — в [docs/reviews.md](docs/reviews.md), Telegram-уведомления — в [docs/telegram-notifications.md](docs/telegram-notifications.md), отложенные задачи — в [docs/technical-debt.md](docs/technical-debt.md).
 
 ## Стек
 

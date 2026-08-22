@@ -16,6 +16,7 @@ import {
   UserRound,
 } from 'lucide-react';
 
+import { AdminActionSpinner } from '@/components/admin/AdminActionSpinner';
 import { addContactNote, deleteContactRequest, updateContactRequest } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import type { ContactRequest } from '@/types';
@@ -55,6 +56,7 @@ export function LeadsTable({ initialLeads }: { initialLeads: ContactRequest[] })
   const [channelFilter, setChannelFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [busyId, setBusyId] = useState<number | null>(null);
+  const [busyAction, setBusyAction] = useState<'status' | 'deal' | 'note' | 'delete' | null>(null);
   const [closingId, setClosingId] = useState<number | null>(null);
   const [outcome, setOutcome] = useState<'sold' | 'rented'>('sold');
   const [dealValue, setDealValue] = useState('');
@@ -83,19 +85,19 @@ export function LeadsTable({ initialLeads }: { initialLeads: ContactRequest[] })
       setDealCurrency((lead.deal_currency as 'RUB' | 'USD' | 'EUR' | 'TRY') || 'RUB');
       return;
     }
-    setBusyId(lead.id);
+    setBusyId(lead.id); setBusyAction('status');
     try {
       replaceLead(await updateContactRequest(lead.id, { status: nextStatus }));
     } catch (error) {
       alert(error instanceof Error ? error.message : 'Не удалось изменить этап');
     } finally {
-      setBusyId(null);
+      setBusyId(null); setBusyAction(null);
     }
   };
 
   const closeDeal = async (lead: ContactRequest) => {
     if (!lead.id) return;
-    setBusyId(lead.id);
+    setBusyId(lead.id); setBusyAction('deal');
     try {
       const updated = await updateContactRequest(lead.id, {
         status: 'won',
@@ -109,31 +111,31 @@ export function LeadsTable({ initialLeads }: { initialLeads: ContactRequest[] })
     } catch (error) {
       alert(error instanceof Error ? error.message : 'Не удалось закрыть сделку');
     } finally {
-      setBusyId(null);
+      setBusyId(null); setBusyAction(null);
     }
   };
 
   const saveNote = async (lead: ContactRequest) => {
     if (!lead.id || !noteDrafts[lead.id]?.trim()) return;
-    setBusyId(lead.id);
+    setBusyId(lead.id); setBusyAction('note');
     try {
       replaceLead(await addContactNote(lead.id, noteDrafts[lead.id].trim()));
       setNoteDrafts((current) => ({ ...current, [lead.id!]: '' }));
     } catch {
       alert('Не удалось добавить заметку');
     } finally {
-      setBusyId(null);
+      setBusyId(null); setBusyAction(null);
     }
   };
 
   const removeLead = async (lead: ContactRequest) => {
     if (!lead.id || !confirm('Удалить обращение и всю его историю?')) return;
-    setBusyId(lead.id);
+    setBusyId(lead.id); setBusyAction('delete');
     try {
       await deleteContactRequest(lead.id);
       setLeads((current) => current.filter((item) => item.id !== lead.id));
     } finally {
-      setBusyId(null);
+      setBusyId(null); setBusyAction(null);
     }
   };
 
@@ -209,7 +211,7 @@ export function LeadsTable({ initialLeads }: { initialLeads: ContactRequest[] })
                       <select value={outcome} onChange={(event) => setOutcome(event.target.value as 'sold' | 'rented')} className="h-11 rounded-xl border border-emerald-200 bg-white px-3 text-sm font-semibold"><option value="sold">Объект продан</option><option value="rented">Объект сдан</option></select>
                       <input type="number" min="0" value={dealValue} onChange={(event) => setDealValue(event.target.value)} placeholder="Сумма сделки" className="h-11 rounded-xl border border-emerald-200 bg-white px-3 text-sm" />
                       <select value={dealCurrency} onChange={(event) => setDealCurrency(event.target.value as 'RUB' | 'USD' | 'EUR' | 'TRY')} className="h-11 rounded-xl border border-emerald-200 bg-white px-3 text-sm font-semibold" aria-label="Валюта сделки"><option value="RUB">RUB · ₽</option><option value="USD">USD · $</option><option value="EUR">EUR · €</option><option value="TRY">TRY · ₺</option></select>
-                      <button type="button" disabled={!lead.property_id || busyId === lead.id} onClick={() => void closeDeal(lead)} className="h-11 rounded-xl bg-emerald-700 px-4 text-sm font-bold text-white hover:bg-emerald-800 disabled:opacity-50">Подтвердить сделку</button>
+                      <button type="button" disabled={!lead.property_id || busyId === lead.id} aria-busy={busyId === lead.id && busyAction === 'deal'} onClick={() => void closeDeal(lead)} className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 text-sm font-bold text-white hover:bg-emerald-800 disabled:opacity-50">{busyId === lead.id && busyAction === 'deal' && <AdminActionSpinner />} {busyId === lead.id && busyAction === 'deal' ? 'Подтверждение…' : 'Подтвердить сделку'}</button>
                     </div>
                     <p className="mt-3 text-xs text-emerald-800">После подтверждения статус объекта изменится на «Продан» или «Сдан», а курс к рублю зафиксируется в сделке.</p>
                   </div>
@@ -233,7 +235,7 @@ export function LeadsTable({ initialLeads }: { initialLeads: ContactRequest[] })
                     <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">Запрос и заметка</h4>
                     <p className="rounded-xl border border-slate-200 bg-white p-3 text-sm leading-relaxed text-slate-700">{lead.message || 'Сообщение не передано — зафиксирован только переход в канал связи.'}</p>
                     <textarea rows={3} value={lead.id ? noteDrafts[lead.id] || '' : ''} onChange={(event) => lead.id && setNoteDrafts((current) => ({ ...current, [lead.id!]: event.target.value }))} placeholder="Итог звонка, договорённость, следующий шаг…" className="w-full rounded-xl border border-slate-200 bg-white p-3 text-sm outline-none focus:border-primary" />
-                    <button type="button" disabled={!lead.id || busyId === lead.id || !noteDrafts[lead.id!]?.trim()} onClick={() => void saveNote(lead)} className="rounded-xl bg-primary px-4 py-2 text-xs font-bold text-white disabled:opacity-40">Добавить в историю</button>
+                    <button type="button" disabled={!lead.id || busyId === lead.id || !noteDrafts[lead.id!]?.trim()} aria-busy={busyId === lead.id && busyAction === 'note'} onClick={() => void saveNote(lead)} className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-white disabled:opacity-40">{busyId === lead.id && busyAction === 'note' && <AdminActionSpinner />} {busyId === lead.id && busyAction === 'note' ? 'Добавление…' : 'Добавить в историю'}</button>
                   </div>
 
                   <div className="space-y-3">
@@ -252,7 +254,7 @@ export function LeadsTable({ initialLeads }: { initialLeads: ContactRequest[] })
                 </div>
 
                 <div className="mt-5 flex justify-end border-t border-slate-200 pt-4">
-                  <button type="button" onClick={() => void removeLead(lead)} disabled={busyId === lead.id} className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-50"><Trash2 className="h-4 w-4" />Удалить обращение</button>
+                  <button type="button" onClick={() => void removeLead(lead)} disabled={busyId === lead.id} aria-busy={busyId === lead.id && busyAction === 'delete'} className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50">{busyId === lead.id && busyAction === 'delete' ? <AdminActionSpinner /> : <Trash2 className="h-4 w-4" />}{busyId === lead.id && busyAction === 'delete' ? 'Удаление…' : 'Удалить обращение'}</button>
                 </div>
               </div>
             </details>

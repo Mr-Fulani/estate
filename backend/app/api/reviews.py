@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 import secrets
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, Request, status
 from sqlalchemy import desc, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -27,6 +27,7 @@ from app.models.admin_user import AdminUser
 from app.security import hash_token, require_permission
 from app.config import get_settings
 from app.rate_limit import enforce_rate_limit
+from app.telegram_notifications import new_review_message, queue_admin_notification
 
 
 router = APIRouter(prefix="/api/v1/reviews", tags=["Reviews"])
@@ -117,6 +118,7 @@ async def list_reviews(
 async def submit_review(
     payload: ReviewPublicCreate,
     request: Request,
+    background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
 ):
     await enforce_rate_limit(
@@ -164,6 +166,18 @@ async def submit_review(
     db.add(review)
     await db.commit()
     await db.refresh(review)
+    await queue_admin_notification(
+        db,
+        background_tasks,
+        "new_review",
+        new_review_message(
+            review_id=review.id,
+            reviewer_name=payload.reviewer_name,
+            rating=payload.rating,
+            content=payload.content,
+            verified=False,
+        ),
+    )
     return ReviewSubmissionResponse(id=review.id, status="pending", is_verified=False)
 
 
@@ -201,6 +215,7 @@ async def submit_invited_review(
     token: str,
     payload: ReviewInvitationSubmit,
     request: Request,
+    background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
 ):
     await enforce_rate_limit(
@@ -234,6 +249,18 @@ async def submit_invited_review(
         reviewer_role=payload.reviewer_role,
     )]
     await db.commit()
+    await queue_admin_notification(
+        db,
+        background_tasks,
+        "new_review",
+        new_review_message(
+            review_id=review.id,
+            reviewer_name=payload.reviewer_name,
+            rating=payload.rating,
+            content=payload.content,
+            verified=True,
+        ),
+    )
     return ReviewSubmissionResponse(id=review.id, status="pending", is_verified=True)
 
 

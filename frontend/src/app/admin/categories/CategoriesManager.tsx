@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Category, CategoryTranslation } from '@/types';
 import { createCategory, deleteCategory } from '@/lib/api';
 import { Plus, Trash2, Building, Home, Trees, Briefcase, type LucideIcon } from 'lucide-react';
+import { AdminActionSpinner } from '@/components/admin/AdminActionSpinner';
 
 const categoryIcons: Record<string, LucideIcon> = {
   kvartira: Building,
@@ -25,6 +26,7 @@ export function CategoriesManager({
   const [description, setDescription] = useState('');
   const [translatedNames, setTranslatedNames] = useState<Record<'en' | 'tr' | 'ar', string>>({ en: '', tr: '', ar: '' });
   const [loading, setLoading] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,12 +60,15 @@ export function CategoriesManager({
 
   const handleDelete = async (id: number, catName: string) => {
     if (!confirm(`Удалить категорию "${catName}"?`)) return;
+    setDeletingId(id);
     try {
       await deleteCategory(id);
       setCategories((prev) => prev.filter((c) => c.id !== id));
       router.refresh();
     } catch {
       alert('Не удалось удалить категорию (возможно, к ней привязаны объекты)');
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -105,10 +110,12 @@ export function CategoriesManager({
                       <button
                         type="button"
                         onClick={() => handleDelete(cat.id, cat.name)}
+                        disabled={deletingId === cat.id}
+                        aria-busy={deletingId === cat.id}
                         className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                         title="Удалить"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        {deletingId === cat.id ? <AdminActionSpinner /> : <Trash2 className="w-4 h-4" />}
                       </button>
                     </td>
                   </tr>
@@ -189,8 +196,10 @@ export function CategoriesManager({
           <button
             type="submit"
             disabled={loading || !name.trim()}
-            className="w-full py-2.5 bg-primary hover:bg-primary-800 text-white rounded-xl text-sm font-bold transition-all shadow-sm disabled:opacity-50"
+            aria-busy={loading}
+            className="inline-flex w-full items-center justify-center gap-2 py-2.5 bg-primary hover:bg-primary-800 text-white rounded-xl text-sm font-bold transition-all shadow-sm disabled:opacity-50"
           >
+            {loading && <AdminActionSpinner />}
             {loading ? 'Создание...' : 'Добавить категорию'}
           </button>
         </form>

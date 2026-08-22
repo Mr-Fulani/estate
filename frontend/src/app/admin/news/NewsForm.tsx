@@ -5,6 +5,7 @@ import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Check, ChevronDown, ChevronUp, Image as ImageIcon, Languages, Play, Plus, Save, Star, Trash2, Upload, Youtube } from 'lucide-react';
 
+import { AdminActionSpinner } from '@/components/admin/AdminActionSpinner';
 import { createNewsArticle, updateNewsArticle, uploadNewsImage } from '@/lib/api';
 import { startNavigationFeedback } from '@/components/layout/NavigationFeedback';
 import { cn } from '@/lib/utils';
@@ -272,8 +273,8 @@ export function NewsForm({ initialData }: { initialData?: NewsAdminArticle }) {
             <p className="text-sm font-bold text-slate-800">Загрузить изображения с компьютера</p>
             <p className="mt-0.5 text-xs text-slate-500">JPEG, PNG, WebP или GIF, до 12 МБ каждый. Можно выбрать несколько файлов.</p>
           </div>
-          <label className={cn('inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-bold text-primary shadow-sm transition hover:border-primary', uploadingMedia && 'pointer-events-none opacity-60')}>
-            <Upload className="h-4 w-4" />{uploadingMedia ? 'Загрузка…' : 'Выбрать файлы'}
+          <label className={cn('inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-bold text-primary shadow-sm transition hover:border-primary', uploadingMedia && 'pointer-events-none opacity-60')} aria-busy={uploadingMedia}>
+            {uploadingMedia ? <AdminActionSpinner /> : <Upload className="h-4 w-4" />}{uploadingMedia ? 'Загрузка…' : 'Выбрать файлы'}
             <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple onChange={handleUploadImages} disabled={uploadingMedia} className="sr-only" />
           </label>
         </div>
@@ -316,7 +317,7 @@ export function NewsForm({ initialData }: { initialData?: NewsAdminArticle }) {
         )}
       </section>
 
-      <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end"><Link href="/admin/news" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-200 px-6 text-sm font-semibold text-slate-700 hover:bg-slate-100">Отмена</Link><button type="submit" disabled={loading} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-7 text-sm font-bold text-white shadow-md transition hover:bg-primary-800 disabled:opacity-50"><Save className="h-4 w-4" />{loading ? 'Сохранение…' : initialData ? 'Сохранить изменения' : 'Создать публикацию'}</button></div>
+      <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end"><Link href="/admin/news" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-200 px-6 text-sm font-semibold text-slate-700 hover:bg-slate-100">Отмена</Link><button type="submit" disabled={loading} aria-busy={loading} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-7 text-sm font-bold text-white shadow-md transition hover:bg-primary-800 disabled:opacity-50">{loading ? <AdminActionSpinner /> : <Save className="h-4 w-4" />}{loading ? 'Сохранение…' : initialData ? 'Сохранить изменения' : 'Создать публикацию'}</button></div>
     </form>
   );
 }

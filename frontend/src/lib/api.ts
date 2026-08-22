@@ -21,6 +21,8 @@ import {
   AdminUser,
   AdminRole,
   AdminAuditLogList,
+  AdminTelegramLink,
+  AdminTelegramSettings,
   ExchangeRatesResponse,
 } from '@/types';
 import type { Locale } from '@/i18n/config';
@@ -640,6 +642,53 @@ export async function fetchCurrentAdmin(adminCookie?: string): Promise<AdminUser
   const res = await fetch(`${baseUrl}/auth/me`, adminReadOptions(adminCookie));
   await ensureAdminResponse(res, 'Сессия администратора недействительна');
   return await res.json();
+}
+
+export async function fetchAdminTelegramSettings(): Promise<AdminTelegramSettings> {
+  const res = await fetch(`${getApiBaseUrl()}/telegram/settings`, adminReadOptions());
+  await ensureAdminResponse(res, 'Не удалось загрузить настройки Telegram');
+  return await res.json();
+}
+
+export async function createAdminTelegramLink(): Promise<AdminTelegramLink> {
+  const res = await fetch(`${getApiBaseUrl()}/telegram/link`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: adminHeaders(),
+  });
+  await ensureAdminResponse(res, 'Не удалось создать ссылку подключения Telegram');
+  return await res.json();
+}
+
+export async function updateAdminTelegramSettings(
+  data: Partial<Pick<AdminTelegramSettings, 'notifications_enabled' | 'notify_new_leads' | 'notify_new_reviews'>>,
+): Promise<AdminTelegramSettings> {
+  const res = await fetch(`${getApiBaseUrl()}/telegram/settings`, {
+    method: 'PATCH',
+    credentials: 'include',
+    headers: adminHeaders(undefined, true),
+    body: JSON.stringify(data),
+  });
+  await ensureAdminResponse(res, 'Не удалось обновить настройки Telegram');
+  return await res.json();
+}
+
+export async function disconnectAdminTelegram(): Promise<void> {
+  const res = await fetch(`${getApiBaseUrl()}/telegram/link`, {
+    method: 'DELETE',
+    credentials: 'include',
+    headers: adminHeaders(),
+  });
+  await ensureAdminResponse(res, 'Не удалось отключить Telegram');
+}
+
+export async function sendAdminTelegramTest(): Promise<void> {
+  const res = await fetch(`${getApiBaseUrl()}/telegram/test`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: adminHeaders(),
+  });
+  await ensureAdminResponse(res, 'Не удалось отправить тестовое уведомление');
 }
 
 export async function logoutAdmin(): Promise<void> {
