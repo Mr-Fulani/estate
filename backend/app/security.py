@@ -83,6 +83,18 @@ class AuthContext:
     session: AdminSession
 
 
+def validate_csrf(request: Request, context: AuthContext) -> None:
+    csrf_header = request.headers.get("x-csrf-token")
+    csrf_cookie = request.cookies.get(settings.AUTH_CSRF_COOKIE_NAME)
+    if (
+        not csrf_header
+        or not csrf_cookie
+        or not hmac.compare_digest(csrf_header, csrf_cookie)
+        or not hmac.compare_digest(hash_token(csrf_header), context.session.csrf_token_hash)
+    ):
+        raise HTTPException(status_code=403, detail="Invalid CSRF token")
+
+
 async def get_optional_auth_context(
     request: Request,
     db: Annotated[AsyncSession, Depends(get_db)],
@@ -126,15 +138,7 @@ def require_permission(permission: str, *, csrf: bool = False) -> Callable:
         if not has_permission(context.user, permission):
             raise HTTPException(status_code=403, detail="Insufficient permissions")
         if csrf:
-            csrf_header = request.headers.get("x-csrf-token")
-            csrf_cookie = request.cookies.get(settings.AUTH_CSRF_COOKIE_NAME)
-            if (
-                not csrf_header
-                or not csrf_cookie
-                or not hmac.compare_digest(csrf_header, csrf_cookie)
-                or not hmac.compare_digest(hash_token(csrf_header), context.session.csrf_token_hash)
-            ):
-                raise HTTPException(status_code=403, detail="Invalid CSRF token")
+            validate_csrf(request, context)
         return context.user
 
     return dependency

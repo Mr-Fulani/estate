@@ -18,13 +18,17 @@ from app.schemas.auth import (
     AuditLogListResponse,
     AuthResponse,
     LoginRequest,
+    PasswordChangeRequest,
+    PasswordChangeResponse,
 )
+from app.rate_limit import enforce_rate_limit
 from app.security import (
     AuthContext,
     hash_password,
     hash_token,
     require_auth_context,
     require_permission,
+    validate_csrf,
     verify_password,
 )
 
@@ -159,16 +163,66 @@ async def logout(
     context: Annotated[AuthContext, Depends(require_auth_context)],
     db: Annotated[AsyncSession, Depends(get_db)],
 ):
-    csrf_header = request.headers.get("x-csrf-token")
-    csrf_cookie = request.cookies.get(settings.AUTH_CSRF_COOKIE_NAME)
-    if not csrf_header or not csrf_cookie or csrf_header != csrf_cookie:
-        raise HTTPException(status_code=403, detail="Invalid CSRF token")
-    if hash_token(csrf_header) != context.session.csrf_token_hash:
-        raise HTTPException(status_code=403, detail="Invalid CSRF token")
+    validate_csrf(request, context)
     context.session.revoked_at = datetime.now(timezone.utc)
     add_audit_log(db, request, context.user, "auth.logout", "admin_user", context.user.id)
     await db.commit()
     _clear_auth_cookies(response)
+
+
+@router.post("/me/password", response_model=PasswordChangeResponse)
+async def change_current_password(
+    payload: PasswordChangeRequest,
+    request: Request,
+    context: Annotated[AuthContext, Depends(require_auth_context)],
+    db: Annotated[AsyncSession, Depends(get_db)],
+):
+    validate_csrf(request, context)
+    await enforce_rate_limit(
+        request,
+        action=f"admin_password_change:{context.user.id}",
+        limit=5,
+        window_minutes=15,
+    )
+    if not verify_password(payload.current_password, context.user.password_hash):
+        add_audit_log(
+            db,
+            request,
+            context.user,
+            "auth.password_change_failed",
+            "admin_user",
+            context.user.id,
+        )
+        await db.commit()
+        raise HTTPException(status_code=422, detail="Текущий пароль указан неверно")
+    if verify_password(payload.new_password, context.user.password_hash):
+        raise HTTPException(status_code=422, detail="Новый пароль должен отличаться от текущего")
+
+    now = datetime.now(timezone.utc)
+    context.user.password_hash = hash_password(payload.new_password)
+    context.user.failed_login_attempts = 0
+    context.user.locked_until = None
+    result = await db.execute(
+        update(AdminSession)
+        .where(
+            AdminSession.user_id == context.user.id,
+            AdminSession.id != context.session.id,
+            AdminSession.revoked_at.is_(None),
+        )
+        .values(revoked_at=now)
+    )
+    revoked_sessions = max(0, result.rowcount or 0)
+    add_audit_log(
+        db,
+        request,
+        context.user,
+        "auth.password_changed",
+        "admin_user",
+        context.user.id,
+        {"revoked_sessions": revoked_sessions},
+    )
+    await db.commit()
+    return PasswordChangeResponse(ok=True, revoked_sessions=revoked_sessions)
 
 
 @router.get("/users", response_model=list[AdminUserResponse])

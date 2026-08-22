@@ -644,6 +644,26 @@ export async function fetchCurrentAdmin(adminCookie?: string): Promise<AdminUser
   return await res.json();
 }
 
+export async function changeCurrentAdminPassword(
+  currentPassword: string,
+  newPassword: string,
+): Promise<{ ok: boolean; revoked_sessions: number }> {
+  const res = await fetch(`${getApiBaseUrl()}/auth/me/password`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: adminHeaders(undefined, true),
+    body: JSON.stringify({
+      current_password: currentPassword,
+      new_password: newPassword,
+    }),
+  });
+  if (res.status === 429) {
+    throw new ApiError('Слишком много попыток. Повторите через 15 минут.', 429);
+  }
+  await ensureAdminResponse(res, 'Не удалось изменить пароль');
+  return await res.json();
+}
+
 export async function fetchAdminTelegramSettings(): Promise<AdminTelegramSettings> {
   const res = await fetch(`${getApiBaseUrl()}/telegram/settings`, adminReadOptions());
   await ensureAdminResponse(res, 'Не удалось загрузить настройки Telegram');

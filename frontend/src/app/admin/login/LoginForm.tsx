@@ -127,7 +127,7 @@ export function LoginForm({ returnTo, reason }: { returnTo?: string; reason?: st
                       required
                       value={identifier}
                       onChange={(event) => setIdentifier(event.target.value)}
-                      placeholder="zloy или name@company.com"
+                      placeholder="username или name@company.com"
                       className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 pl-11 pr-4 text-sm outline-none transition placeholder:text-slate-400 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10"
                     />
                   </div>

@@ -6,6 +6,8 @@ import {
   BellRing,
   CheckCircle2,
   ExternalLink,
+  KeyRound,
+  LockKeyhole,
   MessageCircle,
   RefreshCw,
   Send,
@@ -16,6 +18,7 @@ import {
 
 import { AdminActionSpinner } from '@/components/admin/AdminActionSpinner';
 import {
+  changeCurrentAdminPassword,
   createAdminTelegramLink,
   disconnectAdminTelegram,
   fetchAdminTelegramSettings,
@@ -82,6 +85,7 @@ export default function AdminProfilePage() {
   const [connectExpiresAt, setConnectExpiresAt] = useState('');
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
+  const [passwordForm, setPasswordForm] = useState({ current: '', next: '', confirm: '' });
   const pollTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const stopPolling = useCallback(() => {
@@ -189,6 +193,31 @@ export default function AdminProfilePage() {
     }
   };
 
+  const changePassword = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError(''); setNotice('');
+    if (passwordForm.next !== passwordForm.confirm) {
+      setError('Новый пароль и подтверждение не совпадают.');
+      return;
+    }
+    if (passwordForm.current === passwordForm.next) {
+      setError('Новый пароль должен отличаться от текущего.');
+      return;
+    }
+    setAction('password');
+    try {
+      const result = await changeCurrentAdminPassword(passwordForm.current, passwordForm.next);
+      setPasswordForm({ current: '', next: '', confirm: '' });
+      setNotice(result.revoked_sessions
+        ? `Пароль изменён. Завершено других сессий: ${result.revoked_sessions}.`
+        : 'Пароль изменён. Других активных сессий не было.');
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : 'Не удалось изменить пароль');
+    } finally {
+      setAction(null);
+    }
+  };
+
   if (loading) {
     return <div className="flex min-h-64 items-center justify-center"><AdminActionSpinner className="h-8 w-8 text-primary" /></div>;
   }
@@ -213,6 +242,23 @@ export default function AdminProfilePage() {
           </div>
         </section>
       )}
+
+      <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="flex items-start gap-3 border-b border-slate-100 p-5 sm:p-6">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"><KeyRound className="h-5 w-5" /></div>
+          <div><h2 className="font-bold text-slate-900">Смена пароля</h2><p className="mt-1 text-sm leading-6 text-slate-500">После изменения текущая сессия останется активной, остальные устройства выйдут из аккаунта.</p></div>
+        </div>
+        <form onSubmit={changePassword} className="space-y-5 bg-slate-50/60 p-5 sm:p-6">
+          <div className="grid gap-4 lg:grid-cols-3">
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-600">Текущий пароль<input type="password" required maxLength={256} autoComplete="current-password" value={passwordForm.current} onChange={(event) => setPasswordForm((current) => ({ ...current, current: event.target.value }))} className="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-normal normal-case tracking-normal outline-none focus:border-primary focus:ring-4 focus:ring-primary/10" /></label>
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-600">Новый пароль<input type="password" required minLength={12} maxLength={256} autoComplete="new-password" value={passwordForm.next} onChange={(event) => setPasswordForm((current) => ({ ...current, next: event.target.value }))} className="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-normal normal-case tracking-normal outline-none focus:border-primary focus:ring-4 focus:ring-primary/10" /><span className="mt-1.5 block text-[11px] font-medium normal-case tracking-normal text-slate-400">Минимум 12 символов</span></label>
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-600">Повторите пароль<input type="password" required minLength={12} maxLength={256} autoComplete="new-password" value={passwordForm.confirm} onChange={(event) => setPasswordForm((current) => ({ ...current, confirm: event.target.value }))} className="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-normal normal-case tracking-normal outline-none focus:border-primary focus:ring-4 focus:ring-primary/10" /></label>
+          </div>
+          <div className="flex justify-end">
+            <button type="submit" disabled={action !== null} aria-busy={action === 'password'} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-bold text-white shadow-sm transition hover:bg-primary-800 disabled:opacity-50">{action === 'password' ? <AdminActionSpinner /> : <LockKeyhole className="h-4 w-4" />}{action === 'password' ? 'Изменение…' : 'Изменить пароль'}</button>
+          </div>
+        </form>
+      </section>
 
       <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div className="flex flex-col gap-4 border-b border-slate-100 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">

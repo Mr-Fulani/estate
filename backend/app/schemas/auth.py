@@ -57,6 +57,16 @@ class AuthResponse(BaseModel):
     expires_at: datetime
 
 
+class PasswordChangeRequest(BaseModel):
+    current_password: str = Field(min_length=1, max_length=256)
+    new_password: str = Field(min_length=12, max_length=256)
+
+
+class PasswordChangeResponse(BaseModel):
+    ok: bool = True
+    revoked_sessions: int = 0
+
+
 class AdminUserCreate(BaseModel):
     username: str = Field(min_length=3, max_length=80)
     email: str = Field(min_length=5, max_length=200)

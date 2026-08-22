@@ -42,6 +42,8 @@ const actionLabels: Record<string, string> = {
   'auth.login': 'Вход в админку',
   'auth.logout': 'Выход из админки',
   'auth.login_failed': 'Неудачная попытка входа',
+  'auth.password_changed': 'Изменён пароль',
+  'auth.password_change_failed': 'Неудачная смена пароля',
   'admin_user.created': 'Создан аккаунт',
   'admin_user.updated': 'Изменён аккаунт',
   'property.created': 'Добавлен объект',
