@@ -55,7 +55,7 @@ async def create_founder(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Estate administration commands")
+    parser = argparse.ArgumentParser(description="Rahat Home administration commands")
     subparsers = parser.add_subparsers(dest="command", required=True)
     founder = subparsers.add_parser("create-founder", help="Create or reset the founder account")
     founder.add_argument("--email", required=True)

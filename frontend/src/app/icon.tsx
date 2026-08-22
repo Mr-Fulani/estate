@@ -12,14 +12,14 @@ export default function Icon() {
           background: '#172554',
           color: '#ffffff',
           display: 'flex',
-          fontSize: 42,
+          fontSize: 27,
           fontWeight: 800,
           height: '100%',
           justifyContent: 'center',
           width: '100%',
         }}
       >
-        E<span style={{ color: '#d4a853' }}>.</span>
+        RH<span style={{ color: '#d4a853' }}>.</span>
       </div>
     ),
     size,

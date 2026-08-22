@@ -18,6 +18,13 @@ export const localeTags: Record<Locale, string> = {
   ar: 'ar-AE-u-nu-latn',
 };
 
+export const documentLanguageTags: Record<Locale, string> = {
+  ru: 'ru-RU',
+  en: 'en-GB',
+  tr: 'tr-TR',
+  ar: 'ar-AE',
+};
+
 export const openGraphLocales: Record<Locale, string> = {
   ru: 'ru_RU',
   en: 'en_US',

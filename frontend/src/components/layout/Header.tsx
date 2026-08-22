@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Coins, Globe2, Menu, X, Phone } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type MouseEvent as ReactMouseEvent } from 'react';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import { useLocale } from '@/context/LocaleContext';
 import { localeLabels, locales, localeTags, localizeHref, type Locale } from '@/i18n/config';
@@ -22,6 +22,47 @@ const currencyLabels: Record<CurrencyCode, string> = {
   TRY: '₺ TRY',
 };
 
+type NavParticle = {
+  id: number;
+  startX: number;
+  startY: number;
+  endX: number;
+  endY: number;
+  size: number;
+  delay: number;
+  duration: number;
+  color: string;
+};
+
+type NavBurst = {
+  id: number;
+  href: string;
+  particles: NavParticle[];
+};
+
+const navParticleColors = ['#1a365d', '#d4a746', '#f4d98a', '#6f8fb8'];
+
+function createNavParticles(): NavParticle[] {
+  return Array.from({ length: 14 }, (_, index) => {
+    const angle = ((Math.PI * 2) / 14) * index + (Math.random() - 0.5) * 0.35;
+    const distance = 32 + Math.random() * 26;
+    const startX = Math.cos(angle) * distance;
+    const startY = Math.sin(angle) * distance;
+
+    return {
+      id: index,
+      startX,
+      startY,
+      endX: startX * (0.12 + Math.random() * 0.12),
+      endY: startY * (0.12 + Math.random() * 0.12),
+      size: 8 + Math.random() * 8,
+      delay: Math.random() * 90,
+      duration: 720 + Math.random() * 280,
+      color: navParticleColors[index % navParticleColors.length],
+    };
+  });
+}
+
 function phoneToTel(phone: string): string {
   return 'tel:' + phone.replace(/[\s\-\(\)]/g, '');
 }
@@ -29,6 +70,9 @@ function phoneToTel(phone: string): string {
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDetached, setIsDetached] = useState(false);
+  const [navBurst, setNavBurst] = useState<NavBurst | null>(null);
+  const navBurstTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const navBurstId = useRef(0);
   const pathname = usePathname();
   const router = useRouter();
   const { settings } = useSiteSettings();
@@ -78,6 +122,12 @@ export function Header() {
     };
   }, []);
 
+  useEffect(() => () => {
+    if (navBurstTimer.current) {
+      clearTimeout(navBurstTimer.current);
+    }
+  }, []);
+
   const navItems = [
     { href: href('/'), label: messages.navigation.home },
     { href: href('/properties'), label: messages.navigation.properties },
@@ -96,6 +146,34 @@ export function Header() {
     const locationSuffix = `${window.location.search}${window.location.hash}`;
     startNavigationFeedback();
     router.push(`${targetPath}${locationSuffix}`);
+  };
+
+  const animateNavClick = (event: ReactMouseEvent<HTMLAnchorElement>, itemHref: string) => {
+    if (
+      event.button !== 0
+      || event.metaKey
+      || event.ctrlKey
+      || event.shiftKey
+      || event.altKey
+    ) {
+      return;
+    }
+
+    navBurstId.current += 1;
+    const burstId = navBurstId.current;
+    setNavBurst({
+      id: burstId,
+      href: itemHref,
+      particles: createNavParticles(),
+    });
+
+    if (navBurstTimer.current) {
+      clearTimeout(navBurstTimer.current);
+    }
+
+    navBurstTimer.current = setTimeout(() => {
+      setNavBurst((currentBurst) => currentBurst?.id === burstId ? null : currentBurst);
+    }, 1250);
   };
 
   // Hide public header on admin pages
@@ -121,32 +199,60 @@ export function Header() {
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link href={href('/')} className="flex items-center gap-2 group" aria-label="Estate">
+          <Link href={href('/')} className="notranslate flex items-center gap-2 group" aria-label="Rahat Home" translate="no">
             <span className="text-2xl font-bold tracking-tight text-primary">
-              Estate<span className="text-secondary">.</span>
+              <span className="md:hidden">RH<span className="text-secondary">.</span></span>
+              <span className="hidden md:inline">Rahat Home<span className="text-secondary">.</span></span>
             </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden xl:flex items-center gap-4">
+          <nav className="header-nav hidden xl:flex items-center gap-4">
             {navItems.map((item) => {
               const isActive = pathname === item.href || (item.href !== `/${locale}` && pathname.startsWith(`${item.href}/`));
+              const isBursting = navBurst?.href === item.href;
               return (
                 <Link
                   key={item.href}
                   href={item.href}
+                  onClick={(event) => animateNavClick(event, item.href)}
                   className={cn(
-                    'text-sm font-medium transition-colors relative py-1',
-                    isActive
+                    'header-nav__link relative isolate py-1 text-sm font-medium transition-colors',
+                    isActive || isBursting
                       ? 'text-primary font-semibold'
                       : 'text-slate-600 hover:text-primary'
                   )}
                   aria-current={isActive ? 'page' : undefined}
                 >
-                  {item.label}
-                  {isActive && (
-                    <span className="absolute -bottom-1 inset-x-0 h-0.5 bg-primary rounded-full" />
+                  <span
+                    className={cn(
+                      'header-nav__pill',
+                      (isActive || isBursting) && 'header-nav__pill--active',
+                      isBursting && 'header-nav__pill--bursting'
+                    )}
+                    aria-hidden="true"
+                  />
+                  {isBursting && navBurst && (
+                    <span key={navBurst.id} className="header-nav__burst" aria-hidden="true">
+                      {navBurst.particles.map((particle) => (
+                        <span
+                          key={particle.id}
+                          className="header-nav__particle"
+                          style={{
+                            '--particle-start-x': `${particle.startX}px`,
+                            '--particle-start-y': `${particle.startY}px`,
+                            '--particle-end-x': `${particle.endX}px`,
+                            '--particle-end-y': `${particle.endY}px`,
+                            '--particle-size': `${particle.size}px`,
+                            '--particle-delay': `${particle.delay}ms`,
+                            '--particle-duration': `${particle.duration}ms`,
+                            '--particle-color': particle.color,
+                          } as CSSProperties}
+                        />
+                      ))}
+                    </span>
                   )}
+                  <span className="relative z-[2]">{item.label}</span>
                 </Link>
               );
             })}
@@ -172,7 +278,7 @@ export function Header() {
               <div className="hidden w-px h-6 bg-slate-200 2xl:block" />
             )}
 
-            <label className="relative flex items-center text-slate-500" title={messages.navigation.language}>
+            <label className="notranslate relative flex items-center text-slate-500" title={messages.navigation.language} translate="no">
               <Globe2 className="w-4 h-4 absolute start-2.5 pointer-events-none" aria-hidden="true" />
               <span className="sr-only">{messages.navigation.language}</span>
               <select
@@ -181,7 +287,7 @@ export function Header() {
                 className="h-9 rounded-lg border border-slate-200 bg-white ps-8 pe-2 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
                 aria-label={messages.navigation.language}
               >
-                {locales.map((item) => <option key={item} value={item}>{item.toUpperCase()}</option>)}
+                {locales.map((item) => <option key={item} value={item} lang={item}>{item.toUpperCase()}</option>)}
               </select>
             </label>
 
@@ -247,13 +353,14 @@ export function Header() {
           })}
 
           <div className="pt-2 flex flex-col gap-3">
-            <div className="flex items-center gap-2" aria-label={messages.navigation.language}>
+            <div className="notranslate flex items-center gap-2" aria-label={messages.navigation.language} translate="no">
               <Globe2 className="w-4 h-4 text-primary" aria-hidden="true" />
               {locales.map((item) => (
                 <button
                   key={item}
                   type="button"
                   onClick={() => switchLocale(item)}
+                  lang={item}
                   className={cn(
                     'min-h-9 px-3 rounded-lg text-xs font-semibold border',
                     item === locale ? 'bg-primary text-white border-primary' : 'bg-white text-slate-600 border-slate-200'

@@ -3,25 +3,25 @@ import { headers } from 'next/headers';
 import './globals.css';
 import { AppShell } from '@/components/layout/AppShell';
 import { LocaleProvider } from '@/context/LocaleContext';
-import { assertLocale, localeDirection } from '@/i18n/config';
+import { assertLocale, documentLanguageTags, localeDirection } from '@/i18n/config';
 import { getMessages } from '@/i18n/messages';
 import { fetchSiteSettings } from '@/lib/api';
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
-  title: 'Estate — Агентство недвижимости',
-  description: 'Продажа, покупка и аренда недвижимости. Найдите свой идеальный дом с Estate.',
+  title: 'Rahat Home — Агентство недвижимости',
+  description: 'Продажа, покупка и аренда недвижимости. Найдите свой идеальный дом с Rahat Home.',
   openGraph: {
-    title: 'Estate — Агентство недвижимости',
-    description: 'Продажа, покупка и аренда недвижимости. Найдите свой идеальный дом с Estate.',
-    siteName: process.env.NEXT_PUBLIC_SITE_NAME || 'Estate',
+    title: 'Rahat Home — Агентство недвижимости',
+    description: 'Продажа, покупка и аренда недвижимости. Найдите свой идеальный дом с Rahat Home.',
+    siteName: process.env.NEXT_PUBLIC_SITE_NAME || 'Rahat Home',
     type: 'website',
-    images: [{ url: '/og.png', width: 1200, height: 630, alt: 'Estate — агентство недвижимости' }],
+    images: [{ url: '/og.png', width: 1200, height: 630, alt: 'Rahat Home — агентство недвижимости' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Estate — Агентство недвижимости',
-    description: 'Продажа, покупка и аренда недвижимости. Найдите свой идеальный дом с Estate.',
+    title: 'Rahat Home — Агентство недвижимости',
+    description: 'Продажа, покупка и аренда недвижимости. Найдите свой идеальный дом с Rahat Home.',
     images: ['/og.png'],
   },
 };
@@ -40,7 +40,7 @@ export default async function RootLayout({
     '@context': 'https://schema.org',
     '@type': 'RealEstateAgent',
     '@id': `${siteUrl}/#organization`,
-    name: process.env.NEXT_PUBLIC_SITE_NAME || 'Estate',
+    name: process.env.NEXT_PUBLIC_SITE_NAME || 'Rahat Home',
     url: siteUrl,
     telephone: siteSettings.phone,
     email: siteSettings.email,
@@ -59,8 +59,18 @@ export default async function RootLayout({
   };
 
   return (
-    <html lang={locale} dir={localeDirection(locale)} data-scroll-behavior="smooth">
-      <body className="min-h-screen flex flex-col font-sans">
+    <html
+      lang={documentLanguageTags[locale]}
+      dir={localeDirection(locale)}
+      className="notranslate"
+      translate="no"
+      data-scroll-behavior="smooth"
+    >
+      <head>
+        <meta name="google" content="notranslate" />
+        <meta httpEquiv="Content-Language" content={documentLanguageTags[locale]} />
+      </head>
+      <body lang={documentLanguageTags[locale]} className="min-h-screen flex flex-col font-sans">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organization).replace(/</g, '\\u003c') }}

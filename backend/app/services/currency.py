@@ -99,7 +99,7 @@ async def get_exchange_rates(db: AsyncSession) -> tuple[ExchangeRateSnapshot, bo
             async with httpx.AsyncClient(
                 follow_redirects=True,
                 timeout=httpx.Timeout(10.0),
-                headers={"User-Agent": "Estate/1.0 (+exchange-rates)"},
+                headers={"User-Agent": "RahatHome/1.0 (+exchange-rates)"},
             ) as client:
                 response = await client.get(CBR_DAILY_RATES_URL)
                 response.raise_for_status()

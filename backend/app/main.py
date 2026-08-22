@@ -11,7 +11,7 @@ settings = get_settings()
 
 is_production = settings.ENVIRONMENT == "production"
 app = FastAPI(
-    title="Estate API",
+    title="Rahat Home API",
     docs_url=None if is_production else "/docs",
     redoc_url=None if is_production else "/redoc",
     openapi_url=None if is_production else "/openapi.json",
@@ -61,4 +61,4 @@ app.include_router(uploads.router)
 
 @app.get("/")
 async def root():
-    return {"status": "ok", "project": "Estate API"}
+    return {"status": "ok", "project": "Rahat Home API"}

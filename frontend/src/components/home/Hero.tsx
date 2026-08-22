@@ -6,7 +6,7 @@ import { siteCopy } from '@/i18n/siteCopy';
 export function Hero({ locale }: { locale: Locale }) {
   const copy = siteCopy[locale].home;
   return (
-    <div className="relative py-16 md:py-24 overflow-hidden bg-primary-900">
+    <section className="sticky top-0 z-0 flex min-h-[100svh] items-center overflow-hidden bg-primary-900 py-16 md:py-24">
       {/* Background image with overlay */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-r from-primary-900/95 via-primary-900/85 to-primary-900/60 z-10" />
@@ -38,6 +38,6 @@ export function Hero({ locale }: { locale: Locale }) {
 
         </div>
       </div>
-    </div>
+    </section>
   );
 }

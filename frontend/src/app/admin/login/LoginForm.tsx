@@ -49,11 +49,11 @@ export function LoginForm({ returnTo, reason }: { returnTo?: string; reason?: st
 
       <div className="relative mx-auto grid min-h-screen max-w-7xl lg:grid-cols-[1.05fr_0.95fr]">
         <section className="hidden flex-col justify-between px-12 py-12 lg:flex xl:px-20 xl:py-16">
-          <Link href="/ru" className="flex w-fit items-center gap-3" aria-label="Estate — на сайт">
+          <Link href="/ru" className="flex w-fit items-center gap-3" aria-label="Rahat Home — на сайт">
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary text-white shadow-lg shadow-primary/30">
               <Building2 className="h-5 w-5" />
             </div>
-            <span className="text-2xl font-bold tracking-tight">Estate<span className="text-secondary">.</span></span>
+            <span className="text-2xl font-bold tracking-tight">RH<span className="text-secondary">.</span></span>
           </Link>
 
           <div className="max-w-xl pb-10">
@@ -82,14 +82,14 @@ export function LoginForm({ returnTo, reason }: { returnTo?: string; reason?: st
             </div>
           </div>
 
-          <p className="text-xs text-slate-500">Estate Admin · Доступ только для команды</p>
+          <p className="text-xs text-slate-500">Rahat Home Admin · Доступ только для команды</p>
         </section>
 
         <section className="flex min-h-screen items-center justify-center px-5 py-10 sm:px-10 lg:bg-white/[0.025] lg:backdrop-blur-sm">
           <div className="w-full max-w-md">
             <Link href="/ru" className="mb-10 flex w-fit items-center gap-2.5 lg:hidden">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary"><Building2 className="h-5 w-5" /></div>
-              <span className="text-xl font-bold">Estate<span className="text-secondary">.</span></span>
+              <span className="text-xl font-bold">RH<span className="text-secondary">.</span></span>
             </Link>
 
             <div className="rounded-[28px] border border-white/10 bg-white p-6 text-slate-900 shadow-2xl shadow-black/25 sm:p-9">

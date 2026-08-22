@@ -18,13 +18,13 @@ class SiteSettingsTranslationResponse(SiteSettingsTranslationInput):
 
 class SiteSettingsBase(BaseModel):
     phone: str = "+90 (552) 123-00-00"
-    email: str = "support@estate-agency.ru"
+    email: str = "support@rahathome.com"
     address: str = "г. Стамбул, Бейликдюзю"
     working_hours: str = "Ежедневно с 9:00 до 21:00"
-    telegram: Optional[str] = "https://t.me/estate_agency"
+    telegram: Optional[str] = "https://t.me/rahat_home"
     whatsapp: Optional[str] = "https://wa.me/905521230000"
     vk: Optional[str] = ""
-    youtube: Optional[str] = "https://youtube.com/@estate_agency"
+    youtube: Optional[str] = "https://youtube.com/@rahat_home"
     instagram: Optional[str] = ""
     facebook: Optional[str] = ""
     max_messenger: Optional[str] = ""

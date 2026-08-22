@@ -140,7 +140,7 @@ export default function AdminSettingsPage() {
               type="email"
               value={settings.email}
               onChange={(e) => handleChange('email', e.target.value)}
-              placeholder="info@estate-agency.ru"
+              placeholder="info@rahathome.com"
               className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>

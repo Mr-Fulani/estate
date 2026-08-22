@@ -72,7 +72,7 @@ class NewsTranslationResponse(NewsTranslationBase):
 class NewsArticleCreate(BaseModel):
     slug: str | None = Field(default=None, max_length=220)
     cover_image: str | None = Field(default=None, max_length=1000)
-    author: str = Field(default="Estate", min_length=1, max_length=120)
+    author: str = Field(default="Rahat Home", min_length=1, max_length=120)
     is_published: bool = False
     published_at: datetime | None = None
     translations: list[NewsTranslationBase] = Field(min_length=1)

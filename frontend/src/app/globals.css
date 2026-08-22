@@ -105,6 +105,129 @@
   }
 }
 
+/* Gooey gravity feedback for desktop header navigation. */
+.header-nav__link {
+  transform: translateZ(0);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.header-nav__link:focus {
+  outline: none;
+}
+
+.header-nav__pill {
+  position: absolute;
+  z-index: 0;
+  inset: -0.375rem -0.625rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  opacity: 0;
+  transform: scale(0.35);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.97), rgba(218, 228, 241, 0.88));
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.96),
+    inset 0 -1px 2px rgba(26, 54, 93, 0.08),
+    0 5px 14px -8px rgba(26, 54, 93, 0.55);
+  transition:
+    opacity 220ms ease,
+    transform 720ms cubic-bezier(0.16, 1.45, 0.3, 1),
+    border-color 280ms ease;
+  pointer-events: none;
+}
+
+.header-nav__link:focus-visible .header-nav__pill {
+  opacity: 1;
+  transform: scale(1);
+  border-color: rgba(26, 54, 93, 0.38);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.96),
+    0 0 0 2px rgba(255, 255, 255, 0.95),
+    0 0 0 4px rgba(26, 54, 93, 0.28),
+    0 7px 16px -9px rgba(26, 54, 93, 0.62);
+}
+
+.header-nav__pill--active {
+  opacity: 1;
+  transform: scale(1);
+  border-color: rgba(26, 54, 93, 0.12);
+}
+
+.header-nav__pill--bursting {
+  animation: estate-nav-pill-pop 780ms cubic-bezier(0.16, 1.45, 0.3, 1);
+}
+
+.header-nav__burst {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
+  filter: saturate(1.15);
+}
+
+.header-nav__particle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--particle-size);
+  height: var(--particle-size);
+  border-radius: 999px;
+  opacity: 0;
+  background: var(--particle-color);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.65),
+    0 2px 6px color-mix(in srgb, var(--particle-color), transparent 45%);
+  animation: estate-nav-particle var(--particle-duration) cubic-bezier(0.2, 0.8, 0.2, 1) var(--particle-delay) both;
+  pointer-events: none;
+}
+
+@keyframes estate-nav-pill-pop {
+  0% {
+    transform: scale(0.72, 0.55);
+    border-radius: 45% 55% 48% 52% / 60% 42% 58% 40%;
+  }
+  42% {
+    transform: scale(1.14, 1.08);
+    border-radius: 54% 46% 57% 43% / 46% 58% 42% 54%;
+  }
+  68% {
+    transform: scale(0.97, 0.95);
+  }
+  100% {
+    transform: scale(1);
+    border-radius: 999px;
+  }
+}
+
+@keyframes estate-nav-particle {
+  0% {
+    opacity: 0;
+    transform:
+      translate(-50%, -50%)
+      translate(var(--particle-start-x), var(--particle-start-y))
+      scale(0.1);
+  }
+  22% {
+    opacity: 0.95;
+    transform:
+      translate(-50%, -50%)
+      translate(var(--particle-start-x), var(--particle-start-y))
+      scale(1);
+  }
+  72% {
+    opacity: 0.92;
+    transform:
+      translate(-50%, -50%)
+      translate(var(--particle-end-x), var(--particle-end-y))
+      scale(0.78);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translate(0, 0) scale(0);
+  }
+}
+
 /* Instant feedback for client-side navigation. */
 .navigation-progress {
   position: fixed;
@@ -242,7 +365,9 @@ html[dir='rtl'] .navigation-progress__glow {
   .estate-loader__ring,
   .estate-loader__dot,
   .site-header,
-  .site-header::before {
+  .site-header::before,
+  .header-nav__pill,
+  .header-nav__particle {
     animation: none !important;
     transition: none !important;
   }

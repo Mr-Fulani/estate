@@ -94,7 +94,7 @@ export default function AdminLayout({
           <div className="p-6 border-b border-slate-800 flex items-center justify-between">
             <Link href="/admin" className="flex items-center gap-2">
               <span className="text-xl font-bold tracking-tight text-white">
-                Estate<span className="text-secondary">.</span>
+                RH<span className="text-secondary">.</span>
               </span>
               <span className="text-xs uppercase bg-secondary/20 text-secondary px-2 py-0.5 rounded font-semibold">
                 Admin

@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: PropertyPageProps): Promise<M
   const { locale, id } = await params;
   if (!isLocale(locale)) return {};
   const sourceProperty = await fetchProperty(id);
-  if (!sourceProperty) return { title: 'Estate', robots: { index: false, follow: false } };
+  if (!sourceProperty) return { title: 'Rahat Home', robots: { index: false, follow: false } };
 
   const property = localizedProperty(sourceProperty, locale);
   const translation = localizedPropertyTranslation(sourceProperty, locale);
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: PropertyPageProps): Promise<M
   const availableLocales = propertyAvailableLocales(sourceProperty);
   const canonicalLocale = hasRequestedLocale ? locale : (translation?.locale || 'ru');
   const location = [property.district, property.city].filter(Boolean).join(', ');
-  const generatedTitle = `${property.title}${location ? ` — ${location}` : ''} | Estate`;
+  const generatedTitle = `${property.title}${location ? ` — ${location}` : ''} | Rahat Home`;
   const generatedDescription = property.description?.replace(/\s+/g, ' ').trim().slice(0, 160)
     || `${property.title}. ${property.area ? `${property.area} ${canonicalLocale === 'en' ? 'sq m' : 'm²'}. ` : ''}${location}.`;
   const title = translation?.meta_title?.trim() || generatedTitle;
@@ -59,7 +59,7 @@ export async function generateMetadata({ params }: PropertyPageProps): Promise<M
       title,
       description,
       url: absoluteUrl(canonicalPath),
-      siteName: process.env.NEXT_PUBLIC_SITE_NAME || 'Estate',
+      siteName: process.env.NEXT_PUBLIC_SITE_NAME || 'Rahat Home',
       locale: openGraphLocales[canonicalLocale],
       type: 'website',
       images,

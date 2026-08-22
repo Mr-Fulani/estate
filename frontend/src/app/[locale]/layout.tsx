@@ -7,19 +7,19 @@ import { localizedAlternates } from '@/lib/seo';
 
 const metadataByLocale = {
   ru: {
-    title: 'Estate — агентство недвижимости',
+    title: 'Rahat Home — агентство недвижимости',
     description: 'Подбор, покупка и продажа недвижимости с полным сопровождением.',
   },
   en: {
-    title: 'Estate — real estate agency',
+    title: 'Rahat Home — real estate agency',
     description: 'Property search, purchase and sales with end-to-end support.',
   },
   tr: {
-    title: 'Estate — gayrimenkul danışmanlığı',
+    title: 'Rahat Home — gayrimenkul danışmanlığı',
     description: 'Uçtan uca destekle gayrimenkul arama, satın alma ve satış hizmetleri.',
   },
   ar: {
-    title: 'Estate — وكالة عقارية',
+    title: 'Rahat Home — وكالة عقارية',
     description: 'البحث عن العقارات وشراؤها وبيعها مع دعم متكامل.',
   },
 } as const;
@@ -48,7 +48,7 @@ export async function generateMetadata({
     openGraph: {
       title: copy.title,
       description: copy.description,
-      siteName: process.env.NEXT_PUBLIC_SITE_NAME || 'Estate',
+      siteName: process.env.NEXT_PUBLIC_SITE_NAME || 'Rahat Home',
       locale: openGraphLocales[locale],
       type: 'website',
       images: [{ url: '/og.png', width: 1200, height: 630, alt: copy.title }],

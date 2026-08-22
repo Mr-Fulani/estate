@@ -11,7 +11,7 @@ ARTICLES = [
     {
         "slug": "study-in-turkiye-admission-costs-recognition",
         "cover_image": "/news/study-in-turkiye.webp",
-        "author": "Estate Editorial",
+        "author": "Rahat Home Editorial",
         "published_offset_minutes": 0,
         "translations": [
             {
@@ -79,7 +79,7 @@ Bu içerik genel bilgilendirme amaçlıdır. Güncel tarih, koşul ve ücretleri
     {
         "slug": "denizistanbul-beylikduzu-coastal-living",
         "cover_image": "/news/deniz-istanbul-beylikduzu.webp",
-        "author": "Estate Property Team",
+        "author": "Rahat Home Property Team",
         "published_offset_minutes": -10,
         "translations": [
             {

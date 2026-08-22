@@ -22,13 +22,13 @@ async def get_or_create_settings(db: AsyncSession) -> SiteSetting:
         setting = SiteSetting(
             id=1,
             phone="+90 (552) 123-00-00",
-            email="support@estate-agency.ru",
+            email="support@rahathome.com",
             address="г. Стамбул, Бейликдюзю",
             working_hours="Ежедневно с 9:00 до 21:00",
-            telegram="https://t.me/estate_agency",
+            telegram="https://t.me/rahat_home",
             whatsapp="https://wa.me/905521230000",
             vk="",
-            youtube="https://youtube.com/@estate_agency",
+            youtube="https://youtube.com/@rahat_home",
         )
         setting.translations.append(SiteSettingTranslation(
             locale="ru",

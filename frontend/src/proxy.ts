@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { defaultLocale, isLocale } from '@/i18n/config';
+import { defaultLocale, documentLanguageTags, isLocale } from '@/i18n/config';
 
 
 const PUBLIC_FILE = /\.[^/]+$/;
@@ -49,7 +49,9 @@ export async function proxy(request: NextRequest) {
   if (isLocale(firstSegment)) {
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set('x-estate-locale', firstSegment);
-    return NextResponse.next({ request: { headers: requestHeaders } });
+    const response = NextResponse.next({ request: { headers: requestHeaders } });
+    response.headers.set('Content-Language', documentLanguageTags[firstSegment]);
+    return response;
   }
 
   const redirectUrl = request.nextUrl.clone();
