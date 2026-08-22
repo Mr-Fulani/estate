@@ -26,6 +26,85 @@
   background: #94a3b8;
 }
 
+/* The header gently separates from the viewport like a drop when scrolling. */
+.site-header {
+  overflow: visible;
+  border-radius: 0;
+  transform-origin: top center;
+  transition:
+    top 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    left 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    right 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-radius 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 320ms ease,
+    box-shadow 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 320ms ease;
+  will-change: top, left, right, border-radius, transform;
+}
+
+.site-header #mobile-navigation {
+  border-end-start-radius: inherit;
+  border-end-end-radius: inherit;
+}
+
+.site-header[data-detached='true'] {
+  top: clamp(0.5rem, 1.4vw, 0.875rem);
+  left: clamp(0.5rem, 2vw, 1.75rem);
+  right: clamp(0.5rem, 2vw, 1.75rem);
+  border: 1px solid rgba(203, 213, 225, 0.72);
+  border-radius: clamp(1rem, 2vw, 1.5rem);
+  background-color: rgba(255, 255, 255, 0.97);
+  box-shadow:
+    0 1.125rem 3rem -1.5rem rgba(15, 23, 42, 0.38),
+    0 0.25rem 0.875rem -0.5rem rgba(15, 23, 42, 0.16);
+  animation: estate-header-detach 620ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.site-header[data-detached='true']::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: -0.75rem;
+  left: 50%;
+  width: 3.5rem;
+  height: 1.25rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.97);
+  transform: translateX(-50%);
+  pointer-events: none;
+  animation: estate-header-drop-neck 620ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes estate-header-detach {
+  0% {
+    transform: translateY(-0.125rem) scaleX(1);
+  }
+  52% {
+    transform: translateY(0.1875rem) scaleX(0.992);
+  }
+  76% {
+    transform: translateY(-0.0625rem) scaleX(1.002);
+  }
+  100% {
+    transform: translateY(0) scaleX(1);
+  }
+}
+
+@keyframes estate-header-drop-neck {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) scaleX(1) scaleY(1);
+  }
+  55% {
+    opacity: 0.75;
+    transform: translateX(-50%) scaleX(0.45) scaleY(1.35);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) scaleX(0.08) scaleY(0.25);
+  }
+}
+
 /* Instant feedback for client-side navigation. */
 .navigation-progress {
   position: fixed;
@@ -161,7 +240,9 @@ html[dir='rtl'] .navigation-progress__glow {
 
   .navigation-progress__bar,
   .estate-loader__ring,
-  .estate-loader__dot {
+  .estate-loader__dot,
+  .site-header,
+  .site-header::before {
     animation: none !important;
     transition: none !important;
   }

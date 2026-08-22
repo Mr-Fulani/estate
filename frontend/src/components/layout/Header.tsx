@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Coins, Globe2, Menu, X, Phone } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import { useLocale } from '@/context/LocaleContext';
 import { localeLabels, locales, localeTags, localizeHref, type Locale } from '@/i18n/config';
@@ -28,6 +28,7 @@ function phoneToTel(phone: string): string {
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDetached, setIsDetached] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const { settings } = useSiteSettings();
@@ -44,6 +45,38 @@ export function Header() {
   const currencyTitle = error
     ? messages.navigation.currencyUnavailable
     : [messages.navigation.currencyRate, formattedRateDate].filter(Boolean).join(' · ');
+
+  useEffect(() => {
+    let animationFrame = 0;
+
+    const updateHeaderPosition = () => {
+      animationFrame = 0;
+      const scrollTop = Math.max(window.scrollY, 0);
+
+      setIsDetached((currentValue) => {
+        const nextValue = currentValue ? scrollTop > 2 : scrollTop > 10;
+        return nextValue === currentValue ? currentValue : nextValue;
+      });
+    };
+
+    const handleScroll = () => {
+      if (animationFrame === 0) {
+        animationFrame = window.requestAnimationFrame(updateHeaderPosition);
+      }
+    };
+
+    updateHeaderPosition();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('pageshow', updateHeaderPosition);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('pageshow', updateHeaderPosition);
+      if (animationFrame !== 0) {
+        window.cancelAnimationFrame(animationFrame);
+      }
+    };
+  }, []);
 
   const navItems = [
     { href: href('/'), label: messages.navigation.home },
@@ -81,7 +114,10 @@ export function Header() {
   ].filter((s) => s.url && typeof s.url === 'string' && s.url.trim() !== '');
 
   return (
-    <header className="fixed inset-x-0 top-0 z-[100] bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm transition-all duration-200">
+    <header
+      className="site-header fixed inset-x-0 top-0 z-[100] bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm"
+      data-detached={isDetached}
+    >
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
