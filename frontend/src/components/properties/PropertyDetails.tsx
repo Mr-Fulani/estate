@@ -1,9 +1,16 @@
 import { Property } from '@/types';
-import { formatPrice, formatArea, pluralize } from '@/lib/utils';
-import { MapPin, Bed, Maximize, Layers, Calendar, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { formatArea } from '@/lib/utils';
+import { MapPin, Bed, Maximize, Layers, Calendar } from 'lucide-react';
 import { PropertyGallery } from './PropertyGallery';
+import type { Locale } from '@/i18n/config';
+import { localizedCategoryName, localizedProperty, roomLabel } from '@/i18n/domain';
+import { siteCopy } from '@/i18n/siteCopy';
+import { CurrencyPrice } from '@/components/currency/CurrencyPrice';
 
-export function PropertyDetails({ property }: { property: Property }) {
+export function PropertyDetails({ property: sourceProperty, locale }: { property: Property; locale: Locale }) {
+  const property = localizedProperty(sourceProperty, locale);
+  const copy = siteCopy[locale].property;
+  const location = [property.city, property.district, property.address].filter(Boolean).join(', ');
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
       {/* Interactive Photo Gallery with Zoom & Thumbnails */}
@@ -12,7 +19,7 @@ export function PropertyDetails({ property }: { property: Property }) {
           images={property.images || []}
           title={property.title}
           isFeatured={property.is_featured}
-          categoryName={property.category?.name}
+          categoryName={localizedCategoryName(locale, property.category?.slug, property.category?.name)}
           isActive={property.is_active}
           statusBadge={property.status_badge}
         />
@@ -24,28 +31,24 @@ export function PropertyDetails({ property }: { property: Property }) {
         </h1>
         
         <div className="text-3xl md:text-4xl font-black text-primary mb-6">
-          {formatPrice(property.price, property.currency)}
+          <CurrencyPrice amount={property.price} sourceCurrency={property.currency} locale={locale} />
         </div>
 
         <div className="flex items-start text-slate-600 mb-8 text-base md:text-lg gap-2 bg-slate-50 p-4 rounded-xl border border-slate-100">
           <MapPin className="w-5 h-5 shrink-0 mt-0.5 text-primary" />
-          <span>
-            {property.city}
-            {property.district ? `, ${property.district}` : ''}
-            {property.address ? `, ${property.address}` : ''}
-          </span>
+          <span>{location}</span>
         </div>
 
         {/* Characteristics Grid */}
         <div className="mb-8">
-          <h3 className="text-lg font-bold text-slate-900 mb-4">Основные параметры</h3>
+          <h3 className="text-lg font-bold text-slate-900 mb-4">{copy.parameters}</h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center gap-3.5">
               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
                 <Maximize className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-xs text-slate-500 font-medium">Площадь</div>
+                <div className="text-xs text-slate-500 font-medium">{copy.area}</div>
                 <div className="text-sm md:text-base font-bold text-slate-900">{formatArea(property.area)}</div>
               </div>
             </div>
@@ -55,9 +58,9 @@ export function PropertyDetails({ property }: { property: Property }) {
                 <Bed className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-xs text-slate-500 font-medium">Комнаты</div>
+                <div className="text-xs text-slate-500 font-medium">{copy.rooms}</div>
                 <div className="text-sm md:text-base font-bold text-slate-900">
-                  {property.rooms ? pluralize(property.rooms, ['комната', 'комнаты', 'комнат']) : 'Своб. план.'}
+                  {property.rooms ? roomLabel(locale, property.rooms) : copy.freePlan}
                 </div>
               </div>
             </div>
@@ -67,9 +70,9 @@ export function PropertyDetails({ property }: { property: Property }) {
                 <Layers className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-xs text-slate-500 font-medium">Этаж</div>
+                <div className="text-xs text-slate-500 font-medium">{copy.floor}</div>
                 <div className="text-sm md:text-base font-bold text-slate-900">
-                  {property.floor ? `${property.floor} из ${property.total_floors || '?'}` : '-'}
+                  {property.floor ? `${property.floor} / ${property.total_floors || '?'}` : '-'}
                 </div>
               </div>
             </div>
@@ -79,8 +82,8 @@ export function PropertyDetails({ property }: { property: Property }) {
                 <Calendar className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-xs text-slate-500 font-medium">Год постройки</div>
-                <div className="text-sm md:text-base font-bold text-slate-900">{property.year_built || 'Не указан'}</div>
+                <div className="text-xs text-slate-500 font-medium">{copy.year}</div>
+                <div className="text-sm md:text-base font-bold text-slate-900">{property.year_built || copy.unspecified}</div>
               </div>
             </div>
           </div>
@@ -88,14 +91,14 @@ export function PropertyDetails({ property }: { property: Property }) {
 
         {/* Description */}
         <div className="mb-6">
-          <h3 className="text-lg font-bold text-slate-900 mb-4">Описание объекта</h3>
-          <div className="prose prose-slate max-w-none text-slate-700 leading-relaxed text-sm md:text-base space-y-4">
+          <h3 className="text-lg font-bold text-slate-900 mb-4">{copy.description}</h3>
+          <div className="max-w-none space-y-4 text-sm leading-relaxed text-slate-700 md:text-base">
             {property.description ? (
               property.description.split('\n').map((paragraph, i) => (
                 <p key={i}>{paragraph}</p>
               ))
             ) : (
-              <p className="text-slate-400 italic">Описание пока не добавлено</p>
+              <p className="text-slate-400 italic">{copy.noDescription}</p>
             )}
           </div>
         </div>

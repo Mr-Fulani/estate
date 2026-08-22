@@ -5,11 +5,13 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatPrice(price: number, currency: string = '₽'): string {
+export function formatPrice(price: number, currency: string = '₽', locale: string = 'ru'): string {
   if (price == null) return 'По запросу';
-  return new Intl.NumberFormat('ru-RU', {
+  const localeTag = locale === 'en' ? 'en-GB' : locale === 'tr' ? 'tr-TR' : 'ru-RU';
+  return new Intl.NumberFormat(localeTag, {
     style: 'currency',
     currency: currency === '₽' || currency === 'RUB' ? 'RUB' : currency,
+    currencyDisplay: 'narrowSymbol',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(price).replace('RUB', '₽');
@@ -18,6 +20,16 @@ export function formatPrice(price: number, currency: string = '₽'): string {
 export function formatArea(area: number | null | undefined): string {
   if (area == null) return '-';
   return `${area} м²`;
+}
+
+export function formatDate(value: string | null, locale: 'ru' | 'en' | 'tr'): string {
+  if (!value) return '';
+  const localeTag = { ru: 'ru-RU', en: 'en-GB', tr: 'tr-TR' }[locale];
+  return new Intl.DateTimeFormat(localeTag, {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(new Date(value));
 }
 
 export function pluralize(n: number | null | undefined, forms: [string, string, string]): string {

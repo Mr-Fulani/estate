@@ -48,8 +48,8 @@ export default function AdminSettingsPage() {
       setSettings(updated);
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
-    } catch (e: any) {
-      setError(e.message || 'Ошибка при сохранении настроек');
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Ошибка при сохранении настроек');
     } finally {
       setSaving(false);
     }
@@ -58,7 +58,7 @@ export default function AdminSettingsPage() {
   if (loading || !settings) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-[3px] border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }

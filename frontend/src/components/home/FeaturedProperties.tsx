@@ -1,11 +1,14 @@
 import { fetchFeaturedProperties } from '@/lib/api';
 import { PropertyGrid } from '../properties/PropertyGrid';
 import Link from 'next/link';
-import { Button } from '../ui/Button';
 import { ArrowRight } from 'lucide-react';
+import type { Locale } from '@/i18n/config';
+import { localizeHref } from '@/i18n/config';
+import { siteCopy } from '@/i18n/siteCopy';
 
-export async function FeaturedProperties() {
+export async function FeaturedProperties({ locale }: { locale: Locale }) {
   const properties = await fetchFeaturedProperties();
+  const copy = siteCopy[locale].home;
 
   return (
     <section className="py-20 bg-slate-50">
@@ -13,21 +16,19 @@ export async function FeaturedProperties() {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div className="max-w-2xl">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-              Рекомендуемые объекты
+              {copy.featuredTitle}
             </h2>
             <p className="text-lg text-slate-600">
-              Ознакомьтесь с нашими лучшими предложениями, отобранными экспертами Estate.
+              {copy.featuredDescription}
             </p>
           </div>
-          <Link href="/properties">
-            <Button variant="outline" className="group flex items-center gap-2">
-              Смотреть все
+          <Link href={localizeHref(locale, '/properties')} className="group inline-flex items-center justify-center gap-2 rounded-md border-2 border-primary px-4 py-2 text-primary transition-colors hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+              {copy.viewAll}
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Button>
           </Link>
         </div>
 
-        <PropertyGrid properties={properties} />
+        <PropertyGrid properties={properties} locale={locale} />
       </div>
     </section>
   );

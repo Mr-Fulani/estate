@@ -1,0 +1,107 @@
+import type { Locale } from './config';
+import type { LocalizedMessages } from './types';
+
+
+const messages: Record<Locale, LocalizedMessages> = {
+  ru: {
+    locale: 'ru',
+    navigation: {
+      home: 'Главная',
+      properties: 'Каталог',
+      services: 'Услуги',
+      news: 'Новости',
+      reviews: 'Отзывы',
+      about: 'О нас',
+      contact: 'Контакты',
+      request: 'Оставить заявку',
+      openMenu: 'Открыть меню',
+      closeMenu: 'Закрыть меню',
+      language: 'Язык',
+      currency: 'Валюта',
+      currencyRate: 'Курс ЦБ РФ',
+      currencyUnavailable: 'Курсы временно недоступны',
+    },
+    common: {
+      loading: 'Загрузка…',
+      retry: 'Повторить',
+      back: 'Назад',
+      readMore: 'Читать далее',
+      noResults: 'Ничего не найдено',
+      previous: 'Назад',
+      next: 'Далее',
+      errorTitle: 'Не удалось загрузить страницу',
+      errorDescription: 'Сервис временно недоступен. Попробуйте ещё раз через несколько секунд.',
+      notFoundTitle: 'Страница не найдена',
+      notFoundDescription: 'Возможно, ссылка устарела или страница была перемещена.',
+    },
+  },
+  en: {
+    locale: 'en',
+    navigation: {
+      home: 'Home',
+      properties: 'Properties',
+      services: 'Services',
+      news: 'News',
+      reviews: 'Reviews',
+      about: 'About',
+      contact: 'Contact',
+      request: 'Send an enquiry',
+      openMenu: 'Open menu',
+      closeMenu: 'Close menu',
+      language: 'Language',
+      currency: 'Currency',
+      currencyRate: 'Bank of Russia rate',
+      currencyUnavailable: 'Rates are temporarily unavailable',
+    },
+    common: {
+      loading: 'Loading…',
+      retry: 'Try again',
+      back: 'Back',
+      readMore: 'Read more',
+      noResults: 'No results found',
+      previous: 'Previous',
+      next: 'Next',
+      errorTitle: 'We could not load this page',
+      errorDescription: 'The service is temporarily unavailable. Please try again in a few seconds.',
+      notFoundTitle: 'Page not found',
+      notFoundDescription: 'The link may be outdated or the page may have moved.',
+    },
+  },
+  tr: {
+    locale: 'tr',
+    navigation: {
+      home: 'Ana sayfa',
+      properties: 'İlanlar',
+      services: 'Hizmetler',
+      news: 'Haberler',
+      reviews: 'Yorumlar',
+      about: 'Hakkımızda',
+      contact: 'İletişim',
+      request: 'Talep gönder',
+      openMenu: 'Menüyü aç',
+      closeMenu: 'Menüyü kapat',
+      language: 'Dil',
+      currency: 'Para birimi',
+      currencyRate: 'Rusya Merkez Bankası kuru',
+      currencyUnavailable: 'Kurlara geçici olarak ulaşılamıyor',
+    },
+    common: {
+      loading: 'Yükleniyor…',
+      retry: 'Tekrar dene',
+      back: 'Geri',
+      readMore: 'Devamını oku',
+      noResults: 'Sonuç bulunamadı',
+      previous: 'Önceki',
+      next: 'Sonraki',
+      errorTitle: 'Sayfa yüklenemedi',
+      errorDescription: 'Hizmete geçici olarak ulaşılamıyor. Lütfen birkaç saniye sonra tekrar deneyin.',
+      notFoundTitle: 'Sayfa bulunamadı',
+      notFoundDescription: 'Bağlantı güncel olmayabilir veya sayfa taşınmış olabilir.',
+    },
+  },
+};
+
+
+export function getMessages(locale: Locale): LocalizedMessages {
+  return messages[locale];
+}

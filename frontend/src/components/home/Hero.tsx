@@ -1,7 +1,10 @@
 import { Building, Shield, Users } from 'lucide-react';
 import { HeroSearch } from './HeroSearch';
+import type { Locale } from '@/i18n/config';
+import { siteCopy } from '@/i18n/siteCopy';
 
-export function Hero() {
+export function Hero({ locale }: { locale: Locale }) {
+  const copy = siteCopy[locale].home;
   return (
     <div className="relative py-16 md:py-24 overflow-hidden bg-primary-900">
       {/* Background image with overlay */}
@@ -16,13 +19,13 @@ export function Hero() {
       <div className="container mx-auto px-4 md:px-6 relative z-10">
         <div className="max-w-3xl">
           <span className="inline-block px-3.5 py-1.5 rounded-full bg-white/10 text-secondary text-sm font-semibold tracking-wide uppercase mb-4 backdrop-blur-sm border border-white/10">
-            Агентство премиальной недвижимости
+            {copy.eyebrow}
           </span>
           <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-5">
-            Найдите идеальную недвижимость с Estate
+            {copy.title}
           </h1>
           <p className="text-lg md:text-xl text-primary-100 mb-8 leading-relaxed max-w-2xl">
-            Эксклюзивные предложения квартир, домов и коммерческой недвижимости. Мы поможем сделать правильный выбор и проведем сделку под ключ.
+            {copy.description}
           </p>
           
           {/* Interactive Search Component */}
@@ -36,7 +39,7 @@ export function Hero() {
               </div>
               <div>
                 <div className="text-xl md:text-2xl font-bold text-white">500+</div>
-                <div className="text-xs text-primary-200">Объектов в базе</div>
+                <div className="text-xs text-primary-200">{copy.stats[0]}</div>
               </div>
             </div>
 
@@ -46,7 +49,7 @@ export function Hero() {
               </div>
               <div>
                 <div className="text-xl md:text-2xl font-bold text-white">10+</div>
-                <div className="text-xs text-primary-200">Лет опыта</div>
+                <div className="text-xs text-primary-200">{copy.stats[1]}</div>
               </div>
             </div>
 
@@ -56,7 +59,7 @@ export function Hero() {
               </div>
               <div>
                 <div className="text-xl md:text-2xl font-bold text-white">1000+</div>
-                <div className="text-xs text-primary-200">Клиентов</div>
+                <div className="text-xs text-primary-200">{copy.stats[2]}</div>
               </div>
             </div>
           </div>

@@ -1,10 +1,10 @@
-.PHONY: dev down backend frontend migrate makemigrations seed install
+.PHONY: dev down backend frontend migrate makemigrations seed create-founder install
 
 dev:
-	docker-compose up --build
+	docker compose up --build
 
 down:
-	docker-compose down
+	docker compose down
 
 backend:
 	cd backend && uvicorn app.main:app --reload
@@ -20,6 +20,9 @@ makemigrations:
 
 seed:
 	cd backend && python -m app.seed
+
+create-founder:
+	docker compose exec api python -m app.cli create-founder --username "$(username)" --email "$(email)" --name "$(name)"
 
 install:
 	pip install -r backend/requirements.txt && cd frontend && npm install

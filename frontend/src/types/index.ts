@@ -6,6 +6,17 @@ export interface Category {
   created_at: string;
 }
 
+export type CurrencyCode = 'RUB' | 'USD' | 'EUR' | 'TRY';
+
+export interface ExchangeRatesResponse {
+  base: 'RUB';
+  rates: Record<CurrencyCode, number>;
+  effective_date: string;
+  fetched_at: string;
+  source: string;
+  stale: boolean;
+}
+
 export interface Property {
   id: number;
   title: string;
@@ -23,23 +34,166 @@ export interface Property {
   year_built: number | null;
   is_featured: boolean;
   is_active: boolean;
+  transaction_type: 'sale' | 'rent';
+  market_status: 'available' | 'reserved' | 'sold' | 'rented' | 'archived';
   status_badge?: string | null;
   images: string[];
   category_id: number;
   category: Category | null;
+  translations?: PropertyTranslation[];
   created_at: string;
   updated_at: string;
 }
 
+export interface PropertyTranslation {
+  id?: number;
+  locale: 'ru' | 'en' | 'tr';
+  title: string;
+  description?: string | null;
+  city?: string | null;
+  district?: string | null;
+  address?: string | null;
+  meta_title?: string | null;
+  meta_description?: string | null;
+}
+
+export interface NewsArticle {
+  id: number;
+  slug: string;
+  locale: 'ru' | 'en' | 'tr';
+  title: string;
+  excerpt: string;
+  content: string;
+  meta_title: string | null;
+  meta_description: string | null;
+  cover_image: string | null;
+  author: string;
+  published_at: string | null;
+  media: NewsMedia[];
+}
+
+export type NewsMediaType = 'image' | 'youtube';
+
+export interface NewsMedia {
+  id?: number;
+  media_type: NewsMediaType;
+  url: string;
+  position: number;
+}
+
+export interface NewsListResponse {
+  items: NewsArticle[];
+  total: number;
+  page: number;
+  per_page: number;
+}
+
+export interface NewsTranslation {
+  id?: number;
+  locale: 'ru' | 'en' | 'tr';
+  title: string;
+  excerpt: string;
+  content: string;
+  meta_title?: string | null;
+  meta_description?: string | null;
+}
+
+export interface NewsAdminArticle {
+  id: number;
+  slug: string;
+  cover_image: string | null;
+  author: string;
+  is_published: boolean;
+  published_at: string | null;
+  created_at: string;
+  updated_at: string | null;
+  translations: NewsTranslation[];
+  media: NewsMedia[];
+}
+
+export interface NewsFormData {
+  slug?: string;
+  cover_image?: string | null;
+  author: string;
+  is_published: boolean;
+  published_at?: string | null;
+  translations: NewsTranslation[];
+  media: NewsMedia[];
+}
+
 export interface ContactRequest {
   id?: number;
-  name: string;
-  email: string;
+  name?: string | null;
+  email?: string | null;
   phone?: string | null;
-  message: string;
+  message?: string | null;
   property_id?: number | null;
-  status?: 'new' | 'contacted' | 'closed' | string;
+  property?: { id: number; title: string; slug: string; market_status: string } | null;
+  kind?: 'form' | 'click' | 'manual' | 'webhook';
+  channel?: 'form' | 'phone' | 'email' | 'whatsapp' | 'telegram' | 'max' | 'instagram' | 'facebook' | 'vk';
+  source?: string;
+  locale?: 'ru' | 'en' | 'tr' | null;
+  page_url?: string | null;
+  referrer?: string | null;
+  utm_source?: string | null;
+  utm_medium?: string | null;
+  utm_campaign?: string | null;
+  utm_content?: string | null;
+  utm_term?: string | null;
+  session_id?: string | null;
+  external_conversation_id?: string | null;
+  external_username?: string | null;
+  status?: 'new' | 'contacted' | 'qualified' | 'viewing' | 'negotiation' | 'won' | 'lost' | string;
+  outcome?: 'sold' | 'rented' | null;
+  deal_value?: number | null;
+  deal_currency?: string;
+  assigned_to?: string | null;
+  next_follow_up_at?: string | null;
+  closed_at?: string | null;
+  is_read?: boolean;
+  activities?: LeadActivity[];
   created_at?: string;
+  updated_at?: string | null;
+}
+
+export interface LeadActivity {
+  id: number;
+  event_type: string;
+  from_status?: string | null;
+  to_status?: string | null;
+  note?: string | null;
+  event_data?: Record<string, unknown> | null;
+  created_at: string;
+}
+
+export interface ContactAttribution {
+  property_id?: number | null;
+  locale?: 'ru' | 'en' | 'tr';
+  source: string;
+  page_url?: string;
+  referrer?: string;
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  utm_content?: string;
+  utm_term?: string;
+  session_id?: string;
+}
+
+export interface ContactTrackData extends ContactAttribution {
+  kind: 'click';
+  channel: Exclude<NonNullable<ContactRequest['channel']>, 'form'>;
+}
+
+export interface ContactUpdateData {
+  status?: string;
+  outcome?: 'sold' | 'rented';
+  deal_value?: number;
+  deal_currency?: string;
+  assigned_to?: string;
+  next_follow_up_at?: string | null;
+  is_read?: boolean;
+  note?: string;
 }
 
 export interface PropertyListResponse {
@@ -56,6 +210,7 @@ export interface PropertyFilter {
   min_price?: number;
   max_price?: number;
   rooms?: number;
+  min_rooms?: number;
   min_area?: number;
   max_area?: number;
   include_inactive?: boolean;
@@ -68,6 +223,16 @@ export interface AdminStats {
   total_contacts: number;
   new_contacts: number;
   categories_count: number;
+  form_leads: number;
+  messenger_clicks: number;
+  messenger_messages: number;
+  active_leads: number;
+  won_deals: number;
+  lost_leads: number;
+  sold_properties: number;
+  rented_properties: number;
+  total_deal_value: number;
+  pending_reviews: number;
 }
 
 export interface PropertyFormData {
@@ -88,7 +253,10 @@ export interface PropertyFormData {
   category_id: number;
   is_featured?: boolean;
   is_active?: boolean;
+  transaction_type?: 'sale' | 'rent';
+  market_status?: 'available' | 'reserved' | 'sold' | 'rented' | 'archived';
   status_badge?: string | null;
+  translations?: Array<Omit<PropertyTranslation, 'id'>>;
 }
 
 export interface SiteSettings {
@@ -104,4 +272,107 @@ export interface SiteSettings {
   instagram?: string | null;
   facebook?: string | null;
   max_messenger?: string | null;
+}
+
+export interface ReviewTranslation {
+  id?: number;
+  locale: 'ru' | 'en' | 'tr';
+  content: string;
+  reviewer_role?: string | null;
+  company_response?: string | null;
+}
+
+export interface PublicReview {
+  id: number;
+  reviewer_name: string;
+  rating: number;
+  locale: 'ru' | 'en' | 'tr';
+  content: string;
+  reviewer_role?: string | null;
+  company_response?: string | null;
+  is_verified: boolean;
+  property_title?: string | null;
+  published_at?: string | null;
+}
+
+export interface ReviewListResponse {
+  items: PublicReview[];
+  total: number;
+  page: number;
+  per_page: number;
+}
+
+export interface AdminReview {
+  id: number;
+  reviewer_name?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  rating?: number | null;
+  source_locale: 'ru' | 'en' | 'tr';
+  status: 'invited' | 'pending' | 'published' | 'rejected';
+  is_verified: boolean;
+  is_featured: boolean;
+  display_order: number;
+  consent_given: boolean;
+  property_id?: number | null;
+  contact_id?: number | null;
+  property?: { id: number; title: string; slug: string } | null;
+  contact?: { id: number; name?: string | null; status: string; outcome?: string | null } | null;
+  invitation_token?: string | null;
+  invitation_expires_at?: string | null;
+  published_at?: string | null;
+  created_at: string;
+  updated_at?: string | null;
+  translations: ReviewTranslation[];
+}
+
+export interface ReviewSubmissionData {
+  reviewer_name: string;
+  email?: string;
+  phone?: string;
+  rating: number;
+  locale: 'ru' | 'en' | 'tr';
+  content: string;
+  reviewer_role?: string;
+  property_id?: number;
+  consent_given: true;
+  website?: string;
+}
+
+export interface ReviewInvitation {
+  reviewer_name?: string | null;
+  property_title?: string | null;
+  locale: 'ru' | 'en' | 'tr';
+  expires_at: string;
+}
+
+export type AdminRole = 'founder' | 'admin' | 'manager' | 'editor';
+
+export interface AdminUser {
+  id: number;
+  username: string;
+  email: string;
+  full_name: string;
+  role: AdminRole;
+  is_active: boolean;
+  last_login_at?: string | null;
+  created_at: string;
+}
+
+export interface AdminAuditLog {
+  id: number;
+  action: string;
+  resource_type: string;
+  resource_id?: string | null;
+  details?: Record<string, unknown> | null;
+  ip_address?: string | null;
+  created_at: string;
+  user?: AdminUser | null;
+}
+
+export interface AdminAuditLogList {
+  items: AdminAuditLog[];
+  total: number;
+  page: number;
+  per_page: number;
 }

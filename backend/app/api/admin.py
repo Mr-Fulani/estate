@@ -6,6 +6,9 @@ from app.database import get_db
 from app.models.property import Property
 from app.models.contact import ContactRequest
 from app.models.category import Category
+from app.models.review import Review
+from app.models.admin_user import AdminUser
+from app.security import require_permission
 
 router = APIRouter(prefix="/api/v1/admin", tags=["Admin"])
 
@@ -16,9 +19,22 @@ class AdminStatsResponse(BaseModel):
     total_contacts: int
     new_contacts: int
     categories_count: int
+    form_leads: int
+    messenger_clicks: int
+    messenger_messages: int
+    active_leads: int
+    won_deals: int
+    lost_leads: int
+    sold_properties: int
+    rented_properties: int
+    total_deal_value: float
+    pending_reviews: int
 
 @router.get("/stats", response_model=AdminStatsResponse)
-async def get_admin_stats(db: AsyncSession = Depends(get_db)):
+async def get_admin_stats(
+    _: AdminUser = Depends(require_permission("dashboard:view")),
+    db: AsyncSession = Depends(get_db),
+):
     # Total properties
     res_prop = await db.execute(select(func.count(Property.id)))
     total_properties = res_prop.scalar_one()
@@ -39,6 +55,42 @@ async def get_admin_stats(db: AsyncSession = Depends(get_db)):
     res_new = await db.execute(select(func.count(ContactRequest.id)).where(ContactRequest.status == "new"))
     new_contacts = res_new.scalar_one()
 
+    res_forms = await db.execute(select(func.count(ContactRequest.id)).where(ContactRequest.kind == "form"))
+    form_leads = res_forms.scalar_one()
+
+    res_messenger = await db.execute(
+        select(func.count(ContactRequest.id)).where(
+            ContactRequest.kind == "click",
+            ContactRequest.channel.in_(["whatsapp", "telegram", "max", "instagram", "facebook", "vk"]),
+        )
+    )
+    messenger_clicks = res_messenger.scalar_one()
+    res_messages = await db.execute(select(func.count(ContactRequest.id)).where(ContactRequest.kind == "webhook"))
+    messenger_messages = res_messages.scalar_one()
+
+    res_active_leads = await db.execute(
+        select(func.count(ContactRequest.id)).where(
+            ContactRequest.status.in_(["contacted", "qualified", "viewing", "negotiation"])
+        )
+    )
+    active_leads = res_active_leads.scalar_one()
+
+    res_won = await db.execute(select(func.count(ContactRequest.id)).where(ContactRequest.status == "won"))
+    won_deals = res_won.scalar_one()
+    res_lost = await db.execute(select(func.count(ContactRequest.id)).where(ContactRequest.status == "lost"))
+    lost_leads = res_lost.scalar_one()
+
+    res_sold = await db.execute(select(func.count(Property.id)).where(Property.market_status == "sold"))
+    sold_properties = res_sold.scalar_one()
+    res_rented = await db.execute(select(func.count(Property.id)).where(Property.market_status == "rented"))
+    rented_properties = res_rented.scalar_one()
+    res_value = await db.execute(
+        select(func.coalesce(func.sum(ContactRequest.deal_value), 0)).where(ContactRequest.status == "won")
+    )
+    total_deal_value = float(res_value.scalar_one())
+    res_reviews = await db.execute(select(func.count(Review.id)).where(Review.status == "pending"))
+    pending_reviews = res_reviews.scalar_one()
+
     # Categories count
     res_cat = await db.execute(select(func.count(Category.id)))
     categories_count = res_cat.scalar_one()
@@ -50,4 +102,14 @@ async def get_admin_stats(db: AsyncSession = Depends(get_db)):
         total_contacts=total_contacts,
         new_contacts=new_contacts,
         categories_count=categories_count,
+        form_leads=form_leads,
+        messenger_clicks=messenger_clicks,
+        messenger_messages=messenger_messages,
+        active_leads=active_leads,
+        won_deals=won_deals,
+        lost_leads=lost_leads,
+        sold_properties=sold_properties,
+        rented_properties=rented_properties,
+        total_deal_value=total_deal_value,
+        pending_reviews=pending_reviews,
     )

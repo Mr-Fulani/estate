@@ -1,15 +1,18 @@
 import asyncio
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.database import AsyncSessionLocal, engine, Base
+from sqlalchemy import func, select
+from app.database import AsyncSessionLocal
 from app.models.category import Category
 from app.models.property import Property
+from app.models.property_translation import PropertyTranslation
+from app.models.news import NewsArticle, NewsTranslation
 
 async def seed_data():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
-        await conn.run_sync(Base.metadata.create_all)
-
     async with AsyncSessionLocal() as db:
+        existing_categories = await db.scalar(select(func.count(Category.id)))
+        if existing_categories:
+            print("Seed skipped: the database already contains categories.")
+            return
+
         # Categories
         cat_flat = Category(name="Квартира", slug="kvartira", description="Городские квартиры")
         cat_house = Category(name="Дом", slug="dom", description="Частные дома и коттеджи")
@@ -98,6 +101,60 @@ async def seed_data():
         ]
         
         db.add_all(props)
+        await db.flush()
+
+        property_titles = {
+            props[0].id: {
+                "en": ("Cozy two-bedroom apartment in the city centre", "A renovated apartment in a central location."),
+                "tr": ("Şehir merkezinde rahat iki odalı daire", "Merkezi konumda yenilenmiş ve ferah bir daire."),
+            },
+            props[1].id: {
+                "en": ("Country house with a swimming pool", "A spacious family home with a private pool."),
+                "tr": ("Havuzlu müstakil ev", "Özel havuzlu, geniş bir aile evi."),
+            },
+        }
+        for prop in props:
+            prop.translations.append(
+                PropertyTranslation(locale="ru", title=prop.title, description=prop.description)
+            )
+            for locale, (title, description) in property_titles.get(prop.id, {}).items():
+                prop.translations.append(
+                    PropertyTranslation(locale=locale, title=title, description=description)
+                )
+
+        article = NewsArticle(
+            slug="estate-market-guide-2026",
+            cover_image="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1600&q=80",
+            author="Estate Research",
+            is_published=True,
+            translations=[
+                NewsTranslation(
+                    locale="ru",
+                    title="Как выбирать недвижимость в 2026 году",
+                    excerpt="Короткий гид по локации, документам и потенциалу объекта.",
+                    content="Покупка начинается не с просмотра фотографий, а с определения цели.\n\nОцените район, транспорт, документы и расходы на владение до внесения аванса.",
+                    meta_title="Как выбрать недвижимость в 2026 году — Estate",
+                    meta_description="Практический гид Estate по выбору объекта недвижимости.",
+                ),
+                NewsTranslation(
+                    locale="en",
+                    title="How to choose property in 2026",
+                    excerpt="A concise guide to location, documents and long-term value.",
+                    content="A successful purchase starts with a clear goal, not with listing photos.\n\nReview the neighbourhood, transport, documents and ownership costs before paying a deposit.",
+                    meta_title="How to choose property in 2026 — Estate",
+                    meta_description="Estate's practical guide to choosing the right property.",
+                ),
+                NewsTranslation(
+                    locale="tr",
+                    title="2026'da gayrimenkul nasıl seçilir?",
+                    excerpt="Konum, belgeler ve uzun vadeli değer için kısa bir rehber.",
+                    content="Başarılı bir satın alma ilan fotoğraflarıyla değil, net bir hedefle başlar.\n\nKapora vermeden önce bölgeyi, ulaşımı, belgeleri ve mülkiyet giderlerini inceleyin.",
+                    meta_title="2026'da gayrimenkul seçimi — Estate",
+                    meta_description="Doğru gayrimenkulü seçmek için Estate'in pratik rehberi.",
+                ),
+            ],
+        )
+        db.add(article)
         await db.commit()
         print("Database seeded successfully!")
 

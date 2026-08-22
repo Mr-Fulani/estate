@@ -2,17 +2,19 @@ import Link from 'next/link';
 import { PlusCircle, Building2 } from 'lucide-react';
 import { fetchProperties, fetchCategories } from '@/lib/api';
 import { PropertiesTable } from './PropertiesTable';
+import { getAdminCookieHeader } from '@/lib/adminServer';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminPropertiesPage() {
+  const adminCookie = await getAdminCookieHeader();
   const [propsData, categories] = await Promise.all([
-    fetchProperties({ per_page: 100, sort_by: 'created_at', order: 'desc', include_inactive: true }),
+    fetchProperties({ per_page: 100, sort_by: 'created_at', order: 'desc', include_inactive: true }, adminCookie),
     fetchCategories(),
   ]);
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

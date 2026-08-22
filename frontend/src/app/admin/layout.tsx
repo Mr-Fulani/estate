@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { 
   LayoutDashboard, 
   Building2, 
@@ -9,19 +10,37 @@ import {
   Tags, 
   Globe, 
   PlusCircle, 
-  ShieldAlert,
   ChevronRight,
-  Settings
+  Settings,
+  Newspaper,
+  Menu,
+  X,
+  Star,
+  ShieldCheck,
+  LogOut,
+  UserRound,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { fetchCurrentAdmin, logoutAdmin } from '@/lib/api';
+import type { AdminRole, AdminUser } from '@/types';
 
 const adminNavItems = [
-  { href: '/admin', label: 'Дашборд', icon: LayoutDashboard },
-  { href: '/admin/properties', label: 'Объекты', icon: Building2 },
-  { href: '/admin/leads', label: 'Заявки и лиды', icon: Users },
-  { href: '/admin/categories', label: 'Категории', icon: Tags },
-  { href: '/admin/settings', label: 'Настройки сайта', icon: Settings },
+  { href: '/admin', label: 'Дашборд', icon: LayoutDashboard, roles: ['founder', 'admin', 'manager', 'editor'] },
+  { href: '/admin/properties', label: 'Объекты', icon: Building2, roles: ['founder', 'admin', 'manager', 'editor'] },
+  { href: '/admin/news', label: 'Новости', icon: Newspaper, roles: ['founder', 'admin', 'editor'] },
+  { href: '/admin/leads', label: 'Лиды и сделки', icon: Users, roles: ['founder', 'admin', 'manager'] },
+  { href: '/admin/reviews', label: 'Отзывы', icon: Star, roles: ['founder', 'admin', 'manager', 'editor'] },
+  { href: '/admin/categories', label: 'Категории', icon: Tags, roles: ['founder', 'admin', 'manager'] },
+  { href: '/admin/settings', label: 'Настройки сайта', icon: Settings, roles: ['founder', 'admin'] },
+  { href: '/admin/security', label: 'Команда и доступ', icon: ShieldCheck, roles: ['founder'] },
 ];
+
+const roleLabels: Record<AdminRole, string> = {
+  founder: 'Founder',
+  admin: 'Администратор',
+  manager: 'Менеджер',
+  editor: 'Редактор',
+};
 
 export default function AdminLayout({
   children,
@@ -29,11 +48,36 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [user, setUser] = useState<AdminUser | null>(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  useEffect(() => setIsMenuOpen(false), [pathname]);
+
+  useEffect(() => {
+    if (pathname === '/admin/login') return;
+    fetchCurrentAdmin().then(setUser).catch(() => undefined);
+  }, [pathname]);
+
+  if (pathname === '/admin/login') return <>{children}</>;
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await logoutAdmin();
+    } finally {
+      window.location.assign('/admin/login');
+    }
+  };
+
+  const visibleNavItems = adminNavItems.filter(
+    (item) => !user || item.roles.includes(user.role),
+  );
 
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col md:flex-row">
       {/* Admin Sidebar */}
-      <aside className="w-full md:w-64 bg-slate-900 text-white flex-shrink-0 flex flex-col justify-between">
+      <aside className="w-full bg-slate-900 text-white flex-shrink-0 flex flex-col justify-between md:sticky md:top-0 md:h-screen md:w-64">
         <div>
           {/* Logo / Admin Header */}
           <div className="p-6 border-b border-slate-800 flex items-center justify-between">
@@ -45,10 +89,14 @@ export default function AdminLayout({
                 Admin
               </span>
             </Link>
+            <button type="button" onClick={() => setIsMenuOpen((open) => !open)} className="rounded-xl bg-slate-800 p-2 text-slate-200 md:hidden" aria-label={isMenuOpen ? 'Закрыть меню' : 'Открыть меню'} aria-expanded={isMenuOpen} aria-controls="admin-navigation">
+              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
           </div>
 
+          <div id="admin-navigation" className={cn(!isMenuOpen && 'hidden md:block')}>
           {/* Quick Create Button */}
-          <div className="p-4">
+          <div className="grid gap-2 p-4">
             <Link
               href="/admin/properties/new"
               className="w-full bg-primary-600 hover:bg-primary-500 text-white text-sm font-semibold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md"
@@ -56,11 +104,18 @@ export default function AdminLayout({
               <PlusCircle className="w-4 h-4" />
               Добавить объект
             </Link>
+            <Link
+              href="/admin/news/new"
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-slate-600 hover:bg-slate-800"
+            >
+              <Newspaper className="h-4 w-4" />
+              Добавить новость
+            </Link>
           </div>
 
           {/* Navigation Links */}
           <nav className="px-3 py-2 space-y-1">
-            {adminNavItems.map((item) => {
+            {visibleNavItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
               return (
@@ -83,12 +138,35 @@ export default function AdminLayout({
               );
             })}
           </nav>
+          </div>
         </div>
 
         {/* Sidebar Footer */}
-        <div className="p-4 border-t border-slate-800">
+        <div className={cn('p-4 border-t border-slate-800', !isMenuOpen && 'hidden md:block')}>
+          {user && (
+            <div className="mb-3 rounded-xl border border-slate-700 bg-slate-800/70 p-3">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary-700 text-white">
+                  <UserRound className="h-4 w-4" />
+                </div>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-white">{user.full_name}</p>
+                  <p className="truncate text-[11px] text-slate-400">@{user.username} · {roleLabels[user.role]}</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-300 transition hover:border-slate-600 hover:bg-slate-700 hover:text-white disabled:opacity-50"
+              >
+                <LogOut className="h-3.5 w-3.5" />
+                {isLoggingOut ? 'Выходим…' : 'Выйти'}
+              </button>
+            </div>
+          )}
           <Link
-            href="/"
+            href="/ru"
             className="flex items-center gap-2 text-xs font-medium text-slate-400 hover:text-white transition-colors py-2 px-3 rounded-lg hover:bg-slate-800"
           >
             <Globe className="w-4 h-4 text-secondary" />
@@ -98,7 +176,7 @@ export default function AdminLayout({
       </aside>
 
       {/* Main Admin Content */}
-      <main className="flex-1 p-6 md:p-10 overflow-y-auto max-w-7xl">
+      <main className="min-w-0 flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 2xl:p-10">
         {children}
       </main>
     </div>

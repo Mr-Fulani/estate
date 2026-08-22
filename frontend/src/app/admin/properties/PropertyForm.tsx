@@ -14,13 +14,15 @@ import {
   Save, 
   ArrowLeft,
   Star,
-  ArrowLeftRight,
   ChevronLeft,
   ChevronRight,
-  GripVertical
+  GripVertical,
+  Languages,
+  SearchCheck,
 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { startNavigationFeedback } from '@/components/layout/NavigationFeedback';
 
 const sampleImages = [
   { name: 'Квартира премиум', url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80' },
@@ -29,6 +31,8 @@ const sampleImages = [
   { name: 'Светлая гостиная', url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80' },
   { name: 'Офис / Коммерция', url: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80' },
 ];
+
+const propertyLocales = ['ru', 'en', 'tr'] as const;
 
 export function PropertyForm({
   initialData,
@@ -58,7 +62,22 @@ export function PropertyForm({
     category_id: initialData?.category_id || (categories[0]?.id || 1),
     is_featured: initialData?.is_featured ?? false,
     is_active: initialData?.is_active ?? true,
+    transaction_type: initialData?.transaction_type ?? 'sale',
+    market_status: initialData?.market_status ?? 'available',
     status_badge: initialData?.status_badge ?? 'Актуально',
+    translations: propertyLocales.map((locale) => {
+      const existing = initialData?.translations?.find((item) => item.locale === locale);
+      return {
+        locale,
+        title: existing?.title || (locale === 'ru' ? initialData?.title || '' : ''),
+        description: existing?.description || (locale === 'ru' ? initialData?.description || '' : ''),
+        city: existing?.city || (locale === 'ru' ? initialData?.city || '' : ''),
+        district: existing?.district || (locale === 'ru' ? initialData?.district || '' : ''),
+        address: existing?.address || (locale === 'ru' ? initialData?.address || '' : ''),
+        meta_title: existing?.meta_title || '',
+        meta_description: existing?.meta_description || '',
+      };
+    }),
   });
 
   const [newImageUrl, setNewImageUrl] = useState('');
@@ -74,9 +93,29 @@ export function PropertyForm({
       setFormData((prev) => ({ ...prev, [name]: checked }));
     } else if (['price', 'area', 'rooms', 'floor', 'total_floors', 'year_built', 'category_id'].includes(name)) {
       setFormData((prev) => ({ ...prev, [name]: value === '' ? undefined : Number(value) }));
+    } else if (name === 'market_status') {
+      const statusLabels: Record<string, string> = { available: 'Актуально', reserved: 'В брони', sold: 'Продано', rented: 'Сдано', archived: 'В архиве' };
+      setFormData((prev) => ({ ...prev, market_status: value as PropertyFormData['market_status'], status_badge: statusLabels[value] || prev.status_badge }));
     } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+        translations: ['title', 'description', 'city', 'district', 'address'].includes(name)
+          ? prev.translations?.map((item) => item.locale === 'ru' ? { ...item, [name]: value } : item)
+          : prev.translations,
+      }));
     }
+  };
+
+  const updateTranslation = (
+    locale: 'ru' | 'en' | 'tr',
+    field: 'title' | 'description' | 'city' | 'district' | 'address' | 'meta_title' | 'meta_description',
+    value: string,
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      translations: prev.translations?.map((item) => item.locale === locale ? { ...item, [field]: value } : item),
+    }));
   };
 
   const handleAddImage = (urlToAdd?: string) => {
@@ -152,22 +191,47 @@ export function PropertyForm({
     setLoading(true);
 
     try {
+      const russian = formData.translations?.find((item) => item.locale === 'ru');
+      const payload: PropertyFormData = {
+        ...formData,
+        title: russian?.title.trim() || formData.title,
+        description: russian?.description?.trim() || '',
+        translations: formData.translations?.filter((item) => item.locale === 'ru' || [
+          item.title,
+          item.description,
+          item.city,
+          item.district,
+          item.address,
+          item.meta_title,
+          item.meta_description,
+        ].some((value) => value?.trim())).map((item) => ({
+          locale: item.locale,
+          title: item.title.trim() || formData.title.trim(),
+          description: item.description?.trim() || '',
+          city: item.city?.trim() || undefined,
+          district: item.district?.trim() || undefined,
+          address: item.address?.trim() || undefined,
+          meta_title: item.meta_title?.trim() || undefined,
+          meta_description: item.meta_description?.trim() || undefined,
+        })),
+      };
       if (isEditing && initialData) {
-        await updateProperty(initialData.id, formData);
+        await updateProperty(initialData.id, payload);
       } else {
-        await createProperty(formData);
+        await createProperty(payload);
       }
+      startNavigationFeedback();
       router.push('/admin/properties');
       router.refresh();
-    } catch (err: any) {
-      setError(err.message || 'Произошла ошибка при сохранении');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Произошла ошибка при сохранении');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl">
+    <form onSubmit={handleSubmit} className="w-full min-w-0 max-w-6xl space-y-8">
       {/* Back button */}
       <div className="flex items-center justify-between">
         <Link
@@ -195,7 +259,7 @@ export function PropertyForm({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="md:col-span-2 flex flex-col gap-1.5">
             <label className="text-xs font-semibold uppercase tracking-wider text-slate-600">
-              Название объявления *
+              Название объявления на русском *
             </label>
             <input
               type="text"
@@ -206,6 +270,15 @@ export function PropertyForm({
               placeholder="Например: Просторная 3-комнатная квартира с панорамным видом"
               className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-medium"
             />
+          </div>
+
+          <div className="md:col-span-2 flex flex-col gap-1.5">
+            <label className="text-xs font-semibold uppercase tracking-wider text-slate-600">SEO URL / slug</label>
+            <div className="flex overflow-hidden rounded-xl border border-slate-200 bg-slate-50 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
+              <span className="hidden items-center border-r border-slate-200 bg-slate-100 px-3 text-xs font-semibold text-slate-500 sm:flex">/properties/</span>
+              <input type="text" name="slug" value={formData.slug || ''} onChange={handleChange} placeholder="sozdaetsya-avtomaticheski" pattern="[a-z0-9-]*" className="h-11 min-w-0 flex-1 bg-transparent px-4 text-sm font-medium text-slate-900 outline-none" />
+            </div>
+            <p className="text-xs text-slate-500">Можно оставить пустым при создании. После индексации лучше не менять без редиректа.</p>
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -239,6 +312,25 @@ export function PropertyForm({
               placeholder="15000000"
               className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-semibold"
             />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold uppercase tracking-wider text-slate-600">Тип предложения</label>
+            <select name="transaction_type" value={formData.transaction_type} onChange={handleChange} className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm font-medium text-slate-900 outline-none focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20">
+              <option value="sale">Продажа</option>
+              <option value="rent">Аренда</option>
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold uppercase tracking-wider text-slate-600">Коммерческий статус</label>
+            <select name="market_status" value={formData.market_status} onChange={handleChange} className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm font-medium text-slate-900 outline-none focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20">
+              <option value="available">Доступен</option>
+              <option value="reserved">В брони</option>
+              <option value="sold">Продан</option>
+              <option value="rented">Сдан</option>
+              <option value="archived">В архиве</option>
+            </select>
           </div>
         </div>
       </div>
@@ -378,7 +470,7 @@ export function PropertyForm({
         {/* Description */}
         <div className="flex flex-col gap-1.5 pt-2">
           <label className="text-xs font-semibold uppercase tracking-wider text-slate-600">
-            Подробное описание объекта
+            Подробное описание объекта на русском
           </label>
           <textarea
             name="description"
@@ -391,8 +483,140 @@ export function PropertyForm({
         </div>
       </div>
 
+      {/* Translations */}
+      <div className="space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+          <Languages className="h-5 w-5 text-primary" />
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">Переводы карточки объекта</h2>
+            <p className="text-xs text-slate-500">Русская версия заполняется выше. Английский и турецкий необязательны; без них сайт покажет русский текст.</p>
+          </div>
+        </div>
+        <div className="grid gap-5 lg:grid-cols-2">
+          {(['en', 'tr'] as const).map((locale) => {
+            const translation = formData.translations?.find((item) => item.locale === locale);
+            const label = locale === 'en' ? 'English' : 'Türkçe';
+            return (
+              <fieldset key={locale} className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                <legend className="px-2 text-sm font-bold text-primary">{label}</legend>
+                <div>
+                  <label htmlFor={`property-title-${locale}`} className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">Название</label>
+                  <input id={`property-title-${locale}`} value={translation?.title || ''} onChange={(event) => updateTranslation(locale, 'title', event.target.value)} className="h-11 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium outline-none focus:border-primary focus:ring-2 focus:ring-primary/10" />
+                </div>
+                <div className="space-y-3 rounded-xl border border-slate-200 bg-white p-4">
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-700">Расположение и адрес</p>
+                    <p className="mt-1 text-[11px] leading-relaxed text-slate-500">Оставьте поле пустым, чтобы использовать русское значение.</p>
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div>
+                      <label htmlFor={`property-city-${locale}`} className="mb-1.5 block text-xs font-semibold text-slate-600">Город</label>
+                      <input
+                        id={`property-city-${locale}`}
+                        value={translation?.city || ''}
+                        onChange={(event) => updateTranslation(locale, 'city', event.target.value)}
+                        placeholder={locale === 'en' ? 'Istanbul' : 'İstanbul'}
+                        className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm font-medium outline-none focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor={`property-district-${locale}`} className="mb-1.5 block text-xs font-semibold text-slate-600">Район / Округ</label>
+                      <input
+                        id={`property-district-${locale}`}
+                        value={translation?.district || ''}
+                        onChange={(event) => updateTranslation(locale, 'district', event.target.value)}
+                        placeholder={locale === 'en' ? 'Beylikduzu' : 'Beylikdüzü'}
+                        className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm font-medium outline-none focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label htmlFor={`property-address-${locale}`} className="mb-1.5 block text-xs font-semibold text-slate-600">Улица, дом</label>
+                      <input
+                        id={`property-address-${locale}`}
+                        value={translation?.address || ''}
+                        onChange={(event) => updateTranslation(locale, 'address', event.target.value)}
+                        placeholder={locale === 'en' ? 'Sahil St.' : 'Sahil Mah.'}
+                        className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm font-medium outline-none focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor={`property-description-${locale}`} className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">Описание</label>
+                  <textarea id={`property-description-${locale}`} rows={6} value={translation?.description || ''} onChange={(event) => updateTranslation(locale, 'description', event.target.value)} className="w-full rounded-xl border border-slate-200 bg-white p-4 text-sm leading-relaxed outline-none focus:border-primary focus:ring-2 focus:ring-primary/10" />
+                </div>
+              </fieldset>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Per-locale SEO */}
+      <div className="space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="flex items-start gap-3 border-b border-slate-100 pb-4">
+          <div className="rounded-xl bg-emerald-50 p-2.5 text-emerald-700"><SearchCheck className="h-5 w-5" /></div>
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">SEO каждого объекта</h2>
+            <p className="text-xs leading-relaxed text-slate-500">Уникальные заголовок и описание для Google и превью в соцсетях. Если поле пустое, сайт соберёт текст из названия, адреса и описания объекта.</p>
+          </div>
+        </div>
+        <div className="grid gap-5 rounded-2xl border border-slate-200 bg-slate-50 p-4 md:grid-cols-[minmax(0,1.4fr)_minmax(240px,0.8fr)] md:p-5">
+          <div className="relative aspect-[1200/630] min-w-0 overflow-hidden rounded-xl border border-slate-200 bg-slate-200">
+            {formData.images?.[0] ? (
+              <img src={formData.images[0]} alt="Превью OG-изображения объекта" className="h-full w-full object-cover" />
+            ) : (
+              <div className="flex h-full flex-col items-center justify-center gap-2 px-6 text-center text-slate-400">
+                <ImageIcon className="h-8 w-8" />
+                <span className="text-xs font-semibold">Добавьте главное фото объекта</span>
+              </div>
+            )}
+            <span className="absolute bottom-2.5 right-2.5 rounded-lg bg-slate-950/75 px-2.5 py-1 text-[10px] font-bold text-white backdrop-blur-sm">OG · 1200 × 630</span>
+          </div>
+          <div className="flex min-w-0 flex-col justify-center">
+            <p className="text-sm font-bold text-slate-900">OG-изображение объекта</p>
+            <p className="mt-2 text-xs leading-relaxed text-slate-600">В превью ссылки автоматически используется первое фото. Оно же отмечено как «Главное фото» в медиаблоке.</p>
+            <p className="mt-2 text-xs leading-relaxed text-slate-500">Рекомендуемый размер — 1200 × 630 px. Важные детали лучше располагать ближе к центру, чтобы соцсети не обрезали их.</p>
+            <a href="#property-media" className="mt-4 inline-flex w-fit items-center gap-2 text-xs font-bold text-primary transition-colors hover:text-secondary">
+              <ImageIcon className="h-4 w-4" />
+              Управлять фотографиями
+            </a>
+          </div>
+        </div>
+        <div className="grid min-w-0 gap-5 xl:grid-cols-2 2xl:grid-cols-3">
+          {propertyLocales.map((locale) => {
+            const translation = formData.translations?.find((item) => item.locale === locale);
+            const localeLabel = locale === 'ru' ? 'Русский' : locale === 'en' ? 'English' : 'Türkçe';
+            const titleLength = translation?.meta_title?.length || 0;
+            const descriptionLength = translation?.meta_description?.length || 0;
+            return (
+              <fieldset key={`seo-${locale}`} className="min-w-0 space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                <legend className="px-2 text-sm font-bold text-primary">{localeLabel}</legend>
+                <div>
+                  <div className="mb-1.5 flex items-center justify-between gap-3">
+                    <label htmlFor={`property-meta-title-${locale}`} className="text-xs font-semibold uppercase tracking-wider text-slate-600">SEO title</label>
+                    <span className={cn('text-[11px] font-bold', titleLength > 60 ? 'text-amber-700' : 'text-slate-400')}>{titleLength}/60</span>
+                  </div>
+                  <input id={`property-meta-title-${locale}`} maxLength={240} value={translation?.meta_title || ''} onChange={(event) => updateTranslation(locale, 'meta_title', event.target.value)} placeholder={translation?.title || formData.title} className="h-11 w-full min-w-0 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium outline-none focus:border-primary focus:ring-2 focus:ring-primary/10" />
+                </div>
+                <div>
+                  <div className="mb-1.5 flex items-center justify-between gap-3">
+                    <label htmlFor={`property-meta-description-${locale}`} className="text-xs font-semibold uppercase tracking-wider text-slate-600">Meta description</label>
+                    <span className={cn('text-[11px] font-bold', descriptionLength > 160 ? 'text-amber-700' : 'text-slate-400')}>{descriptionLength}/160</span>
+                  </div>
+                  <textarea id={`property-meta-description-${locale}`} rows={4} maxLength={320} value={translation?.meta_description || ''} onChange={(event) => updateTranslation(locale, 'meta_description', event.target.value)} placeholder={translation?.description?.slice(0, 160) || 'Кратко опишите главное преимущество объекта'} className="w-full min-w-0 resize-y rounded-xl border border-slate-200 bg-white p-4 text-sm leading-relaxed outline-none focus:border-primary focus:ring-2 focus:ring-primary/10" />
+                </div>
+                <div className="min-w-0 overflow-hidden rounded-xl border border-slate-200 bg-white p-3">
+                  <p className="truncate text-sm font-semibold text-blue-700">{translation?.meta_title || translation?.title || formData.title || 'Название объекта'}</p>
+                  <p className="mt-1 line-clamp-2 break-words text-xs leading-relaxed text-slate-600">{translation?.meta_description || translation?.description || formData.description || 'Описание объекта появится здесь.'}</p>
+                </div>
+              </fieldset>
+            );
+          })}
+        </div>
+      </div>
+
       {/* 4. Media & Photos Card with Drag and Drop Reordering */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">
+      <div id="property-media" className="scroll-mt-28 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">
         <div className="flex items-center justify-between pb-3 border-b border-slate-100">
           <div className="flex items-center gap-2">
             <ImageIcon className="w-5 h-5 text-primary" />
@@ -597,6 +821,7 @@ export function PropertyForm({
               </button>
             ))}
           </div>
+          <p className="text-xs text-slate-500">Готовые плашки автоматически переводятся на русский, английский и турецкий языки.</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">

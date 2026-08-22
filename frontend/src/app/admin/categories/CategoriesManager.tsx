@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Category } from '@/types';
 import { createCategory, deleteCategory } from '@/lib/api';
-import { Tags, Plus, Trash2, Building, Home, Trees, Briefcase } from 'lucide-react';
+import { Plus, Trash2, Building, Home, Trees, Briefcase, type LucideIcon } from 'lucide-react';
 
-const categoryIcons: Record<string, any> = {
+const categoryIcons: Record<string, LucideIcon> = {
   kvartira: Building,
   dom: Home,
   uchastok: Trees,
@@ -41,7 +41,7 @@ export function CategoriesManager({
       setSlug('');
       setDescription('');
       router.refresh();
-    } catch (e) {
+    } catch {
       alert('Ошибка при создании категории');
     } finally {
       setLoading(false);
@@ -54,7 +54,7 @@ export function CategoriesManager({
       await deleteCategory(id);
       setCategories((prev) => prev.filter((c) => c.id !== id));
       router.refresh();
-    } catch (e) {
+    } catch {
       alert('Не удалось удалить категорию (возможно, к ней привязаны объекты)');
     }
   };

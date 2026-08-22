@@ -24,8 +24,11 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/app
+      - ./uploads:/app/uploads
     env_file:
       - ./backend/.env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${DB_USER:-estate}:${DB_PASSWORD:-estate_secret}@db:5432/${DB_NAME:-estate_db}
     depends_on:
       db:
         condition: service_healthy
@@ -42,6 +45,9 @@ services:
       - /app/node_modules
     env_file:
       - ./frontend/.env
+    environment:
+      INTERNAL_API_URL: http://api:8000/api/v1
+      NEXT_DIST_DIR: .next-dev
     depends_on:
       - api
 

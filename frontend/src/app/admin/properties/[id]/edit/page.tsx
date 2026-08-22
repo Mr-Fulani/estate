@@ -2,17 +2,19 @@ import { fetchProperty, fetchCategories } from '@/lib/api';
 import { PropertyForm } from '../../PropertyForm';
 import { notFound } from 'next/navigation';
 import { Edit3 } from 'lucide-react';
+import { getAdminCookieHeader } from '@/lib/adminServer';
 
 export const dynamic = 'force-dynamic';
 
 export default async function EditPropertyPage({
   params,
 }: {
-  params: Promise<{ id: string }> | { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const resolvedParams = await params;
+  const adminCookie = await getAdminCookieHeader();
   const [property, categories] = await Promise.all([
-    fetchProperty(resolvedParams.id),
+    fetchProperty(resolvedParams.id, adminCookie),
     fetchCategories(),
   ]);
 

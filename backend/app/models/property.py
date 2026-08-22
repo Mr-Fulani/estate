@@ -24,10 +24,20 @@ class Property(Base):
     year_built: Mapped[int | None] = mapped_column(Integer)
     is_featured: Mapped[bool] = mapped_column(Boolean, default=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    transaction_type: Mapped[str] = mapped_column(String(20), default="sale", index=True)
+    market_status: Mapped[str] = mapped_column(String(20), default="available", index=True)
     status_badge: Mapped[str | None] = mapped_column(String(100), default="Актуально", nullable=True)
     
     category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"), nullable=False)
     category = relationship("Category", back_populates="properties")
+
+    translations = relationship(
+        "PropertyTranslation",
+        back_populates="property",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+        order_by="PropertyTranslation.locale",
+    )
     
     images: Mapped[list[Any] | None] = mapped_column(JSON().with_variant(JSONB, 'postgresql'), default=list)
 

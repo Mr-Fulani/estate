@@ -6,9 +6,21 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 from app.database import Base
-from app.models.category import Category
-from app.models.property import Property
-from app.models.contact import ContactRequest
+from app.models import (
+    Category,
+    ContactRequest,
+    NewsArticle,
+    NewsMedia,
+    NewsTranslation,
+    Property,
+    PropertyTranslation,
+    SiteSetting,
+    AdminAuditLog,
+    AdminLoginAttempt,
+    AdminSession,
+    AdminUser,
+    ExchangeRateSnapshot,
+)
 from app.config import get_settings
 
 config = context.config

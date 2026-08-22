@@ -8,6 +8,7 @@ Thumbs.db
 # === Node.js / Next.js ===
 node_modules/
 .next/
+.next-dev/
 out/
 build/
 dist/
@@ -47,3 +48,5 @@ htmlcov/
 
 # === Docker ===
 *.log
+uploads/*
+!uploads/.gitkeep

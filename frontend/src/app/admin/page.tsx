@@ -2,57 +2,80 @@ import Link from 'next/link';
 import { 
   Building2, 
   Users, 
-  Sparkles, 
-  Tags, 
   PlusCircle, 
   ArrowRight,
-  Clock,
   Phone,
   Mail,
+  MessageCircle,
   CheckCircle2,
-  AlertCircle
+  CircleDollarSign,
+  TrendingUp,
+  Star,
 } from 'lucide-react';
 import { fetchAdminStats, fetchContactRequests, fetchProperties } from '@/lib/api';
 import { formatPrice } from '@/lib/utils';
 import { LeadsStatusSwitcher } from './LeadsStatusSwitcher';
+import { getAdminCookieHeader } from '@/lib/adminServer';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboardPage() {
+  const adminCookie = await getAdminCookieHeader();
   const [stats, leads, recentProps] = await Promise.all([
-    fetchAdminStats(),
-    fetchContactRequests(),
+    fetchAdminStats(adminCookie),
+    fetchContactRequests(undefined, adminCookie),
     fetchProperties({ per_page: 5, sort_by: 'created_at', order: 'desc' }),
   ]);
 
   const statCards = [
     {
-      title: 'Всего объектов',
-      value: stats.total_properties,
-      sub: `${stats.active_properties} активно на сайте`,
-      icon: Building2,
-      color: 'text-blue-600 bg-blue-50 border-blue-100',
-    },
-    {
       title: 'Новые заявки',
       value: stats.new_contacts,
-      sub: `Всего ${stats.total_contacts} заявок`,
+      sub: `${stats.form_leads} форм, всего ${stats.total_contacts} касаний`,
       icon: Users,
       color: 'text-amber-600 bg-amber-50 border-amber-100',
     },
     {
-      title: 'Рекомендуемые',
-      value: stats.featured_properties,
-      sub: 'Показываются на главной',
-      icon: Sparkles,
+      title: 'В работе',
+      value: stats.active_leads,
+      sub: 'От контакта до переговоров',
+      icon: TrendingUp,
+      color: 'text-blue-600 bg-blue-50 border-blue-100',
+    },
+    {
+      title: 'Мессенджеры',
+      value: stats.messenger_messages,
+      sub: `${stats.messenger_clicks} переходов · подтверждённые сообщения`,
+      icon: MessageCircle,
+      color: 'text-purple-600 bg-purple-50 border-purple-100',
+    },
+    {
+      title: 'Успешные сделки',
+      value: stats.won_deals,
+      sub: `${stats.sold_properties} продано · ${stats.rented_properties} сдано`,
+      icon: CheckCircle2,
       color: 'text-emerald-600 bg-emerald-50 border-emerald-100',
     },
     {
-      title: 'Категории',
-      value: stats.categories_count,
-      sub: 'Типы недвижимости',
-      icon: Tags,
-      color: 'text-purple-600 bg-purple-50 border-purple-100',
+      title: 'Сумма сделок',
+      value: formatPrice(stats.total_deal_value, 'RUB'),
+      sub: 'По закрытым обращениям',
+      icon: CircleDollarSign,
+      color: 'text-teal-600 bg-teal-50 border-teal-100',
+    },
+    {
+      title: 'Объекты',
+      value: stats.total_properties,
+      sub: `${stats.active_properties} опубликовано`,
+      icon: Building2,
+      color: 'text-slate-600 bg-slate-50 border-slate-200',
+    },
+    {
+      title: 'Отзывы',
+      value: stats.pending_reviews,
+      sub: 'Ожидают модерации',
+      icon: Star,
+      color: 'text-amber-600 bg-amber-50 border-amber-100',
     },
   ];
 
@@ -81,7 +104,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
         {statCards.map((stat, idx) => {
           const Icon = stat.icon;
           return (
@@ -135,7 +158,7 @@ export default async function AdminDashboardPage() {
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-slate-900 text-sm">{lead.name}</span>
+                      <span className="font-semibold text-slate-900 text-sm">{lead.name || `${lead.channel || 'Канал'}: новый интерес`}</span>
                       {lead.status === 'new' && (
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
                           Новая
@@ -150,14 +173,11 @@ export default async function AdminDashboardPage() {
                           {lead.phone}
                         </span>
                       )}
-                      <span className="flex items-center gap-1">
-                        <Mail className="w-3 h-3 text-slate-400" />
-                        {lead.email}
-                      </span>
+                      {lead.email && <span className="flex items-center gap-1"><Mail className="w-3 h-3 text-slate-400" />{lead.email}</span>}
                     </div>
 
                     <p className="text-xs text-slate-600 line-clamp-1 italic mt-1">
-                      «{lead.message}»
+                      «{lead.message || 'Зафиксирован переход в канал связи'}»
                     </p>
                   </div>
 

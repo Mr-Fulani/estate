@@ -1,20 +1,26 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Menu, X, Phone, Shield } from 'lucide-react';
+import { Coins, Globe2, Menu, X, Phone } from 'lucide-react';
 import { useState } from 'react';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
+import { useLocale } from '@/context/LocaleContext';
+import { localeLabels, locales, localizeHref, type Locale } from '@/i18n/config';
 import { TelegramIcon, WhatsappIcon, VkIcon, YoutubeIcon, InstagramIcon, FacebookIcon, MaxIcon } from '../ui/SocialIcons';
+import { TrackedContactLink } from '@/components/contact/TrackedContactLink';
+import type { ContactTrackData } from '@/types';
+import { currencyCodes, useCurrency } from '@/context/CurrencyContext';
+import type { CurrencyCode } from '@/types';
+import { startNavigationFeedback } from '@/components/layout/NavigationFeedback';
 
-const navItems = [
-  { href: '/', label: 'Главная' },
-  { href: '/properties', label: 'Каталог' },
-  { href: '/services', label: 'Услуги' },
-  { href: '/about', label: 'О нас' },
-  { href: '/contact', label: 'Контакты' },
-];
+const currencyLabels: Record<CurrencyCode, string> = {
+  RUB: '₽ RUB',
+  USD: '$ USD',
+  EUR: '€ EUR',
+  TRY: '₺ TRY',
+};
 
 function phoneToTel(phone: string): string {
   return 'tel:' + phone.replace(/[\s\-\(\)]/g, '');
@@ -23,7 +29,41 @@ function phoneToTel(phone: string): string {
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
   const { settings } = useSiteSettings();
+  const { locale, messages, href } = useLocale();
+  const { currency, setCurrency, effectiveDate, isReady, error } = useCurrency();
+  const formattedRateDate = effectiveDate
+    ? new Intl.DateTimeFormat(locale === 'en' ? 'en-GB' : locale === 'tr' ? 'tr-TR' : 'ru-RU', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      }).format(new Date(`${effectiveDate}T12:00:00Z`))
+    : null;
+
+  const currencyTitle = error
+    ? messages.navigation.currencyUnavailable
+    : [messages.navigation.currencyRate, formattedRateDate].filter(Boolean).join(' · ');
+
+  const navItems = [
+    { href: href('/'), label: messages.navigation.home },
+    { href: href('/properties'), label: messages.navigation.properties },
+    { href: href('/services'), label: messages.navigation.services },
+    { href: href('/news'), label: messages.navigation.news },
+    { href: href('/reviews'), label: messages.navigation.reviews },
+    { href: href('/about'), label: messages.navigation.about },
+    { href: href('/contact'), label: messages.navigation.contact },
+  ];
+
+  const switchLocale = (nextLocale: Locale) => {
+    setIsMobileMenuOpen(false);
+    if (nextLocale === locale) return;
+
+    const targetPath = localizeHref(nextLocale, pathname || '/');
+    const locationSuffix = `${window.location.search}${window.location.hash}`;
+    startNavigationFeedback();
+    router.push(`${targetPath}${locationSuffix}`);
+  };
 
   // Hide public header on admin pages
   if (pathname?.startsWith('/admin')) {
@@ -31,13 +71,13 @@ export function Header() {
   }
 
   const socialLinks = [
-    { url: settings.telegram, icon: TelegramIcon, label: 'Telegram' },
-    { url: settings.whatsapp, icon: WhatsappIcon, label: 'WhatsApp' },
-    { url: settings.vk, icon: VkIcon, label: 'VK' },
+    { url: settings.telegram, icon: TelegramIcon, label: 'Telegram', channel: 'telegram' },
+    { url: settings.whatsapp, icon: WhatsappIcon, label: 'WhatsApp', channel: 'whatsapp' },
+    { url: settings.vk, icon: VkIcon, label: 'VK', channel: 'vk' },
     { url: settings.youtube, icon: YoutubeIcon, label: 'YouTube' },
-    { url: settings.instagram, icon: InstagramIcon, label: 'Instagram' },
-    { url: settings.facebook, icon: FacebookIcon, label: 'Facebook' },
-    { url: settings.max_messenger, icon: MaxIcon, label: 'MAX' },
+    { url: settings.instagram, icon: InstagramIcon, label: 'Instagram', channel: 'instagram' },
+    { url: settings.facebook, icon: FacebookIcon, label: 'Facebook', channel: 'facebook' },
+    { url: settings.max_messenger, icon: MaxIcon, label: 'MAX', channel: 'max' },
   ].filter((s) => s.url && typeof s.url === 'string' && s.url.trim() !== '');
 
   return (
@@ -45,16 +85,16 @@ export function Header() {
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
+          <Link href={href('/')} className="flex items-center gap-2 group" aria-label="Estate">
             <span className="text-2xl font-bold tracking-tight text-primary">
               Estate<span className="text-secondary">.</span>
             </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden xl:flex items-center gap-4">
             {navItems.map((item) => {
-              const isActive = pathname === item.href;
+              const isActive = pathname === item.href || (item.href !== `/${locale}` && pathname.startsWith(`${item.href}/`));
               return (
                 <Link
                   key={item.href}
@@ -65,6 +105,7 @@ export function Header() {
                       ? 'text-primary font-semibold'
                       : 'text-slate-600 hover:text-primary'
                   )}
+                  aria-current={isActive ? 'page' : undefined}
                 >
                   {item.label}
                   {isActive && (
@@ -76,51 +117,72 @@ export function Header() {
           </nav>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden xl:flex items-center gap-3">
             {/* Social Icons */}
-            <div className="flex items-center gap-1.5">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.url!}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-primary hover:bg-primary/5 transition-colors"
-                  title={social.label}
-                >
-                  <social.icon className="w-4.5 h-4.5" />
+            <div className="hidden items-center gap-1.5 2xl:flex">
+              {socialLinks.map((social) => social.channel ? (
+                <TrackedContactLink key={social.label} href={social.url!} target="_blank" channel={social.channel as ContactTrackData['channel']} source={`header_${social.channel}`} className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-primary/5 hover:text-primary" title={social.label}>
+                  <social.icon className="h-[18px] w-[18px]" />
+                </TrackedContactLink>
+              ) : (
+                <a key={social.label} href={social.url!} target="_blank" rel="noopener noreferrer" className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-primary/5 hover:text-primary" title={social.label}>
+                  <social.icon className="h-[18px] w-[18px]" />
                 </a>
               ))}
             </div>
 
             {/* Divider */}
             {socialLinks.length > 0 && (
-              <div className="w-px h-6 bg-slate-200" />
+              <div className="hidden w-px h-6 bg-slate-200 2xl:block" />
             )}
 
+            <label className="relative flex items-center text-slate-500" title={messages.navigation.language}>
+              <Globe2 className="w-4 h-4 absolute left-2.5 pointer-events-none" aria-hidden="true" />
+              <span className="sr-only">{messages.navigation.language}</span>
+              <select
+                value={locale}
+                onChange={(event) => switchLocale(event.target.value as Locale)}
+                className="h-9 rounded-lg border border-slate-200 bg-white pl-8 pr-2 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+                aria-label={messages.navigation.language}
+              >
+                {locales.map((item) => <option key={item} value={item}>{item.toUpperCase()}</option>)}
+              </select>
+            </label>
+
+            <label className="relative flex items-center text-slate-500" title={currencyTitle}>
+              <Coins className="w-4 h-4 absolute left-2.5 pointer-events-none" aria-hidden="true" />
+              <span className="sr-only">{messages.navigation.currency}</span>
+              <select
+                value={currency}
+                onChange={(event) => setCurrency(event.target.value as CurrencyCode)}
+                disabled={!isReady}
+                className="h-9 rounded-lg border border-slate-200 bg-white pl-8 pr-2 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-60"
+                aria-label={messages.navigation.currency}
+              >
+                {currencyCodes.map((item) => <option key={item} value={item}>{currencyLabels[item]}</option>)}
+              </select>
+            </label>
+
             {/* Phone */}
-            <a
-              href={phoneToTel(settings.phone)}
-              className="flex items-center gap-2 text-sm font-medium text-slate-700 hover:text-primary transition-colors"
-            >
+            <TrackedContactLink href={phoneToTel(settings.phone)} channel="phone" source="header_phone" className="flex items-center gap-2 text-sm font-medium text-slate-700 hover:text-primary transition-colors">
               <div className="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center text-secondary">
                 <Phone className="w-4 h-4" />
               </div>
               <span>{settings.phone}</span>
-            </a>
+            </TrackedContactLink>
 
-            <Link href="/contact">
-              <button className="bg-primary text-white hover:bg-primary-800 px-4 py-2 rounded-xl text-sm font-medium transition-all shadow-sm active:scale-95">
-                Оставить заявку
-              </button>
+            <Link href={href('/contact')} className="bg-primary text-white hover:bg-primary-800 px-4 py-2 rounded-xl text-sm font-medium transition-all shadow-sm active:scale-95">
+              {messages.navigation.request}
             </Link>
           </div>
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 rounded-xl text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors"
+            className="xl:hidden p-2 rounded-xl text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label="Toggle menu"
+            aria-label={isMobileMenuOpen ? messages.navigation.closeMenu : messages.navigation.openMenu}
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-navigation"
           >
             {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
@@ -129,9 +191,9 @@ export function Header() {
 
       {/* Mobile Drawer */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-slate-100 px-6 py-5 flex flex-col gap-4 shadow-xl animate-in slide-in-from-top-2">
+        <div id="mobile-navigation" className="xl:hidden max-h-[calc(100vh-4rem)] overflow-y-auto bg-white border-t border-slate-100 px-6 py-5 flex flex-col gap-4 shadow-xl">
           {navItems.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive = pathname === item.href || (item.href !== `/${locale}` && pathname.startsWith(`${item.href}/`));
             return (
               <Link
                 key={item.href}
@@ -141,6 +203,7 @@ export function Header() {
                   'block text-base font-medium py-2 transition-colors border-b border-slate-50',
                   isActive ? 'text-primary font-semibold' : 'text-slate-700 hover:text-primary'
                 )}
+                aria-current={isActive ? 'page' : undefined}
               >
                 {item.label}
               </Link>
@@ -148,42 +211,64 @@ export function Header() {
           })}
 
           <div className="pt-2 flex flex-col gap-3">
-            <a
-              href={phoneToTel(settings.phone)}
-              className="flex items-center gap-2.5 text-slate-800 font-medium py-1.5"
-            >
+            <div className="flex items-center gap-2" aria-label={messages.navigation.language}>
+              <Globe2 className="w-4 h-4 text-primary" aria-hidden="true" />
+              {locales.map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => switchLocale(item)}
+                  className={cn(
+                    'min-h-9 px-3 rounded-lg text-xs font-semibold border',
+                    item === locale ? 'bg-primary text-white border-primary' : 'bg-white text-slate-600 border-slate-200'
+                  )}
+                  aria-label={localeLabels[item]}
+                >
+                  {item.toUpperCase()}
+                </button>
+              ))}
+            </div>
+            <div className="flex flex-wrap items-center gap-2" aria-label={messages.navigation.currency} title={currencyTitle}>
+              <Coins className="w-4 h-4 text-primary" aria-hidden="true" />
+              {currencyCodes.map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => setCurrency(item)}
+                  disabled={!isReady && item !== 'RUB'}
+                  className={cn(
+                    'min-h-9 px-3 rounded-lg text-xs font-semibold border disabled:cursor-not-allowed disabled:opacity-50',
+                    item === currency ? 'bg-primary text-white border-primary' : 'bg-white text-slate-600 border-slate-200'
+                  )}
+                  aria-label={`${messages.navigation.currency}: ${item}`}
+                  aria-pressed={item === currency}
+                >
+                  {currencyLabels[item]}
+                </button>
+              ))}
+            </div>
+            <TrackedContactLink href={phoneToTel(settings.phone)} channel="phone" source="mobile_header_phone" className="flex items-center gap-2.5 text-slate-800 font-medium py-1.5">
               <Phone className="w-4 h-4 text-secondary" />
               <span>{settings.phone}</span>
-            </a>
+            </TrackedContactLink>
 
             {/* Social Links in Mobile */}
             <div className="flex items-center gap-2 py-1.5">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.url!}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 bg-slate-100 hover:text-primary hover:bg-primary/10 transition-colors"
-                  title={social.label}
-                >
-                  <social.icon className="w-5 h-5" />
+              {socialLinks.map((social) => social.channel ? (
+                <TrackedContactLink key={social.label} href={social.url!} target="_blank" channel={social.channel as ContactTrackData['channel']} source={`mobile_header_${social.channel}`} className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-slate-500 transition-colors hover:bg-primary/10 hover:text-primary" title={social.label}>
+                  <social.icon className="h-5 w-5" />
+                </TrackedContactLink>
+              ) : (
+                <a key={social.label} href={social.url!} target="_blank" rel="noopener noreferrer" className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-slate-500 transition-colors hover:bg-primary/10 hover:text-primary" title={social.label}>
+                  <social.icon className="h-5 w-5" />
                 </a>
               ))}
             </div>
 
-            <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)}>
-              <button className="w-full bg-primary text-white py-3 rounded-xl font-medium hover:bg-primary-800 transition-colors">
-                Оставить заявку
-              </button>
+            <Link href={href('/contact')} onClick={() => setIsMobileMenuOpen(false)} className="w-full bg-primary text-white py-3 rounded-xl font-medium hover:bg-primary-800 transition-colors text-center">
+              {messages.navigation.request}
             </Link>
 
-            <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)}>
-              <div className="flex items-center gap-2 text-xs font-semibold text-secondary py-2 border-t border-slate-100 mt-2">
-                <Shield className="w-4 h-4" />
-                <span>Панель администратора</span>
-              </div>
-            </Link>
           </div>
         </div>
       )}

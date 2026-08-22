@@ -14,7 +14,6 @@ import {
   Eye, 
   EyeOff, 
   Search,
-  Filter
 } from 'lucide-react';
 
 export function PropertiesTable({
@@ -52,7 +51,7 @@ export function PropertiesTable({
       await deleteProperty(id);
       setProperties((prev) => prev.filter((p) => p.id !== id));
       router.refresh();
-    } catch (e) {
+    } catch {
       alert('Ошибка при удалении объекта');
     } finally {
       setDeletingId(null);
@@ -63,7 +62,7 @@ export function PropertiesTable({
     try {
       const updated = await updateProperty(p.id, { is_featured: !p.is_featured });
       setProperties((prev) => prev.map((item) => (item.id === p.id ? { ...item, is_featured: updated.is_featured } : item)));
-    } catch (e) {
+    } catch {
       alert('Ошибка при обновлении статуса');
     }
   };
@@ -72,13 +71,22 @@ export function PropertiesTable({
     try {
       const updated = await updateProperty(p.id, { is_active: !p.is_active });
       setProperties((prev) => prev.map((item) => (item.id === p.id ? { ...item, is_active: updated.is_active } : item)));
-    } catch (e) {
+    } catch {
       alert('Ошибка при обновлении активности');
     }
   };
 
+  const changeMarketStatus = async (p: Property, marketStatus: Property['market_status']) => {
+    try {
+      const updated = await updateProperty(p.id, { market_status: marketStatus });
+      setProperties((prev) => prev.map((item) => item.id === p.id ? { ...item, market_status: updated.market_status } : item));
+    } catch {
+      alert('Ошибка при обновлении коммерческого статуса');
+    }
+  };
+
   return (
-    <div className="space-y-4">
+    <div className="min-w-0 space-y-4">
       {/* Search & Category Filter Bar */}
       <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-3 items-center justify-between">
         <div className="relative w-full sm:w-80">
@@ -114,8 +122,8 @@ export function PropertiesTable({
       </div>
 
       {/* Properties Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+      <div className="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="max-w-full overflow-x-auto">
           <table className="w-full text-left border-collapse text-sm">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500">
@@ -176,7 +184,15 @@ export function PropertiesTable({
                       </td>
 
                       {/* Active Status */}
-                      <td className="py-3.5 px-4 text-center">
+                      <td className="py-3.5 px-4 text-center space-y-2">
+                        <select value={p.market_status} onChange={(event) => void changeMarketStatus(p, event.target.value as Property['market_status'])} className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-bold text-slate-700 outline-none focus:border-primary" aria-label={`Коммерческий статус ${p.title}`}>
+                          <option value="available">Доступен</option>
+                          <option value="reserved">В брони</option>
+                          <option value="sold">Продан</option>
+                          <option value="rented">Сдан</option>
+                          <option value="archived">Архив</option>
+                        </select>
+                        <div>
                         <button
                           type="button"
                           onClick={() => toggleActive(p)}
@@ -199,6 +215,7 @@ export function PropertiesTable({
                             </>
                           )}
                         </button>
+                        </div>
                       </td>
 
                       {/* Featured Status */}
@@ -221,7 +238,7 @@ export function PropertiesTable({
                       <td className="py-3.5 px-4 text-right whitespace-nowrap">
                         <div className="flex items-center justify-end gap-1.5">
                           <Link
-                            href={`/properties/${p.id}`}
+                            href={`/ru/properties/${p.slug}`}
                             target="_blank"
                             className="p-2 text-slate-400 hover:text-primary hover:bg-slate-100 rounded-lg transition-colors"
                             title="Открыть на сайте"
