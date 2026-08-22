@@ -396,6 +396,9 @@ export async function fetchAdminStats(adminCookie?: string): Promise<AdminStats>
     sold_properties: 0,
     rented_properties: 0,
     total_deal_value: 0,
+    deal_base_currency: 'RUB',
+    deal_totals_by_currency: {},
+    unconverted_won_deals: 0,
     pending_reviews: 0,
   };
   try {

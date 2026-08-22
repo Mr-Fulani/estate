@@ -58,6 +58,7 @@ export function LeadsTable({ initialLeads }: { initialLeads: ContactRequest[] })
   const [closingId, setClosingId] = useState<number | null>(null);
   const [outcome, setOutcome] = useState<'sold' | 'rented'>('sold');
   const [dealValue, setDealValue] = useState('');
+  const [dealCurrency, setDealCurrency] = useState<'RUB' | 'USD' | 'EUR' | 'TRY'>('RUB');
   const [noteDrafts, setNoteDrafts] = useState<Record<number, string>>({});
 
   const counts = useMemo(() => Object.fromEntries(statuses.map((status) => [status.id, leads.filter((lead) => lead.status === status.id).length])), [leads]);
@@ -79,6 +80,7 @@ export function LeadsTable({ initialLeads }: { initialLeads: ContactRequest[] })
       setClosingId(lead.id);
       setOutcome(lead.property?.market_status === 'rented' ? 'rented' : 'sold');
       setDealValue(lead.deal_value ? String(lead.deal_value) : '');
+      setDealCurrency((lead.deal_currency as 'RUB' | 'USD' | 'EUR' | 'TRY') || 'RUB');
       return;
     }
     setBusyId(lead.id);
@@ -99,7 +101,7 @@ export function LeadsTable({ initialLeads }: { initialLeads: ContactRequest[] })
         status: 'won',
         outcome,
         deal_value: dealValue ? Number(dealValue) : undefined,
-        deal_currency: lead.deal_currency || 'RUB',
+        deal_currency: dealCurrency,
         note: outcome === 'sold' ? 'Объект отмечен как проданный' : 'Объект отмечен как сданный',
       });
       replaceLead(updated);
@@ -182,7 +184,14 @@ export function LeadsTable({ initialLeads }: { initialLeads: ContactRequest[] })
                   </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-3" onClick={(event) => event.stopPropagation()}>
-                  {lead.deal_value != null && <span className="inline-flex items-center gap-1 rounded-xl bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-800"><CircleDollarSign className="h-4 w-4" />{formatMoney(lead.deal_value, lead.deal_currency)}</span>}
+                  {lead.deal_value != null && (
+                    <span className="inline-flex flex-col items-end rounded-xl bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-800">
+                      <span className="inline-flex items-center gap-1"><CircleDollarSign className="h-4 w-4" />{formatMoney(lead.deal_value, lead.deal_currency)}</span>
+                      {lead.deal_currency !== 'RUB' && lead.deal_value_rub != null && (
+                        <span className="mt-0.5 text-[10px] font-semibold text-emerald-700">≈ {formatMoney(lead.deal_value_rub, 'RUB')}</span>
+                      )}
+                    </span>
+                  )}
                   <select value={lead.status || 'new'} disabled={busyId === lead.id} onChange={(event) => void changeStatus(lead, event.target.value)} className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-xs font-bold text-slate-800 outline-none focus:border-primary">
                     {statuses.map((status) => <option key={status.id} value={status.id}>{status.label}</option>)}
                   </select>
@@ -196,12 +205,13 @@ export function LeadsTable({ initialLeads }: { initialLeads: ContactRequest[] })
                   <div className="mb-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
                     <div className="mb-4 flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-emerald-700" /><h4 className="font-bold text-emerald-950">Зафиксировать результат сделки</h4></div>
                     {!lead.property_id && <p className="mb-3 text-sm font-semibold text-red-700">Сначала привяжите обращение к объекту.</p>}
-                    <div className="grid gap-3 sm:grid-cols-3">
+                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                       <select value={outcome} onChange={(event) => setOutcome(event.target.value as 'sold' | 'rented')} className="h-11 rounded-xl border border-emerald-200 bg-white px-3 text-sm font-semibold"><option value="sold">Объект продан</option><option value="rented">Объект сдан</option></select>
                       <input type="number" min="0" value={dealValue} onChange={(event) => setDealValue(event.target.value)} placeholder="Сумма сделки" className="h-11 rounded-xl border border-emerald-200 bg-white px-3 text-sm" />
+                      <select value={dealCurrency} onChange={(event) => setDealCurrency(event.target.value as 'RUB' | 'USD' | 'EUR' | 'TRY')} className="h-11 rounded-xl border border-emerald-200 bg-white px-3 text-sm font-semibold" aria-label="Валюта сделки"><option value="RUB">RUB · ₽</option><option value="USD">USD · $</option><option value="EUR">EUR · €</option><option value="TRY">TRY · ₺</option></select>
                       <button type="button" disabled={!lead.property_id || busyId === lead.id} onClick={() => void closeDeal(lead)} className="h-11 rounded-xl bg-emerald-700 px-4 text-sm font-bold text-white hover:bg-emerald-800 disabled:opacity-50">Подтвердить сделку</button>
                     </div>
-                    <p className="mt-3 text-xs text-emerald-800">После подтверждения коммерческий статус связанного объекта автоматически изменится на «Продан» или «Сдан».</p>
+                    <p className="mt-3 text-xs text-emerald-800">После подтверждения статус объекта изменится на «Продан» или «Сдан», а курс к рублю зафиксируется в сделке.</p>
                   </div>
                 )}
 

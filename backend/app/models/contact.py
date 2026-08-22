@@ -1,13 +1,21 @@
+from datetime import date
 from typing import Any
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, JSON, Numeric, String, Text
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Index, Integer, JSON, Numeric, String, Text, text
 from sqlalchemy.sql import func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
 
 class ContactRequest(Base):
     __tablename__ = "contact_requests"
+    __table_args__ = (
+        Index(
+            "uq_contact_requests_won_property",
+            "property_id",
+            unique=True,
+            postgresql_where=text("status = 'won' AND property_id IS NOT NULL"),
+        ),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     name: Mapped[str | None] = mapped_column(String(100), nullable=True)
@@ -33,10 +41,15 @@ class ContactRequest(Base):
     external_conversation_id: Mapped[str | None] = mapped_column(String(200), nullable=True, index=True)
     external_username: Mapped[str | None] = mapped_column(String(160), nullable=True)
 
-    status: Mapped[str] = mapped_column(String(30), default="new", index=True)
+    status: Mapped[str] = mapped_column(String(20), default="new", index=True)
     outcome: Mapped[str | None] = mapped_column(String(20), nullable=True, index=True)
     deal_value: Mapped[float | None] = mapped_column(Numeric(14, 2), nullable=True)
     deal_currency: Mapped[str] = mapped_column(String(3), default="RUB")
+    deal_value_rub: Mapped[float | None] = mapped_column(Numeric(18, 2), nullable=True)
+    deal_exchange_rate: Mapped[float | None] = mapped_column(Numeric(18, 8), nullable=True)
+    deal_rate_effective_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    previous_property_market_status: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    previous_property_status_badge: Mapped[str | None] = mapped_column(String(100), nullable=True)
     assigned_to: Mapped[str | None] = mapped_column(String(120), nullable=True)
     next_follow_up_at: Mapped[str | None] = mapped_column(DateTime(timezone=True), nullable=True)
     closed_at: Mapped[str | None] = mapped_column(DateTime(timezone=True), nullable=True)
@@ -71,7 +84,7 @@ class LeadActivity(Base):
     to_status: Mapped[str | None] = mapped_column(String(30), nullable=True)
     note: Mapped[str | None] = mapped_column(Text, nullable=True)
     event_data: Mapped[dict[str, Any] | None] = mapped_column(
-        JSON().with_variant(JSONB, "postgresql"), nullable=True
+        JSON(), nullable=True
     )
     created_at: Mapped[str] = mapped_column(DateTime(timezone=True), server_default=func.now())
 

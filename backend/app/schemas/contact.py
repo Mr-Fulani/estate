@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from typing import Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
@@ -10,6 +10,7 @@ LeadKind = Literal["form", "click", "manual", "webhook"]
 LeadChannel = Literal[
     "form", "phone", "email", "whatsapp", "telegram", "max", "instagram", "facebook", "vk"
 ]
+DealCurrency = Literal["RUB", "USD", "EUR", "TRY"]
 
 
 class AttributionFields(BaseModel):
@@ -65,7 +66,7 @@ class ContactUpdate(BaseModel):
     status: Optional[LeadStatus] = None
     outcome: Optional[LeadOutcome] = None
     deal_value: Optional[float] = Field(default=None, ge=0)
-    deal_currency: Optional[str] = Field(default=None, min_length=3, max_length=3)
+    deal_currency: Optional[DealCurrency] = None
     assigned_to: Optional[str] = Field(default=None, max_length=120)
     next_follow_up_at: Optional[datetime] = None
     is_read: Optional[bool] = None
@@ -122,7 +123,10 @@ class ContactResponse(BaseModel):
     status: LeadStatus
     outcome: Optional[LeadOutcome] = None
     deal_value: Optional[float] = None
-    deal_currency: str
+    deal_currency: DealCurrency
+    deal_value_rub: Optional[float] = None
+    deal_exchange_rate: Optional[float] = None
+    deal_rate_effective_date: Optional[date] = None
     assigned_to: Optional[str] = None
     next_follow_up_at: Optional[datetime] = None
     closed_at: Optional[datetime] = None

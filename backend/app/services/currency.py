@@ -1,5 +1,6 @@
 import asyncio
 from datetime import date, datetime, timedelta, timezone
+from decimal import Decimal, ROUND_HALF_UP
 import xml.etree.ElementTree as ET
 
 import httpx
@@ -11,9 +12,32 @@ from app.models.exchange_rate import ExchangeRateSnapshot
 
 CBR_DAILY_RATES_URL = "https://www.cbr.ru/scripts/XML_daily.asp"
 SUPPORTED_CURRENCIES = ("USD", "EUR", "TRY")
+SUPPORTED_DEAL_CURRENCIES = ("RUB", *SUPPORTED_CURRENCIES)
 CACHE_TTL = timedelta(hours=6)
 
 _refresh_lock = asyncio.Lock()
+
+
+def convert_amount_to_rub(
+    amount: float | Decimal,
+    currency: str,
+    rates: dict[str, float],
+) -> tuple[Decimal, Decimal]:
+    normalized_currency = currency.strip().upper()
+    if normalized_currency not in SUPPORTED_DEAL_CURRENCIES:
+        raise ValueError(f"Unsupported deal currency: {currency}")
+
+    try:
+        rate = Decimal(str(rates[normalized_currency]))
+    except (KeyError, ValueError, TypeError) as exc:
+        raise ValueError(f"Missing exchange rate for {normalized_currency}") from exc
+    if rate <= 0:
+        raise ValueError(f"Invalid exchange rate for {normalized_currency}")
+
+    value = Decimal(str(amount))
+    if value < 0:
+        raise ValueError("Deal value cannot be negative")
+    return (value * rate).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP), rate
 
 
 def _decimal(value: str | None) -> float:

@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, JSON, String, Text
+from sqlalchemy import Boolean, DateTime, ForeignKey, Index, Integer, JSON, String, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
@@ -8,10 +8,16 @@ from app.database import Base
 
 class AdminUser(Base):
     __tablename__ = "admin_users"
+    __table_args__ = (
+        UniqueConstraint("username", name="uq_admin_users_username"),
+        UniqueConstraint("email", name="admin_users_email_key"),
+        Index("ix_admin_users_username", "username", unique=True),
+        Index("ix_admin_users_email", "email", unique=True),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    username: Mapped[str] = mapped_column(String(80), unique=True, nullable=False, index=True)
-    email: Mapped[str] = mapped_column(String(200), unique=True, nullable=False, index=True)
+    username: Mapped[str] = mapped_column(String(80), nullable=False)
+    email: Mapped[str] = mapped_column(String(200), nullable=False)
     full_name: Mapped[str] = mapped_column(String(120), nullable=False)
     role: Mapped[str] = mapped_column(String(20), nullable=False, default="manager", index=True)
     password_hash: Mapped[str] = mapped_column(Text, nullable=False)
@@ -30,12 +36,16 @@ class AdminUser(Base):
 
 class AdminSession(Base):
     __tablename__ = "admin_sessions"
+    __table_args__ = (
+        UniqueConstraint("token_hash", name="admin_sessions_token_hash_key"),
+        Index("ix_admin_sessions_token_hash", "token_hash", unique=True),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     user_id: Mapped[int] = mapped_column(
         ForeignKey("admin_users.id", ondelete="CASCADE"), nullable=False, index=True
     )
-    token_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False, index=True)
+    token_hash: Mapped[str] = mapped_column(String(64), nullable=False)
     csrf_token_hash: Mapped[str] = mapped_column(String(64), nullable=False)
     ip_address: Mapped[str | None] = mapped_column(String(64), nullable=True)
     user_agent: Mapped[str | None] = mapped_column(String(500), nullable=True)

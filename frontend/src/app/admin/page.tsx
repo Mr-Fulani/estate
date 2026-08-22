@@ -26,6 +26,10 @@ export default async function AdminDashboardPage() {
     fetchContactRequests(undefined, adminCookie),
     fetchProperties({ per_page: 5, sort_by: 'created_at', order: 'desc' }),
   ]);
+  const dealCurrencyBreakdown = Object.entries(stats.deal_totals_by_currency)
+    .filter((entry): entry is [string, number] => typeof entry[1] === 'number')
+    .map(([currency, value]) => formatPrice(value, currency))
+    .join(' · ');
 
   const statCards = [
     {
@@ -58,8 +62,10 @@ export default async function AdminDashboardPage() {
     },
     {
       title: 'Сумма сделок',
-      value: formatPrice(stats.total_deal_value, 'RUB'),
-      sub: 'По закрытым обращениям',
+      value: formatPrice(stats.total_deal_value, stats.deal_base_currency),
+      sub: stats.unconverted_won_deals
+        ? `${stats.unconverted_won_deals} сделок требуют пересчёта курса`
+        : dealCurrencyBreakdown || 'Нет сделок с указанной суммой',
       icon: CircleDollarSign,
       color: 'text-teal-600 bg-teal-50 border-teal-100',
     },

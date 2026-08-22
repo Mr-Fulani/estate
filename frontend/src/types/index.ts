@@ -147,6 +147,9 @@ export interface ContactRequest {
   outcome?: 'sold' | 'rented' | null;
   deal_value?: number | null;
   deal_currency?: string;
+  deal_value_rub?: number | null;
+  deal_exchange_rate?: number | null;
+  deal_rate_effective_date?: string | null;
   assigned_to?: string | null;
   next_follow_up_at?: string | null;
   closed_at?: string | null;
@@ -232,6 +235,9 @@ export interface AdminStats {
   sold_properties: number;
   rented_properties: number;
   total_deal_value: number;
+  deal_base_currency: 'RUB';
+  deal_totals_by_currency: Partial<Record<'RUB' | 'USD' | 'EUR' | 'TRY', number>>;
+  unconverted_won_deals: number;
   pending_reviews: number;
 }
 

@@ -28,6 +28,9 @@ class AdminStatsResponse(BaseModel):
     sold_properties: int
     rented_properties: int
     total_deal_value: float
+    deal_base_currency: str
+    deal_totals_by_currency: dict[str, float]
+    unconverted_won_deals: int
     pending_reviews: int
 
 @router.get("/stats", response_model=AdminStatsResponse)
@@ -85,9 +88,29 @@ async def get_admin_stats(
     res_rented = await db.execute(select(func.count(Property.id)).where(Property.market_status == "rented"))
     rented_properties = res_rented.scalar_one()
     res_value = await db.execute(
-        select(func.coalesce(func.sum(ContactRequest.deal_value), 0)).where(ContactRequest.status == "won")
+        select(func.coalesce(func.sum(ContactRequest.deal_value_rub), 0)).where(
+            ContactRequest.status == "won"
+        )
     )
     total_deal_value = float(res_value.scalar_one())
+    res_currency_totals = await db.execute(
+        select(ContactRequest.deal_currency, func.sum(ContactRequest.deal_value))
+        .where(ContactRequest.status == "won", ContactRequest.deal_value.is_not(None))
+        .group_by(ContactRequest.deal_currency)
+        .order_by(ContactRequest.deal_currency)
+    )
+    deal_totals_by_currency = {
+        currency: float(total)
+        for currency, total in res_currency_totals.all()
+    }
+    res_unconverted = await db.execute(
+        select(func.count(ContactRequest.id)).where(
+            ContactRequest.status == "won",
+            ContactRequest.deal_value.is_not(None),
+            ContactRequest.deal_value_rub.is_(None),
+        )
+    )
+    unconverted_won_deals = res_unconverted.scalar_one()
     res_reviews = await db.execute(select(func.count(Review.id)).where(Review.status == "pending"))
     pending_reviews = res_reviews.scalar_one()
 
@@ -111,5 +134,8 @@ async def get_admin_stats(
         sold_properties=sold_properties,
         rented_properties=rented_properties,
         total_deal_value=total_deal_value,
+        deal_base_currency="RUB",
+        deal_totals_by_currency=deal_totals_by_currency,
+        unconverted_won_deals=unconverted_won_deals,
         pending_reviews=pending_reviews,
     )

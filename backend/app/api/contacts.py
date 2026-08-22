@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 import secrets
 from typing import Optional
 
@@ -7,7 +7,7 @@ from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.database import get_db
+from app.database import AsyncSessionLocal, get_db
 from app.config import get_settings
 from app.models.contact import ContactRequest, LeadActivity
 from app.models.property import Property
@@ -22,25 +22,121 @@ from app.schemas.contact import (
 from app.audit import add_audit_log
 from app.models.admin_user import AdminUser
 from app.security import require_permission
+from app.services.currency import convert_amount_to_rub, get_exchange_rates
 
 
 router = APIRouter(prefix="/api/v1/contacts", tags=["Contacts"])
 settings = get_settings()
 
 
-def _lead_query():
-    return select(ContactRequest).options(
+PROPERTY_CLOSED_BADGES = {"sold": "Продано", "rented": "Сдано"}
+PROPERTY_DEFAULT_BADGES = {
+    "available": "Актуально",
+    "reserved": "В брони",
+    "sold": "Продано",
+    "rented": "Сдано",
+    "archived": "В архиве",
+}
+
+
+def _lead_query(for_update: bool = False):
+    query = select(ContactRequest).options(
         selectinload(ContactRequest.property),
         selectinload(ContactRequest.activities),
     )
+    if for_update:
+        query = query.with_for_update().execution_options(populate_existing=True)
+    return query
 
 
-async def _get_lead(contact_id: int, db: AsyncSession) -> ContactRequest:
-    result = await db.execute(_lead_query().where(ContactRequest.id == contact_id))
+async def _get_lead(
+    contact_id: int,
+    db: AsyncSession,
+    *,
+    for_update: bool = False,
+) -> ContactRequest:
+    result = await db.execute(
+        _lead_query(for_update=for_update).where(ContactRequest.id == contact_id)
+    )
     lead = result.scalars().first()
     if not lead:
         raise HTTPException(status_code=404, detail="Contact request not found")
     return lead
+
+
+async def _lock_property(property_id: int, db: AsyncSession) -> Property:
+    result = await db.execute(
+        select(Property).where(Property.id == property_id).with_for_update()
+    )
+    property_record = result.scalar_one_or_none()
+    if property_record is None:
+        raise HTTPException(status_code=422, detail="Linked property no longer exists")
+    return property_record
+
+
+async def _find_other_won_deal(
+    property_id: int,
+    contact_id: int,
+    db: AsyncSession,
+) -> ContactRequest | None:
+    result = await db.execute(
+        select(ContactRequest)
+        .where(
+            ContactRequest.property_id == property_id,
+            ContactRequest.status == "won",
+            ContactRequest.id != contact_id,
+        )
+        .order_by(ContactRequest.closed_at.desc(), ContactRequest.id.desc())
+        .limit(1)
+    )
+    return result.scalar_one_or_none()
+
+
+async def _deal_conversion(
+    amount: float | None,
+    currency: str,
+) -> tuple[float | None, float | None, date | None]:
+    if amount is None:
+        return None, None, None
+
+    normalized_currency = currency.upper()
+    if normalized_currency == "RUB":
+        converted, rate = convert_amount_to_rub(amount, normalized_currency, {"RUB": 1.0})
+        return float(converted), float(rate), date.today()
+
+    try:
+        async with AsyncSessionLocal() as rate_db:
+            snapshot, _ = await get_exchange_rates(rate_db)
+            rates = dict(snapshot.rates)
+            effective_date = snapshot.effective_date
+        converted, rate = convert_amount_to_rub(amount, normalized_currency, rates)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Official exchange rate is unavailable; the deal was not closed",
+        ) from exc
+    return float(converted), float(rate), effective_date
+
+
+async def _restore_property_after_won(
+    lead: ContactRequest,
+    property_record: Property,
+    db: AsyncSession,
+) -> None:
+    other_won = await _find_other_won_deal(property_record.id, lead.id, db)
+    if other_won and other_won.outcome in PROPERTY_CLOSED_BADGES:
+        property_record.market_status = other_won.outcome
+        property_record.status_badge = PROPERTY_CLOSED_BADGES[other_won.outcome]
+    else:
+        restored_status = lead.previous_property_market_status or "available"
+        property_record.market_status = restored_status
+        if lead.previous_property_market_status is not None:
+            property_record.status_badge = lead.previous_property_status_badge
+        else:
+            property_record.status_badge = PROPERTY_DEFAULT_BADGES.get(restored_status)
+
+    lead.previous_property_market_status = None
+    lead.previous_property_status_badge = None
 
 
 @router.get("", include_in_schema=False)
@@ -206,9 +302,36 @@ async def update_contact(
     current: AdminUser = Depends(require_permission("leads:write", csrf=True)),
     db: AsyncSession = Depends(get_db),
 ):
-    lead = await _get_lead(contact_id, db)
+    initial_lead = await _get_lead(contact_id, db)
     data = update.model_dump(exclude_unset=True)
     note = data.pop("note", None)
+    initial_next_status = data.get("status", initial_lead.status)
+    initial_next_outcome = data.get("outcome", initial_lead.outcome)
+    raw_initial_deal_value = data.get("deal_value", initial_lead.deal_value)
+    initial_deal_value = (
+        float(raw_initial_deal_value) if raw_initial_deal_value is not None else None
+    )
+    initial_currency = str(data.get("deal_currency", initial_lead.deal_currency))
+
+    if initial_next_status == "won":
+        if not initial_lead.property_id:
+            raise HTTPException(status_code=422, detail="A won deal must be linked to a property")
+        if initial_next_outcome not in PROPERTY_CLOSED_BADGES:
+            raise HTTPException(status_code=422, detail="Select sold or rented for a won deal")
+
+    should_prepare_conversion = initial_next_status == "won" and (
+        initial_lead.status != "won"
+        or "deal_value" in data
+        or "deal_currency" in data
+        or initial_lead.deal_value_rub is None
+    )
+    prepared_conversion = (
+        await _deal_conversion(initial_deal_value, initial_currency)
+        if should_prepare_conversion
+        else None
+    )
+
+    lead = await _get_lead(contact_id, db, for_update=True)
     old_status = lead.status
     next_status = data.get("status", old_status)
     next_outcome = data.get("outcome", lead.outcome)
@@ -216,26 +339,73 @@ async def update_contact(
     if next_status == "won":
         if not lead.property_id:
             raise HTTPException(status_code=422, detail="A won deal must be linked to a property")
-        if next_outcome not in {"sold", "rented"}:
+        if next_outcome not in PROPERTY_CLOSED_BADGES:
             raise HTTPException(status_code=422, detail="Select sold or rented for a won deal")
 
     for field, value in data.items():
         setattr(lead, field, value)
     lead.is_read = True
 
+    property_record = (
+        await _lock_property(lead.property_id, db) if lead.property_id is not None else None
+    )
+    if next_status == "won" and property_record is not None:
+        conflict = await _find_other_won_deal(property_record.id, lead.id, db)
+        if conflict is not None:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="This property already has another successful deal",
+            )
+
     now = datetime.now(timezone.utc)
-    if next_status in {"won", "lost"}:
-        lead.closed_at = lead.closed_at or now
-    elif next_status != old_status:
+    if next_status in {"won", "lost"} and next_status != old_status:
+        lead.closed_at = now
+    elif next_status not in {"won", "lost"}:
         lead.closed_at = None
-        if next_status != "won":
-            lead.outcome = None
 
-    if next_status == "won" and lead.property:
-        lead.property.market_status = next_outcome
-        lead.property.status_badge = "Продано" if next_outcome == "sold" else "Сдано"
+    if old_status == "won" and next_status != "won" and property_record is not None:
+        await _restore_property_after_won(lead, property_record, db)
 
-    if next_status != old_status or data.get("outcome") or data.get("deal_value") is not None:
+    if next_status == "won" and property_record is not None:
+        if old_status != "won":
+            lead.previous_property_market_status = property_record.market_status
+            lead.previous_property_status_badge = property_record.status_badge
+        property_record.market_status = next_outcome
+        property_record.status_badge = PROPERTY_CLOSED_BADGES[next_outcome]
+
+        should_update_conversion = (
+            old_status != "won"
+            or "deal_value" in data
+            or "deal_currency" in data
+            or lead.deal_value_rub is None
+        )
+        if should_update_conversion:
+            final_amount = float(lead.deal_value) if lead.deal_value is not None else None
+            final_currency = lead.deal_currency
+            if (
+                prepared_conversion is None
+                or initial_deal_value != final_amount
+                or initial_currency != final_currency
+            ):
+                prepared_conversion = await _deal_conversion(final_amount, final_currency)
+            (
+                lead.deal_value_rub,
+                lead.deal_exchange_rate,
+                lead.deal_rate_effective_date,
+            ) = prepared_conversion
+    else:
+        lead.outcome = None
+        lead.deal_value = None
+        lead.deal_value_rub = None
+        lead.deal_exchange_rate = None
+        lead.deal_rate_effective_date = None
+
+    if (
+        next_status != old_status
+        or "outcome" in data
+        or "deal_value" in data
+        or "deal_currency" in data
+    ):
         db.add(
             LeadActivity(
                 contact_id=lead.id,
@@ -246,6 +416,9 @@ async def update_contact(
                     "outcome": lead.outcome,
                     "deal_value": float(lead.deal_value) if lead.deal_value is not None else None,
                     "deal_currency": lead.deal_currency,
+                    "deal_value_rub": float(lead.deal_value_rub) if lead.deal_value_rub is not None else None,
+                    "deal_exchange_rate": float(lead.deal_exchange_rate) if lead.deal_exchange_rate is not None else None,
+                    "deal_rate_effective_date": lead.deal_rate_effective_date.isoformat() if lead.deal_rate_effective_date else None,
                 },
             )
         )
@@ -315,7 +488,10 @@ async def delete_contact(
     current: AdminUser = Depends(require_permission("leads:write", csrf=True)),
     db: AsyncSession = Depends(get_db),
 ):
-    lead = await _get_lead(contact_id, db)
+    lead = await _get_lead(contact_id, db, for_update=True)
+    if lead.status == "won" and lead.property_id is not None:
+        property_record = await _lock_property(lead.property_id, db)
+        await _restore_property_after_won(lead, property_record, db)
     add_audit_log(
         db,
         request,
