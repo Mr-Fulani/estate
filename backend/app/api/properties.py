@@ -147,7 +147,7 @@ async def list_properties(
     }
     order_func = desc if order == "desc" else asc
     sort_column = sort_columns[sort_by]
-    query = query.order_by(order_func(sort_column))
+    query = query.order_by(order_func(sort_column), order_func(Property.id))
 
     # Pagination
     offset = (page - 1) * per_page

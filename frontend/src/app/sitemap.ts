@@ -29,7 +29,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const pages = Math.ceil(firstPage.total / firstPage.per_page);
     const properties = [...firstPage.items];
     for (let page = 2; page <= pages; page += 1) {
-      properties.push(...(await fetchProperties({ per_page: 100, page })).items);
+      properties.push(...(await fetchProperties({ per_page: 100, page, sort_by: 'updated_at', order: 'desc' })).items);
     }
     entries.push(...properties
       .filter((property) => property.market_status !== 'archived' && !property.development?.is_demo)
