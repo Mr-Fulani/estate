@@ -4,6 +4,7 @@ import { siteCopy } from '@/i18n/siteCopy';
 
 export type SeoPage = 'home' | 'collections' | 'properties' | 'services' | 'about' | 'contact' | 'news' | 'reviews' | 'privacy' | 'terms';
 export interface SiteProfile {
+  content_reviewed?: boolean;
   price_presets?: number[];
   brand_name?: string;
   legal_name?: string;

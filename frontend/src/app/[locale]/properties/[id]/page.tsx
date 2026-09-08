@@ -1,3 +1,4 @@
+import { readyForIndexing } from '@/lib/indexing';
 import { getLocaleConfig, defaultAvailableLocale } from '@/lib/runtime-locales';
 import { getSiteOrigin } from '@/lib/site-config';
 import type { Metadata } from 'next';
@@ -44,7 +45,7 @@ export async function generateMetadata({ params }: PropertyPageProps): Promise<M
   const images = sourceProperty.images?.[0]
     ? [{ url: absoluteUrl(sourceProperty.images[0]), alt: property.title }]
     : [];
-  const indexable = !sourceProperty.development?.is_demo && sourceProperty.is_active && sourceProperty.market_status !== 'archived' && hasRequestedLocale;
+  const indexable = readyForIndexing(settings) && !sourceProperty.development?.is_demo && sourceProperty.is_active && sourceProperty.market_status !== 'archived' && hasRequestedLocale;
   const languages = Object.fromEntries([
     ...availableLocales.map((availableLocale) => [
       availableLocale,

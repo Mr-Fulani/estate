@@ -1,4 +1,5 @@
-import { getApiBaseUrl } from '@/lib/api';
+import { readyForIndexing } from '@/lib/indexing';
+import { getApiBaseUrl, fetchSiteSettings } from '@/lib/api';
 import { getSiteOrigin } from '@/lib/site-config';
 import { getLocaleConfig } from '@/lib/runtime-locales';
 import { buildSitemapEntries, sitemapParts, sitemapIndex, createSitemapCache, type SitemapItem } from '@/lib/sitemap-data';
@@ -7,6 +8,7 @@ const cached=createSitemapCache<string[]>();
 export async function sitemapResponse(part?:string):Promise<Response> {
   const origin=getSiteOrigin();const config=getLocaleConfig();
   try {
+    if (!readyForIndexing(await fetchSiteSettings())) return new Response(sitemapParts([])[0],{headers:{'Content-Type':'application/xml; charset=utf-8','Cache-Control':'no-store','X-Robots-Tag':'noindex'}});
     const snapshot=await cached(`${origin}|${getApiBaseUrl()}|${config.locales.join(',')}|${config.defaultLocale}`,async()=>{
       const response=await fetch(`${getApiBaseUrl()}/seo/sitemap`,{cache:'no-store',signal:AbortSignal.timeout(15000)});
       if(!response.ok)throw new Error(`Sitemap source status ${response.status}`);

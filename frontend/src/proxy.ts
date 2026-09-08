@@ -1,3 +1,4 @@
+import { indexingEnabled, previewResponse } from '@/lib/indexing';
 import { getLocaleConfig } from '@/lib/runtime-locales';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -9,6 +10,12 @@ const PUBLIC_FILE = /\.[^/]+$/;
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const preview = previewResponse(request);
+  if (preview) return preview;
+  const protect = (response: NextResponse) => {
+    if (!indexingEnabled() || pathname.startsWith('/admin') || pathname.startsWith('/api')) response.headers.set('X-Robots-Tag','noindex, follow');
+    return response;
+  };
 
   if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
     const session = request.cookies.get('estate_admin_session');
@@ -16,7 +23,7 @@ export async function proxy(request: NextRequest) {
       const loginUrl = request.nextUrl.clone();
       loginUrl.pathname = '/admin/login';
       loginUrl.searchParams.set('returnTo', `${pathname}${request.nextUrl.search}`);
-      return NextResponse.redirect(loginUrl);
+      return protect(NextResponse.redirect(loginUrl));
     }
     try {
       const apiUrl = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
@@ -33,7 +40,7 @@ export async function proxy(request: NextRequest) {
       const redirect = NextResponse.redirect(loginUrl);
       redirect.cookies.delete('estate_admin_session');
       redirect.cookies.delete('estate_admin_csrf');
-      return redirect;
+      return protect(redirect);
     }
   }
 
@@ -44,7 +51,7 @@ export async function proxy(request: NextRequest) {
     pathname === '/icon' || pathname === '/apple-icon' ||
     PUBLIC_FILE.test(pathname)
   ) {
-    return NextResponse.next();
+    return protect(NextResponse.next());
   }
 
   const { locales: activeLocales, defaultLocale } = getLocaleConfig();
@@ -60,15 +67,15 @@ export async function proxy(request: NextRequest) {
       response.headers.set('Cache-Control', 'private, no-store, max-age=0');
       response.headers.set('Referrer-Policy', 'no-referrer');
     }
-    return response;
+    return protect(response);
   }
 
   const redirectUrl = request.nextUrl.clone();
   redirectUrl.pathname = pathname === '/' ? `/${defaultLocale}` : `/${defaultLocale}${pathname}`;
-  return NextResponse.redirect(redirectUrl, 308);
+  return protect(NextResponse.redirect(redirectUrl, 308));
 }
 
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image).*)'],
+  matcher: ['/((?!_next/static).*)'],
 };

@@ -1,3 +1,4 @@
+import { readyForIndexing } from '@/lib/indexing';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { articleAuthor } from '@/lib/structured-data';
 import { getMessages } from '@/i18n/messages';
@@ -47,7 +48,7 @@ export async function generateMetadata({ params }: NewsArticlePageProps): Promis
     title,
     description,
     alternates: { canonical: `/${canonicalLocale}/news/${slug}`, languages },
-    robots: hasRequestedLocale ? undefined : { index: false, follow: true },
+    robots: { index: hasRequestedLocale && readyForIndexing(await fetchSiteSettings()), follow: true },
     openGraph: {
       title,
       description,

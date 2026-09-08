@@ -1,3 +1,4 @@
+import { readyForIndexing } from '@/lib/indexing';
 import { getLocaleConfig } from '@/lib/runtime-locales';
 import { getSiteOrigin } from '@/lib/site-config';
 import type { Metadata } from 'next';
@@ -16,6 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: new URL(getSiteOrigin()),
     title: brand,
+    robots: { index: readyForIndexing(settings), follow: true },
     icons: settings.profile?.icon_url ? { icon: settings.profile.icon_url, apple: settings.profile.icon_url } : undefined,
   };
 }

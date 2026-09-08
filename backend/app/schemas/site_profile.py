@@ -16,6 +16,7 @@ class PageSeo(BaseModel):
 
 class SiteProfile(BaseModel):
     model_config = ConfigDict(extra='forbid', str_strip_whitespace=True)
+    content_reviewed: bool = False
     price_presets: list[float] = Field(default_factory=list, max_length=12)
     brand_name: str = Field(default='', max_length=120)
     legal_name: str = Field(default='', max_length=240)

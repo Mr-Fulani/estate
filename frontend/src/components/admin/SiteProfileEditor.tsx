@@ -22,6 +22,7 @@ export function SiteProfileEditor({ profile, onChange }: {profile: SiteProfile; 
   const [search, setSearch] = useState('');
   const fields = copyFields({...siteCopy[locale], legal: legalCopy[locale]}).filter(([key, text]) => key.startsWith(`${section}.`) && (!search || text.toLowerCase().includes(search.toLowerCase())));
   return <div className="space-y-6 rounded-2xl border border-slate-200 bg-white p-6">
+    <label className="flex items-start gap-3 text-sm font-semibold"><input type="checkbox" checked={profile.content_reviewed || false} onChange={event=>onChange({...profile,content_reviewed:event.target.checked})}/>Тексты, услуги и данные компании проверены для публикации</label>
     <h2 className="text-lg font-bold">Компания, изображения и SEO</h2>
     <p className="text-sm text-slate-500">Домен задаётся при развёртывании. Здесь хранится информация именно этой компании. Для изображений используйте адрес HTTPS или путь к загруженному файлу.</p>
     <div className="grid gap-4 sm:grid-cols-2">{Object.entries(identityFields).map(([key,label]) => <label key={key} className="text-sm font-semibold">{label}<input className={inputClass} value={profile[key as keyof typeof identityFields] || ''} onChange={event=>onChange({...profile,[key]:event.target.value})} /></label>)}</div>

@@ -1,3 +1,4 @@
+import { readyForIndexing } from '@/lib/indexing';
 import { collectionsLabel } from '@/lib/landing-pages';
 import { getLocaleConfig } from '@/lib/runtime-locales';
 import type { Metadata } from 'next';
@@ -25,7 +26,7 @@ export async function localizedPageMetadata(
   return {
     title, description,
     alternates: { canonical, languages: localizedAlternates(`${path}${options.canonicalSuffix || ''}`) },
-    robots: options.index === false ? { index: false, follow: true } : undefined,
+    robots: { index: readyForIndexing(settings) && options.index !== false, follow: true },
     openGraph: { title, description, url: canonical, siteName: brandName(settings), locale: openGraphLocales[locale], type: 'website', images: image ? [{ url: image, alt: title }] : [] },
     twitter: { card: image ? 'summary_large_image' : 'summary', title, description, images: image ? [image] : [] },
   };
