@@ -130,7 +130,7 @@ export function PropertyGallery({
           fill
           preload
           loading="eager"
-          sizes="(max-width: 1024px) 100vw, 66vw"
+          sizes="(max-width: 640px) calc(100vw - 68px), (max-width: 1024px) calc(100vw - 96px), 66vw"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
 
@@ -209,7 +209,7 @@ export function PropertyGallery({
                     ? 'ring-2 ring-primary border-transparent scale-100 opacity-100 shadow-md'
                     : 'border-slate-200 opacity-70 hover:opacity-100 hover:border-primary/50'
                 )}
-                aria-label={`${copy.photo} ${idx + 1}`}
+                aria-label={`${copy.photo} ${idx + 1}${idx === 0 ? ` · ${copy.mainPhoto}` : ''}`}
                 aria-current={isSelected ? 'true' : undefined}
               >
                 <Image
@@ -305,7 +305,7 @@ export function PropertyGallery({
                       ? 'ring-2 ring-white border-transparent scale-105 opacity-100'
                       : 'border-white/20 opacity-50 hover:opacity-80'
                   )}
-                  aria-label={`${copy.photo} ${idx + 1}`}
+                  aria-label={`${copy.photo} ${idx + 1}${idx === 0 ? ` · ${copy.mainPhoto}` : ''}`}
                   aria-current={selectedIndex === idx ? 'true' : undefined}
                 >
                   <Image src={imgUrl} alt="" fill sizes="64px" className="object-cover" />

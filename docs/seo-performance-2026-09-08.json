@@ -1,0 +1,241 @@
+{
+  "date": "2026-09-08",
+  "tool": "Lighthouse 13.4.1",
+  "environment": "Local standalone production Next.js; isolated PostgreSQL and FastAPI; artificial EN/TR company/catalog, existing repository test photos; not the public domain.",
+  "throttling": {
+    "rttMs": 150,
+    "throughputKbps": 1638.4,
+    "requestLatencyMs": 562.5,
+    "downloadThroughputKbps": 1474.5600000000002,
+    "uploadThroughputKbps": 675,
+    "cpuSlowdownMultiplier": 4
+  },
+  "screenEmulation": {
+    "mobile": true,
+    "width": 412,
+    "height": 823,
+    "deviceScaleFactor": 1.75,
+    "disabled": false
+  },
+  "throttlingMethod": "simulate",
+  "runs": [
+    {
+      "stage": "До SEO-17",
+      "source": "home-before.report.json",
+      "source_sha256": "86697d69b4d2354a4fa7cd316a6a2b51753915678b03f8ab9a3e668b82d794b1",
+      "measured_at": "2026-09-08T17:24:01.853Z",
+      "path": "en",
+      "scores": {
+        "performance": 72,
+        "accessibility": 97,
+        "seo": 100
+      },
+      "metrics": {
+        "first-contentful-paint": 1235.74225,
+        "largest-contentful-paint": 4098.226750000001,
+        "total-blocking-time": 359,
+        "cumulative-layout-shift": 0,
+        "speed-index": 6879.592683989281,
+        "total-byte-weight": 311887
+      },
+      "warnings": [
+        "The tested device appears to have a slower CPU than  Lighthouse expects. This can negatively affect your performance score. Learn more about [calibrating an appropriate CPU slowdown multiplier](https://github.com/GoogleChrome/lighthouse/blob/main/docs/throttling.md#cpu-throttling)."
+      ],
+      "runtime_error": null
+    },
+    {
+      "stage": "До SEO-17, повтор",
+      "source": "home-baseline-repeat.json",
+      "source_sha256": "81472e8ddb078164cce18473dbee1434492a142e90ae09ff85638286b5dcdd87",
+      "measured_at": "2026-09-08T17:26:18.103Z",
+      "path": "en",
+      "scores": {
+        "performance": 80,
+        "accessibility": 97,
+        "seo": 100
+      },
+      "metrics": {
+        "first-contentful-paint": 1206.2645499999999,
+        "largest-contentful-paint": 3215.5290999999997,
+        "total-blocking-time": 502.5,
+        "cumulative-layout-shift": 0,
+        "speed-index": 2142.603092002488,
+        "total-byte-weight": 311380
+      },
+      "warnings": [
+        "The tested device appears to have a slower CPU than  Lighthouse expects. This can negatively affect your performance score. Learn more about [calibrating an appropriate CPU slowdown multiplier](https://github.com/GoogleChrome/lighthouse/blob/main/docs/throttling.md#cpu-throttling)."
+      ],
+      "runtime_error": null
+    },
+    {
+      "stage": "После первых исправлений",
+      "source": "home-after.report.json",
+      "source_sha256": "14d2bb5d7415bb1ee6792183e127b33e0471f0fad7499b45227e59c7d150a37b",
+      "measured_at": "2026-09-08T17:38:46.886Z",
+      "path": "en",
+      "scores": {
+        "performance": 88,
+        "accessibility": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "first-contentful-paint": 959.3866,
+        "largest-contentful-paint": 3259.1597999999994,
+        "total-blocking-time": 231,
+        "cumulative-layout-shift": 0,
+        "speed-index": 2211.94687400718,
+        "total-byte-weight": 312288
+      },
+      "warnings": [],
+      "runtime_error": null
+    },
+    {
+      "stage": "После первых исправлений",
+      "source": "property-after.report.json",
+      "source_sha256": "7f6334d71a7e43a368836002664535cba03839b0c9e8e89d7e12955bea5819a0",
+      "measured_at": "2026-09-08T17:39:02.050Z",
+      "path": "en/properties/fixture-office-101",
+      "scores": {
+        "performance": 91,
+        "accessibility": 97,
+        "seo": 100
+      },
+      "metrics": {
+        "first-contentful-paint": 1136.1619,
+        "largest-contentful-paint": 3373.364275,
+        "total-blocking-time": 66.5,
+        "cumulative-layout-shift": 0,
+        "speed-index": 2308.192929988959,
+        "total-byte-weight": 342162
+      },
+      "warnings": [],
+      "runtime_error": null
+    },
+    {
+      "stage": "После первых исправлений",
+      "source": "catalog-after.report.json",
+      "source_sha256": "18025d911f44aa8dffa70f2bb55e159345ad9a8a1c80fa37c1024f07a5d44a54",
+      "measured_at": "2026-09-08T17:39:19.195Z",
+      "path": "en/properties",
+      "scores": {
+        "performance": 95,
+        "accessibility": 95,
+        "seo": 100
+      },
+      "metrics": {
+        "first-contentful-paint": 976.6887999999999,
+        "largest-contentful-paint": 2913.6888,
+        "total-blocking-time": 72,
+        "cumulative-layout-shift": 0,
+        "speed-index": 976.6887999999999,
+        "total-byte-weight": 306680
+      },
+      "warnings": [],
+      "runtime_error": null
+    },
+    {
+      "stage": "После контраста и подписей",
+      "source": "home-final.report.json",
+      "source_sha256": "5d78b6668b4d2ab49c0846364b38946ee8cc1c91df3088ff6a2d77cbdcbc6cb8",
+      "measured_at": "2026-09-08T17:44:56.335Z",
+      "path": "en",
+      "scores": {
+        "performance": 99,
+        "accessibility": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "first-contentful-paint": 1007.7081000000001,
+        "largest-contentful-paint": 1007.7081000000001,
+        "total-blocking-time": 120.5,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1532.8281000065756,
+        "total-byte-weight": 310542
+      },
+      "warnings": [],
+      "runtime_error": null
+    },
+    {
+      "stage": "После контраста и подписей",
+      "source": "property-final.report.json",
+      "source_sha256": "302f2e89c53e4e18f428f4b938292ddba0b97b8c913704c4da4591f00b8e05fa",
+      "measured_at": "2026-09-08T17:45:09.966Z",
+      "path": "en/properties/fixture-office-101",
+      "scores": {
+        "performance": 91,
+        "accessibility": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "first-contentful-paint": 1074.4973,
+        "largest-contentful-paint": 3299.9946,
+        "total-blocking-time": 126,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1074.4973,
+        "total-byte-weight": 340591
+      },
+      "warnings": [
+        "The page loaded too slowly to finish within the time limit. Results may be incomplete."
+      ],
+      "runtime_error": null
+    },
+    {
+      "stage": "После контраста и подписей",
+      "source": "catalog-final.report.json",
+      "source_sha256": "fd058c2594f894627a5f99d44820dbb0ad7bd755527131dbe97791f38748ca3c",
+      "measured_at": "2026-09-08T17:46:11.903Z",
+      "path": "en/properties",
+      "scores": {
+        "performance": 78,
+        "accessibility": 98,
+        "seo": 100
+      },
+      "metrics": {
+        "first-contentful-paint": 1540.7604999999999,
+        "largest-contentful-paint": 3301.2814999999996,
+        "total-blocking-time": 521.0000000000005,
+        "cumulative-layout-shift": 0,
+        "speed-index": 2243.877054010658,
+        "total-byte-weight": 307188
+      },
+      "warnings": [],
+      "runtime_error": null
+    },
+    {
+      "stage": "После исправления H2",
+      "source": "catalog-heading-final.report.json",
+      "source_sha256": "582a1d535bc8db32cccf3f6e09cd14858572f6953fa1815b21c1794dbece4f86",
+      "measured_at": "2026-09-08T17:48:50.072Z",
+      "path": "en/properties",
+      "scores": {
+        "performance": 93,
+        "accessibility": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "first-contentful-paint": 957.234,
+        "largest-contentful-paint": 3001.702,
+        "total-blocking-time": 134,
+        "cumulative-layout-shift": 0,
+        "speed-index": 2499.3638580095526,
+        "total-byte-weight": 307034
+      },
+      "warnings": [],
+      "runtime_error": null
+    }
+  ],
+  "checks": {
+    "development_initial_html": {
+      "unit_types": 3,
+      "crawlable_plan_links": 3,
+      "passed": true
+    },
+    "browser_contact_attribution": "See seo-verification-2026-09-08.json"
+  },
+  "limitations": [
+    "No public DNS/TLS/CDN or actual company content tested.",
+    "Baseline runs warn about host CPU; no controlled causal performance percentage can be inferred.",
+    "Small number of lab samples, no field INP or CrUX data.",
+    "Final home/card measurements precede the heading-only catalog/collection fix; final catalog includes it."
+  ]
+}

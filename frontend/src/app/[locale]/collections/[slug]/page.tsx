@@ -43,12 +43,14 @@ export default async function CollectionPage(props: Props) {
   const path=`/${locale}/collections/${slug}`;
   const totalPages=Math.ceil(properties.total/properties.per_page);
   const messages=getMessages(locale);
+  const catalogCopy=getSiteCopy(locale,await fetchSiteSettings()).catalog;
   return <div className="container mx-auto px-4 py-10 md:px-6">
     <Breadcrumbs items={[{name:messages.navigation.home,href:`/${locale}`},{name:collectionsLabel[locale],href:`/${locale}/collections`},{name:copy.title,href:path}]} />
     <h1 className="mb-5 max-w-4xl text-4xl font-bold text-slate-950">{copy.title}</h1>
     <p className="mb-8 max-w-3xl text-lg text-slate-600">{copy.description}</p>
     <div className="mb-12 max-w-3xl"><RichText content={copy.content}/></div>
-    <PropertyGrid properties={properties.items} locale={locale} emptyMessage={getSiteCopy(locale,await fetchSiteSettings()).catalog.empty}/>
+    <h2 className="mb-5 text-2xl font-semibold">{catalogCopy.found}: {properties.total}</h2>
+    <PropertyGrid properties={properties.items} locale={locale} emptyMessage={catalogCopy.empty}/>
     {totalPages>1 && <nav className="mt-10 flex justify-center gap-5" aria-label="Pagination">{page>1 && <Link href={`${path}?page=${page-1}`}>{messages.common.previous}</Link>}<span>{page} / {totalPages}</span>{page<totalPages && <Link href={`${path}?page=${page+1}`}>{messages.common.next}</Link>}</nav>}
   </div>;
 }

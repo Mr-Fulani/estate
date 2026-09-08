@@ -22,8 +22,8 @@ export function DevelopmentCard({ property: source, locale }: { property: Proper
     <div className="flex flex-1 flex-col p-5 text-[#182a34]">
       <p className="mb-3 text-[9px] uppercase tracking-[.15em] text-[#896b40]">{property.development?.design_brand || copy.collection}</p>
       <h3 className="font-serif text-[25px] leading-tight">{property.title}</h3>
-      <p className="mt-3 text-xs text-[#6a7476]" dir="ltr">{property.unit_types?.map(item => item.code).join(' / ')}</p>
-      <div className="mt-5 flex items-end justify-between gap-3 border-t border-[#dedbd2] pt-4"><div><p className="mb-1 text-[9px] text-[#777e7c]">{property.development?.is_demo ? developmentDemoCopy[locale].price : property.development?.price_status === 'indicative' ? copy.indicative : copy.from}</p><p className="font-serif text-xl"><span className="text-sm">{copy.from} </span><CurrencyPrice amount={property.price} sourceCurrency={property.currency} locale={locale} /></p></div><ArrowUpRight size={22} className="text-[#94723e] transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" /></div>
+      <p className="mt-3 text-xs text-[#535f60]" dir="ltr">{property.unit_types?.map(item => item.code).join(' / ')}</p>
+      <div className="mt-5 flex items-end justify-between gap-3 border-t border-[#dedbd2] pt-4"><div><p className="mb-1 text-[9px] text-[#535f60]">{property.development?.is_demo ? developmentDemoCopy[locale].price : property.development?.price_status === 'indicative' ? copy.indicative : copy.from}</p><p className="font-serif text-xl"><span className="text-sm">{copy.from} </span><CurrencyPrice amount={property.price} sourceCurrency={property.currency} locale={locale} /></p></div><ArrowUpRight size={22} className="text-[#94723e] transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" /></div>
     </div>
   </Link>;
 }

@@ -159,7 +159,7 @@ export function CurrencyConverter({ locale }: { locale: Locale }) {
                 </div>
 
                 <div className="min-w-0 rounded-2xl border border-primary/15 bg-primary-50 p-4">
-                  <div className="mb-3 text-xs font-bold uppercase tracking-[0.14em] text-primary-500">
+                  <div className="mb-3 text-xs font-bold uppercase tracking-[0.14em] text-primary-700">
                     {copy.result}
                   </div>
                   <div className="flex min-w-0 flex-col items-stretch gap-3">

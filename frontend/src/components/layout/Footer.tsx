@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { collectionsLabel } from '@/lib/landing-pages';
 import { Brand } from '@/components/layout/Brand';
-import { brandName } from '@/lib/site-profile';
+import { brandInitials, brandName } from '@/lib/site-profile';
 import { usePathname } from 'next/navigation';
 import { Mail, MapPin, Phone } from 'lucide-react';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
@@ -45,7 +45,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
           {/* Brand */}
           <div>
-            <Link href={href('/')} className="notranslate inline-block mb-4" aria-label={brandName(settings)} translate="no">
+            <Link href={href('/')} className="notranslate inline-block mb-4" aria-label={`${brandInitials(settings)} — ${brandName(settings)}`} translate="no">
               <span className="text-2xl font-bold tracking-tight text-white">
                 <Brand />
               </span>

@@ -126,6 +126,10 @@ export function DevelopmentPage({ property: source, locale, preview = false }: {
           </div>
           <div className={styles.unitDetails}><p className={styles.eyebrow}>{copy.residences}</p><h3 dir="ltr">{unit.code}</h3><dl><div><dt>{copy.area}</dt><dd><bdi>{range(unit.area_min, unit.area_max)}</bdi></dd></div><div><dt>{copy.price}</dt><dd className={styles.unitPrice}>{unit.price_min !== null && unit.price_max !== null ? <><bdi>{price(unit.price_min)}</bdi><span>— <bdi>{price(unit.price_max)}</bdi></span></> : copy.priceOnRequest}</dd></div></dl><button className={styles.darkButton} onClick={() => enquire(unit.code)}>{copy.availability}<ArrowUpRight size={18} /></button>{date && unit.price_min !== null && <p className={styles.caption}>{profile.price_status === 'verified' ? copy.verified : copy.dated} {date}</p>}</div>
         </div>}
+        <details className="mx-4 my-6 rounded-xl border border-slate-200 p-4 md:mx-8">
+          <summary className="cursor-pointer font-semibold">{copy.residences} · {units.length}</summary>
+          <ul className="mt-4 grid gap-5 md:grid-cols-3">{units.map(item => <li key={item.code}><h3>{item.code}</h3><p>{copy.area}: <bdi>{range(item.area_min, item.area_max)}</bdi></p><ul>{item.plans.map((url, index) => <li key={`${url}-${index}`}><a className="underline" href={url}>{copy.plan} {item.plan_details?.find(detail => detail.image === url)?.code || `${item.code} · ${index + 1}`}</a></li>)}</ul></li>)}</ul>
+        </details>
         <div className={styles.notes}><p>{copy.planNote}</p><p>{copy.typePriceNote} {profile.price_status === 'indicative' && copy.priceNote}</p></div>
       </section>}
 

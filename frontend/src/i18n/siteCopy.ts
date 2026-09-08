@@ -3,19 +3,16 @@ import { arabicSiteCopy } from './siteCopyAr';
 
 
 type ServiceItem = { title: string; description: string };
-type Testimonial = { name: string; role: string; content: string; initial: string };
 
 export type SiteCopy = {
   home: {
     eyebrow: string;
     title: string;
     description: string;
-    stats: [string, string, string];
     search: {
       all: string;
       placeholder: string;
       budget: string;
-      budgets: [string, string, string, string];
       submit: string;
     };
     featuredTitle: string;
@@ -26,7 +23,6 @@ export type SiteCopy = {
     services: ServiceItem[];
     testimonialsTitle: string;
     testimonialsDescription: string;
-    testimonials: Testimonial[];
     ctaTitle: string;
     ctaDescription: string;
     consultation: string;
@@ -129,7 +125,6 @@ export type SiteCopy = {
   about: {
     title: string;
     intro: string;
-    stats: [string, string, string, string];
     approachTitle: string;
     paragraphs: [string, string];
     teamTitle: string;
@@ -224,10 +219,8 @@ export const siteCopy: Record<Locale, SiteCopy> = {
       eyebrow: 'Агентство премиальной недвижимости',
       title: 'Найдите идеальную недвижимость с {brand}',
       description: 'Эксклюзивные предложения квартир, домов и коммерческой недвижимости. Мы поможем сделать правильный выбор и проведём сделку под ключ.',
-      stats: ['Объектов в базе', 'Лет опыта', 'Клиентов'],
       search: {
-        all: 'Все объекты', placeholder: 'Город, район, улица или ключевое слово…', budget: 'Бюджет: любой',
-        budgets: ['до 10 млн ₽', 'до 20 млн ₽', 'до 50 млн ₽', 'до 100 млн ₽'], submit: 'Найти',
+        all: 'Все объекты', placeholder: 'Город, район, улица или ключевое слово…', budget: 'Бюджет: любой', submit: 'Найти',
       },
       featuredTitle: 'Рекомендуемые объекты',
       featuredDescription: 'Лучшие предложения, отобранные экспертами {brand}.',
@@ -242,11 +235,6 @@ export const siteCopy: Record<Locale, SiteCopy> = {
       ],
       testimonialsTitle: 'Отзывы клиентов',
       testimonialsDescription: 'Что говорят о нас люди, которые уже воспользовались нашими услугами.',
-      testimonials: [
-        { name: 'Елена Смирнова', role: 'Покупатель квартиры', content: 'Команда {brand} помогла нам спокойно пройти весь путь покупки первой квартиры и тщательно проверила документы.', initial: 'Е' },
-        { name: 'Михаил Иванов', role: 'Инвестор', content: 'Команда отлично знает рынок и предлагает действительно ликвидные варианты с понятной экономикой.', initial: 'М' },
-        { name: 'Анна Новикова', role: 'Продавец дома', content: 'Покупателя нашли быстро, а оформление сделки прошло организованно и без лишнего стресса.', initial: 'А' },
-      ],
       ctaTitle: 'Готовы найти дом своей мечты?',
       ctaDescription: 'Расскажите о задаче, и наши специалисты предложат подходящие варианты.',
       consultation: 'Получить консультацию', catalog: 'Смотреть каталог',
@@ -279,8 +267,7 @@ export const siteCopy: Record<Locale, SiteCopy> = {
       title: 'Свяжитесь с нами', description: 'Мы готовы ответить на вопросы и помочь с выбором недвижимости.', info: 'Контактная информация', office: 'Наш офис', phone: 'Телефон', email: 'Email', hours: 'Режим работы', social: 'Мессенджеры и соцсети', write: 'Напишите нам', responseTime: 'Оставьте контакты — мы ответим в рабочее время.',
     },
     about: {
-      title: 'О компании {brand}', intro: 'Мы — команда профессионалов, которая помогает находить подходящую недвижимость и принимать взвешенные инвестиционные решения.',
-      stats: ['Лет опыта', 'Объектов в базе', 'Довольных клиентов', 'Экспертов в штате'], approachTitle: 'Наш подход к работе',
+      title: 'О компании {brand}', intro: 'Мы — команда профессионалов, которая помогает находить подходящую недвижимость и принимать взвешенные инвестиционные решения.', approachTitle: 'Наш подход к работе',
       paragraphs: ['Покупка или продажа недвижимости — важный этап. Поэтому мы строим работу на прозрачности, честности и профессионализме.', 'Юристы проверяют каждый объект, а агенты сопровождают клиента от первого разговора до передачи ключей.'],
       teamTitle: 'Наша команда руководителей', roles: ['Генеральный директор', 'Руководитель отдела продаж', 'Главный юрист'],
     },
@@ -305,18 +292,14 @@ export const siteCopy: Record<Locale, SiteCopy> = {
   },
   en: {
     home: {
-      eyebrow: 'Premium real estate agency', title: 'Find the right property with {brand}', description: 'Selected apartments, houses and commercial properties with expert support from the first search to completion.', stats: ['Properties listed', 'Years of experience', 'Clients'],
-      search: { all: 'All properties', placeholder: 'City, district, street or keyword…', budget: 'Any budget', budgets: ['up to ₽10M', 'up to ₽20M', 'up to ₽50M', 'up to ₽100M'], submit: 'Search' },
+      eyebrow: 'Premium real estate agency', title: 'Find the right property with {brand}', description: 'Selected apartments, houses and commercial properties with expert support from the first search to completion.',
+      search: { all: 'All properties', placeholder: 'City, district, street or keyword…', budget: 'Any budget', submit: 'Search' },
       featuredTitle: 'Featured properties', featuredDescription: 'Selected opportunities curated by {brand} experts.', viewAll: 'View all', servicesTitle: 'Our services', servicesDescription: 'End-to-end real estate support built around your goals.',
       services: [
         { title: 'Buying property', description: 'Support from shortlisting to receiving the keys.' }, { title: 'Selling property', description: 'Positioning, marketing and qualified buyer search.' },
         { title: 'Investments', description: 'Selection of liquid assets for income and growth.' }, { title: 'Legal support', description: 'Due diligence and secure transaction management.' },
       ],
-      testimonialsTitle: 'Client stories', testimonialsDescription: 'What clients say after working with our team.', testimonials: [
-        { name: 'Elena Smirnova', role: 'Apartment buyer', content: '{brand} guided us through our first purchase calmly and checked every document in detail.', initial: 'E' },
-        { name: 'Mikhail Ivanov', role: 'Investor', content: 'The team understands the market and presents liquid opportunities with clear numbers.', initial: 'M' },
-        { name: 'Anna Novikova', role: 'Home seller', content: 'They found a buyer quickly and kept the transaction organised from start to finish.', initial: 'A' },
-      ],
+      testimonialsTitle: 'Client stories', testimonialsDescription: 'What clients say after working with our team.',
       ctaTitle: 'Ready to find your next home?', ctaDescription: 'Tell us what you need and our experts will prepare a focused shortlist.', consultation: 'Book a consultation', catalog: 'Browse properties',
       converter: {
         eyebrow: '{brand} currency service', title: 'Compare property values in your preferred currency', description: 'Convert your property budget between roubles, US dollars, euros and Turkish lira using the official reference rate.',
@@ -328,7 +311,7 @@ export const siteCopy: Record<Locale, SiteCopy> = {
     property: { back: 'Back to properties', fallbackNotice: 'This listing is not available in English yet, so another available version is shown.', interested: 'Interested in this property?', interestedDescription: 'Leave your details and our agent will contact you.', recommended: 'Featured', actual: 'Available', archived: 'Archived', area: 'Area', rooms: 'Rooms', floor: 'Floor', year: 'Year built', parameters: 'Key details', description: 'Property description', noDescription: 'Description is not available yet', freePlan: 'Open plan', unspecified: 'Not specified', noPhoto: 'No photo', related: 'Similar properties', photosSoon: 'Photos will be added soon', photo: 'Photo', mainPhoto: 'Main', enlarge: 'Enlarge photo', previousPhoto: 'Previous photo', nextPhoto: 'Next photo', close: 'Close', quickContact: 'Or contact us now', whatsapp: 'WhatsApp', telegram: 'Telegram', call: 'Call' },
     form: { name: 'Your name', namePlaceholder: 'John Smith', phone: 'Phone', email: 'Email (optional)', message: 'Message', messagePlaceholder: 'How can we help?', propertyMessage: 'Hello! I am interested in this property.', submit: 'Send enquiry', submitting: 'Sending…', successTitle: 'Enquiry sent', successDescription: 'Our specialist will contact you shortly.', error: 'We could not send your enquiry. Check the details and try again.' },
     contact: { title: 'Contact us', description: 'Ask a question or tell us what kind of property you are looking for.', info: 'Contact information', office: 'Our office', phone: 'Phone', email: 'Email', hours: 'Working hours', social: 'Messengers and social media', write: 'Send us a message', responseTime: 'Leave your details and we will reply during working hours.' },
-    about: { title: 'About {brand}', intro: 'We help clients find the right property and make informed investment decisions.', stats: ['Years of experience', 'Properties listed', 'Happy clients', 'In-house experts'], approachTitle: 'How we work', paragraphs: ['Buying or selling property is an important step. We build every engagement around transparency, integrity and professional advice.', 'Our lawyers review each property while our agents stay with you from the first conversation to key handover.'], teamTitle: 'Leadership team', roles: ['Chief Executive Officer', 'Head of Sales', 'Head of Legal'] },
+    about: { title: 'About {brand}', intro: 'We help clients find the right property and make informed investment decisions.', approachTitle: 'How we work', paragraphs: ['Buying or selling property is an important step. We build every engagement around transparency, integrity and professional advice.', 'Our lawyers review each property while our agents stay with you from the first conversation to key handover.'], teamTitle: 'Leadership team', roles: ['Chief Executive Officer', 'Head of Sales', 'Head of Legal'] },
     services: { eyebrow: 'Agency services', title: 'Complete real estate solutions', description: 'Residential and commercial support from the first consultation to registration.', consultation: 'Book a consultation', properties: 'Browse properties', trust: ['Experienced team', 'Legal confidence', 'Personal strategy'], sectionTitle: 'How we can help', sectionDescription: 'Choose a direction and we will tailor the process to your goal.', items: [
       { title: 'Buying property', description: 'Shortlisting, viewings and negotiations.', features: ['Focused search', 'Price negotiation', 'Transaction support'] }, { title: 'Selling property', description: 'Positioning and a structured route to market.', features: ['Valuation', 'Marketing', 'Buyer qualification'] },
       { title: 'Investments', description: 'Compare returns, risks and exit scenarios.', features: ['Market analysis', 'Financial model', 'Exit strategy'] }, { title: 'Legal support', description: 'Documents, contracts and secure settlement.', features: ['Due diligence', 'Contracts', 'Registration'] },
@@ -339,16 +322,12 @@ export const siteCopy: Record<Locale, SiteCopy> = {
   },
   tr: {
     home: {
-      eyebrow: 'Premium gayrimenkul danışmanlığı', title: 'Doğru gayrimenkulü {brand} ile bulun', description: 'Daire, villa ve ticari gayrimenkul seçeneklerinde aramadan tapu sürecine kadar uzman desteği.', stats: ['Portföydeki ilan', 'Yıllık deneyim', 'Müşteri'],
-      search: { all: 'Tüm ilanlar', placeholder: 'Şehir, bölge, sokak veya anahtar kelime…', budget: 'Bütçe: tümü', budgets: ['₽10 Mn’a kadar', '₽20 Mn’a kadar', '₽50 Mn’a kadar', '₽100 Mn’a kadar'], submit: 'Ara' },
+      eyebrow: 'Premium gayrimenkul danışmanlığı', title: 'Doğru gayrimenkulü {brand} ile bulun', description: 'Daire, villa ve ticari gayrimenkul seçeneklerinde aramadan tapu sürecine kadar uzman desteği.',
+      search: { all: 'Tüm ilanlar', placeholder: 'Şehir, bölge, sokak veya anahtar kelime…', budget: 'Bütçe: tümü', submit: 'Ara' },
       featuredTitle: 'Öne çıkan ilanlar', featuredDescription: '{brand} uzmanları tarafından seçilen fırsatlar.', viewAll: 'Tümünü gör', servicesTitle: 'Hizmetlerimiz', servicesDescription: 'Hedefinize göre uçtan uca gayrimenkul desteği.', services: [
         { title: 'Gayrimenkul alımı', description: 'Portföy seçiminden anahtar teslimine kadar destek.' }, { title: 'Gayrimenkul satışı', description: 'Konumlandırma, pazarlama ve nitelikli alıcı arama.' },
         { title: 'Yatırım', description: 'Gelir ve değer artışı için likit varlık seçimi.' }, { title: 'Hukuki destek', description: 'Belge kontrolü ve güvenli işlem yönetimi.' },
-      ], testimonialsTitle: 'Müşteri deneyimleri', testimonialsDescription: 'Bizimle çalışan müşterilerin görüşleri.', testimonials: [
-        { name: 'Elena Smirnova', role: 'Daire alıcısı', content: '{brand} ilk satın alma sürecimizi sakin ve düzenli yönetti, tüm belgeleri ayrıntılı kontrol etti.', initial: 'E' },
-        { name: 'Mikhail Ivanov', role: 'Yatırımcı', content: 'Ekip piyasayı iyi tanıyor ve rakamları net, likit seçenekler sunuyor.', initial: 'M' },
-        { name: 'Anna Novikova', role: 'Ev satıcısı', content: 'Alıcıyı hızlı buldular ve süreci baştan sona düzenli yönettiler.', initial: 'A' },
-      ], ctaTitle: 'Yeni evinizi bulmaya hazır mısınız?', ctaDescription: 'İhtiyacınızı anlatın, uzmanlarımız size özel bir liste hazırlasın.', consultation: 'Danışmanlık alın', catalog: 'İlanları incele',
+      ], testimonialsTitle: 'Müşteri deneyimleri', testimonialsDescription: 'Bizimle çalışan müşterilerin görüşleri.', ctaTitle: 'Yeni evinizi bulmaya hazır mısınız?', ctaDescription: 'İhtiyacınızı anlatın, uzmanlarımız size özel bir liste hazırlasın.', consultation: 'Danışmanlık alın', catalog: 'İlanları incele',
       converter: {
         eyebrow: '{brand} döviz servisi', title: 'Gayrimenkul değerini tercih ettiğiniz para biriminde karşılaştırın', description: 'Gayrimenkul bütçenizi resmî referans kuruyla ruble, ABD doları, euro ve Türk lirası arasında hesaplayın.',
         amount: 'Tutar', result: 'Dönüştürülen tutar', swap: 'Para birimlerini değiştir', live: 'Güncel kur', cached: 'Son kaydedilen kur', loading: 'Kur yükleniyor…', unavailable: 'Kura geçici olarak ulaşılamıyor',
@@ -359,7 +338,7 @@ export const siteCopy: Record<Locale, SiteCopy> = {
     property: { back: 'İlanlara dön', fallbackNotice: 'Bu ilanın Türkçe çevirisi henüz yok; mevcut başka bir sürüm gösteriliyor.', interested: 'Bu ilanla ilgileniyor musunuz?', interestedDescription: 'Bilgilerinizi bırakın, danışmanımız sizi arasın.', recommended: 'Öne çıkan', actual: 'Satışta', archived: 'Arşivde', area: 'Alan', rooms: 'Oda', floor: 'Kat', year: 'Yapım yılı', parameters: 'Temel özellikler', description: 'İlan açıklaması', noDescription: 'Açıklama henüz eklenmedi', freePlan: 'Açık plan', unspecified: 'Belirtilmedi', noPhoto: 'Fotoğraf yok', related: 'Benzer ilanlar', photosSoon: 'Fotoğraflar yakında eklenecek', photo: 'Fotoğraf', mainPhoto: 'Ana', enlarge: 'Fotoğrafı büyüt', previousPhoto: 'Önceki fotoğraf', nextPhoto: 'Sonraki fotoğraf', close: 'Kapat', quickContact: 'Ya da hemen iletişime geçin', whatsapp: 'WhatsApp', telegram: 'Telegram', call: 'Ara' },
     form: { name: 'Adınız', namePlaceholder: 'Ad Soyad', phone: 'Telefon', email: 'E-posta (isteğe bağlı)', message: 'Mesaj', messagePlaceholder: 'Size nasıl yardımcı olabiliriz?', propertyMessage: 'Merhaba! Bu gayrimenkul ilanıyla ilgileniyorum.', submit: 'Talep gönder', submitting: 'Gönderiliyor…', successTitle: 'Talebiniz gönderildi', successDescription: 'Uzmanımız kısa süre içinde sizinle iletişime geçecek.', error: 'Talep gönderilemedi. Bilgileri kontrol edip tekrar deneyin.' },
     contact: { title: 'Bize ulaşın', description: 'Sorunuzu veya aradığınız gayrimenkulü bize anlatın.', info: 'İletişim bilgileri', office: 'Ofisimiz', phone: 'Telefon', email: 'E-posta', hours: 'Çalışma saatleri', social: 'Mesajlaşma ve sosyal medya', write: 'Bize yazın', responseTime: 'Bilgilerinizi bırakın, çalışma saatlerinde size dönüş yapalım.' },
-    about: { title: '{brand} hakkında', intro: 'Doğru gayrimenkulü bulmanıza ve bilinçli yatırım kararları vermenize yardımcı oluyoruz.', stats: ['Yıllık deneyim', 'Portföydeki ilan', 'Mutlu müşteri', 'Uzman'], approachTitle: 'Çalışma şeklimiz', paragraphs: ['Gayrimenkul almak veya satmak önemli bir adımdır. Sürecimizi şeffaflık, dürüstlük ve profesyonel danışmanlık üzerine kuruyoruz.', 'Hukuk ekibimiz her ilanı inceler, danışmanlarımız ilk görüşmeden anahtar teslimine kadar yanınızda olur.'], teamTitle: 'Yönetim ekibi', roles: ['Genel Müdür', 'Satış Direktörü', 'Hukuk Direktörü'] },
+    about: { title: '{brand} hakkında', intro: 'Doğru gayrimenkulü bulmanıza ve bilinçli yatırım kararları vermenize yardımcı oluyoruz.', approachTitle: 'Çalışma şeklimiz', paragraphs: ['Gayrimenkul almak veya satmak önemli bir adımdır. Sürecimizi şeffaflık, dürüstlük ve profesyonel danışmanlık üzerine kuruyoruz.', 'Hukuk ekibimiz her ilanı inceler, danışmanlarımız ilk görüşmeden anahtar teslimine kadar yanınızda olur.'], teamTitle: 'Yönetim ekibi', roles: ['Genel Müdür', 'Satış Direktörü', 'Hukuk Direktörü'] },
     services: { eyebrow: 'Danışmanlık hizmetleri', title: 'Kapsamlı gayrimenkul çözümleri', description: 'İlk görüşmeden tapu işlemlerine kadar konut ve ticari gayrimenkul desteği.', consultation: 'Danışmanlık alın', properties: 'İlanları incele', trust: ['Deneyimli ekip', 'Hukuki güven', 'Kişisel strateji'], sectionTitle: 'Nasıl yardımcı olabiliriz?', sectionDescription: 'Hedefinizi seçin, süreci size göre planlayalım.', items: [
       { title: 'Gayrimenkul alımı', description: 'Seçim, gösterim ve pazarlık desteği.', features: ['Hedefli arama', 'Fiyat pazarlığı', 'İşlem desteği'] }, { title: 'Gayrimenkul satışı', description: 'Doğru konumlandırma ve pazara çıkış planı.', features: ['Değerleme', 'Pazarlama', 'Alıcı seçimi'] },
       { title: 'Yatırım', description: 'Getiri, risk ve çıkış seçeneklerini karşılaştırın.', features: ['Piyasa analizi', 'Finansal model', 'Çıkış stratejisi'] }, { title: 'Hukuki destek', description: 'Belge, sözleşme ve güvenli ödeme yönetimi.', features: ['Hukuki inceleme', 'Sözleşmeler', 'Tapu işlemleri'] },

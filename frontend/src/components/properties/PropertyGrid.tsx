@@ -1,22 +1,23 @@
 import { Property } from '@/types';
+import { getMessages } from '@/i18n/messages';
 import { PropertyCard } from './PropertyCard';
 import type { Locale } from '@/i18n/config';
 
 interface PropertyGridProps {
   properties: Property[];
   emptyMessage?: string;
-  locale?: Locale;
+  locale: Locale;
 }
 
 export function PropertyGrid({ 
   properties, 
-  emptyMessage = 'Объекты не найдены',
-  locale = 'ru',
+  emptyMessage,
+  locale,
 }: PropertyGridProps) {
   if (!properties || properties.length === 0) {
     return (
       <div className="py-12 text-center text-slate-500 bg-slate-50 rounded-xl border border-slate-100">
-        <p className="text-lg">{emptyMessage}</p>
+        <p className="text-lg">{emptyMessage ?? getMessages(locale).common.noResults}</p>
       </div>
     );
   }

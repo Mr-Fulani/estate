@@ -41,7 +41,7 @@ export async function PropertiesPageContent({ searchParams, locale }: { searchPa
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
           <aside className="lg:col-span-1"><div className="lg:sticky lg:top-24 lg:z-20 lg:max-h-[calc(100vh-110px)] lg:overflow-y-auto lg:pe-1"><PropertyFilter categories={categories} /></div></aside>
           <div className="lg:col-span-3">
-            <div className="mb-5 flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4"><div className="text-sm font-semibold text-slate-700">{copy.found}: <span className="font-bold text-primary">{data.total}</span></div></div>
+            <div className="mb-5 flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4"><h2 className="text-sm font-semibold text-slate-700">{copy.found}: <span className="font-bold text-primary">{data.total}</span></h2></div>
             <PropertyGrid properties={data.items} locale={locale} emptyMessage={copy.empty} />
             {totalPages > 1 && (
               <nav className="mt-10 flex items-center justify-center gap-3" aria-label={`${copy.title}: ${copy.found}`}>
