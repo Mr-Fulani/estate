@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { CheckCircle2, Star } from 'lucide-react';
 
 import type { Locale } from '@/i18n/config';
-import { siteCopy } from '@/i18n/siteCopy';
+import { useSiteSettings } from '@/context/SiteSettingsContext';
+import { getSiteCopy } from '@/lib/site-profile';
 import { submitReview } from '@/lib/api';
 
 
@@ -19,7 +20,8 @@ export function ReviewForm({
   initialName?: string;
   propertyTitle?: string;
 }) {
-  const copy = siteCopy[locale].reviews;
+  const { settings: siteSettings } = useSiteSettings();
+  const copy = getSiteCopy(locale, siteSettings).reviews;
   const [rating, setRating] = useState(5);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);

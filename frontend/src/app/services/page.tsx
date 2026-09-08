@@ -14,15 +14,17 @@ import {
 } from 'lucide-react';
 
 import { localizeHref } from '@/i18n/config';
-import { siteCopy } from '@/i18n/siteCopy';
+import { useSiteSettings } from '@/context/SiteSettingsContext';
+import { getSiteCopy } from '@/lib/site-profile';
 import { useLocale } from '@/context/LocaleContext';
 
 const serviceIcons = [Home, Key, TrendingUp, ShieldCheck];
 const trustIcons = [Award, ShieldCheck, Clock];
 
 export default function ServicesPage() {
+  const { settings: siteSettings } = useSiteSettings();
   const { locale } = useLocale();
-  const copy = siteCopy[locale].services;
+  const copy = getSiteCopy(locale, siteSettings).services;
 
   return (
     <div className="bg-white">

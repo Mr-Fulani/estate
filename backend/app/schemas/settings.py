@@ -1,3 +1,4 @@
+from app.schemas.site_profile import SiteProfile
 from pydantic import BaseModel, ConfigDict, Field
 from typing import Literal, Optional
 
@@ -17,6 +18,7 @@ class SiteSettingsTranslationResponse(SiteSettingsTranslationInput):
     model_config = ConfigDict(from_attributes=True)
 
 class SiteSettingsBase(BaseModel):
+    profile: SiteProfile = Field(default_factory=SiteProfile)
     phone: str = ""
     email: str = ""
     address: str = ""
@@ -30,6 +32,7 @@ class SiteSettingsBase(BaseModel):
     max_messenger: Optional[str] = ""
 
 class SiteSettingsUpdate(BaseModel):
+    profile: SiteProfile = Field(default_factory=SiteProfile)
     phone: Optional[str] = None
     email: Optional[str] = None
     address: Optional[str] = None

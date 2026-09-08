@@ -7,7 +7,8 @@ import { ArrowLeft, CalendarDays, UserRound } from 'lucide-react';
 
 import { NewsMediaGallery } from '@/components/news/NewsMediaGallery';
 import { isLocale, localizeHref, openGraphLocales } from '@/i18n/config';
-import { siteCopy } from '@/i18n/siteCopy';
+import { fetchSiteSettings } from '@/lib/api';
+import { getSiteCopy } from '@/lib/site-profile';
 import { fetchNewsArticle } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
 
@@ -25,7 +26,7 @@ export async function generateMetadata({ params }: NewsArticlePageProps): Promis
   const { locale, slug } = await params;
   if (!isLocale(locale)) return {};
   const article = await fetchNewsArticle(slug, locale);
-  if (!article) return { title: siteCopy[locale].news.metaTitle };
+  if (!article) return { title: getSiteCopy(locale, await fetchSiteSettings()).news.metaTitle };
 
   const title = article.meta_title || article.title;
   const description = article.meta_description || article.excerpt;
@@ -67,7 +68,7 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
   const article = await fetchNewsArticle(slug, locale);
   if (!article) notFound();
 
-  const copy = siteCopy[locale].news;
+  const copy = getSiteCopy(locale, await fetchSiteSettings()).news;
   const paragraphs = article.content.split(/\n{2,}/).filter(Boolean);
   const structuredData = {
     '@context': 'https://schema.org',

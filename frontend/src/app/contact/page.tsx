@@ -5,7 +5,7 @@ import { MapPin, Phone, Mail, Clock, MessageSquare } from 'lucide-react';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import { useLocale } from '@/context/LocaleContext';
 import { localizedSiteSettings } from '@/i18n/domain';
-import { siteCopy } from '@/i18n/siteCopy';
+import { getSiteCopy } from '@/lib/site-profile';
 import {
   TelegramIcon,
   WhatsappIcon,
@@ -19,9 +19,10 @@ import { TrackedContactLink } from '@/components/contact/TrackedContactLink';
 import type { ContactTrackData } from '@/types';
 
 export default function ContactPage() {
+  const { settings: siteSettings } = useSiteSettings();
   const { settings } = useSiteSettings();
   const { locale } = useLocale();
-  const copy = siteCopy[locale].contact;
+  const copy = getSiteCopy(locale, siteSettings).contact;
   const localizedSettings = localizedSiteSettings(settings, locale);
 
   const phoneTel = 'tel:' + (settings.phone || '').replace(/[\s\-\(\)]/g, '');

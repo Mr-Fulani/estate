@@ -4,12 +4,13 @@ import { MapPin, Bed, Maximize, Layers, Calendar } from 'lucide-react';
 import { PropertyGallery } from './PropertyGallery';
 import type { Locale } from '@/i18n/config';
 import { localizedCategoryName, localizedProperty, roomLabel } from '@/i18n/domain';
-import { siteCopy } from '@/i18n/siteCopy';
+import { fetchSiteSettings } from '@/lib/api';
+import { getSiteCopy } from '@/lib/site-profile';
 import { CurrencyPrice } from '@/components/currency/CurrencyPrice';
 
-export function PropertyDetails({ property: sourceProperty, locale }: { property: Property; locale: Locale }) {
+export async function PropertyDetails({ property: sourceProperty, locale }: { property: Property; locale: Locale }) {
   const property = localizedProperty(sourceProperty, locale);
-  const copy = siteCopy[locale].property;
+  const copy = getSiteCopy(locale, await fetchSiteSettings()).property;
   const location = [property.city, property.district, property.address].filter(Boolean).join(', ');
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">

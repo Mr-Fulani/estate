@@ -20,7 +20,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const [{ locale }, query] = await Promise.all([params, searchParams]);
   if (!isLocale(locale)) return {};
-  const metadata = staticPageMetadata(locale, 'properties');
+  const metadata = await staticPageMetadata(locale, 'properties');
   const hasFilters = Object.entries(query).some(([key, value]) => key !== 'page' && value !== undefined && value !== '');
   const filters = propertyQuery(query);
   const page = Number(filters.page);

@@ -9,14 +9,15 @@ import { PropertyDetails } from '@/components/properties/PropertyDetails';
 import type { Locale } from '@/i18n/config';
 import { localizeHref } from '@/i18n/config';
 import { hasPropertyLocale, localizedProperty, localizedPropertyTranslation } from '@/i18n/domain';
-import { siteCopy } from '@/i18n/siteCopy';
+import { fetchSiteSettings } from '@/lib/api';
+import { getSiteCopy } from '@/lib/site-profile';
 import { fetchProperty } from '@/lib/api';
 import type { Property } from '@/types';
 import { DevelopmentPage } from '@/components/properties/DevelopmentPage';
 
 export async function PropertyDetailContent({ id, locale, initialProperty }: { id: string; locale: Locale; initialProperty?: Property }) {
   const property = initialProperty || await fetchProperty(id);
-  const copy = siteCopy[locale].property;
+  const copy = getSiteCopy(locale, await fetchSiteSettings()).property;
   if (!property) notFound();
   const localized = localizedProperty(property, locale);
   const contentLocale = localizedPropertyTranslation(property, locale)?.locale || locale;

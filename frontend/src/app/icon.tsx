@@ -1,9 +1,13 @@
+import { fetchSiteSettings } from '@/lib/api';
+import { brandInitials } from '@/lib/site-profile';
 import { ImageResponse } from 'next/og';
 
+export const dynamic = 'force-dynamic';
 export const size = { width: 64, height: 64 };
 export const contentType = 'image/png';
 
-export default function Icon() {
+export default async function Icon() {
+  const settings = await fetchSiteSettings();
   return new ImageResponse(
     (
       <div
@@ -19,7 +23,7 @@ export default function Icon() {
           width: '100%',
         }}
       >
-        RH<span style={{ color: '#d4a853' }}>.</span>
+        {brandInitials(settings)}<span style={{ color: '#d4a853' }}>.</span>
       </div>
     ),
     size,

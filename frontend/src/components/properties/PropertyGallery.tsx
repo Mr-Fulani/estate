@@ -13,7 +13,8 @@ import { Badge } from '../ui/Badge';
 import { cn, getStatusBadgeVariant } from '@/lib/utils';
 import { useLocale } from '@/context/LocaleContext';
 import { localizedStatus } from '@/i18n/domain';
-import { siteCopy } from '@/i18n/siteCopy';
+import { useSiteSettings } from '@/context/SiteSettingsContext';
+import { getSiteCopy } from '@/lib/site-profile';
 
 export function PropertyGallery({
   images,
@@ -30,12 +31,13 @@ export function PropertyGallery({
   isActive?: boolean;
   statusBadge?: string | null;
 }) {
+  const { settings: siteSettings } = useSiteSettings();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const { locale } = useLocale();
-  const copy = siteCopy[locale].property;
+  const copy = getSiteCopy(locale, siteSettings).property;
 
   const hasImages = images && images.length > 0;
   const currentImage = hasImages ? images[selectedIndex] : null;

@@ -4,11 +4,12 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import type { Locale } from '@/i18n/config';
 import { localizeHref } from '@/i18n/config';
-import { siteCopy } from '@/i18n/siteCopy';
+import { fetchSiteSettings } from '@/lib/api';
+import { getSiteCopy } from '@/lib/site-profile';
 
 export async function FeaturedProperties({ locale }: { locale: Locale }) {
   const properties = await fetchFeaturedProperties();
-  const copy = siteCopy[locale].home;
+  const copy = getSiteCopy(locale, await fetchSiteSettings()).home;
 
   return (
     <section id="featured-properties" className="scroll-mt-28 rounded-t-[2rem] bg-slate-50 py-20 shadow-[0_-24px_60px_-32px_rgba(15,23,42,0.65)] sm:rounded-t-[2.5rem]">

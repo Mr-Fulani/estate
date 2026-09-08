@@ -60,7 +60,7 @@ export function PropertyForm({
     price: initialData?.price || 0,
     currency: initialData?.currency || 'RUB',
     address: initialData?.address || '',
-    city: initialData?.city || 'Москва',
+    city: initialData?.city || '',
     district: initialData?.district || '',
     area: initialData?.area || undefined,
     rooms: initialData?.rooms || undefined,
@@ -361,7 +361,7 @@ export function PropertyForm({
               name="city"
               value={formData.city || ''}
               onChange={handleChange}
-              placeholder="Москва"
+              placeholder="Город"
               className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-medium"
             />
           </div>
@@ -524,7 +524,7 @@ export function PropertyForm({
                         id={`property-city-${locale}`}
                         value={translation?.city || ''}
                         onChange={(event) => updateTranslation(locale, 'city', event.target.value)}
-                        placeholder={locale === 'en' ? 'Istanbul' : locale === 'ar' ? 'إسطنبول' : 'İstanbul'}
+                        placeholder="Город на выбранном языке"
                         className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm font-medium outline-none focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10"
                       />
                     </div>
@@ -534,7 +534,7 @@ export function PropertyForm({
                         id={`property-district-${locale}`}
                         value={translation?.district || ''}
                         onChange={(event) => updateTranslation(locale, 'district', event.target.value)}
-                        placeholder={locale === 'en' ? 'Beylikduzu' : locale === 'ar' ? 'بيليك دوزو' : 'Beylikdüzü'}
+                        placeholder="Район на выбранном языке"
                         className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm font-medium outline-none focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10"
                       />
                     </div>

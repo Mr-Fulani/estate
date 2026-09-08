@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation';
 import { Search, Building, Building2, Home, Briefcase, Palmtree, type LucideIcon } from 'lucide-react';
 import { Category } from '@/types';
 import { useLocale } from '@/context/LocaleContext';
-import { siteCopy } from '@/i18n/siteCopy';
+import { useSiteSettings } from '@/context/SiteSettingsContext';
+import { getSiteCopy } from '@/lib/site-profile';
 import { localizedCategoryNavigationName } from '@/i18n/domain';
 import { useCurrency } from '@/context/CurrencyContext';
 import { formatPrice } from '@/lib/utils';
@@ -22,9 +23,10 @@ const categoryIcons: Record<string, LucideIcon> = {
 };
 
 export function HeroSearch({ categories = [] }: { categories: Category[] }) {
+  const { settings: siteSettings } = useSiteSettings();
   const router = useRouter();
   const { locale, href } = useLocale();
-  const copy = siteCopy[locale].home.search;
+  const copy = getSiteCopy(locale, siteSettings).home.search;
   const { currency, convert } = useCurrency();
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [maxPrice, setMaxPrice] = useState<string>('');
@@ -66,7 +68,7 @@ export function HeroSearch({ categories = [] }: { categories: Category[] }) {
   return (
     <div className="w-full max-w-3xl">
       {/* Category Tabs */}
-      <nav aria-label={siteCopy[locale].catalog.category} className="home-category-nav flex w-full flex-nowrap gap-1 overflow-x-auto rounded-2xl border border-white/15 bg-white/10 p-1 mb-3 backdrop-blur-md">
+      <nav aria-label={getSiteCopy(locale, siteSettings).catalog.category} className="home-category-nav flex w-full flex-nowrap gap-1 overflow-x-auto rounded-2xl border border-white/15 bg-white/10 p-1 mb-3 backdrop-blur-md">
         <Link
           href={searchHref()}
           className="shrink-0 whitespace-nowrap rounded-xl bg-white px-3 py-2.5 text-xs font-semibold text-primary shadow-md transition-colors"

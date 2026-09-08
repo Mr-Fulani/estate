@@ -4,12 +4,13 @@ import { ArrowUpRight } from 'lucide-react';
 import { NewsCard } from '@/components/news/NewsCard';
 import type { Locale } from '@/i18n/config';
 import { localizeHref } from '@/i18n/config';
-import { siteCopy } from '@/i18n/siteCopy';
+import { fetchSiteSettings } from '@/lib/api';
+import { getSiteCopy } from '@/lib/site-profile';
 import { fetchNews } from '@/lib/api';
 import type { NewsArticle } from '@/types';
 
 export async function LatestNews({ locale }: { locale: Locale }) {
-  const copy = siteCopy[locale].news;
+  const copy = getSiteCopy(locale, await fetchSiteSettings()).news;
   let articles: NewsArticle[] = [];
 
   try {

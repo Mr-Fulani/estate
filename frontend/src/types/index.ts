@@ -328,6 +328,7 @@ export interface PropertyFormData {
 }
 
 export interface SiteSettings {
+  profile?: import('@/lib/site-profile').SiteProfile;
   id?: number;
   phone: string;
   email: string;

@@ -1,26 +1,28 @@
 import Image from 'next/image';
 import { HeroSearch } from './HeroSearch';
 import type { Locale } from '@/i18n/config';
-import { siteCopy } from '@/i18n/siteCopy';
+import { fetchSiteSettings } from '@/lib/api';
+import { getSiteCopy } from '@/lib/site-profile';
 import { fetchCategories } from '@/lib/api';
 
 export async function Hero({ locale }: { locale: Locale }) {
-  const copy = siteCopy[locale].home;
+  const copy = getSiteCopy(locale, await fetchSiteSettings()).home;
+  const settings = await fetchSiteSettings();
   const categories = await fetchCategories();
   return (
     <section data-testid="home-hero" className="sticky top-0 z-0 flex min-h-[100svh] items-center overflow-hidden bg-primary-900 py-16 md:py-24">
       {/* Background image with overlay */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-r from-primary-900/95 via-primary-900/85 to-primary-900/60 z-10" />
-        <Image
-          src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2075&q=80"
+        {settings.profile?.hero_image_url && <Image
+          src={settings.profile.hero_image_url}
           alt=""
           fill
           preload
           loading="eager"
           sizes="100vw"
           className="object-cover object-center"
-        />
+        />}
       </div>
 
       <div className="container mx-auto px-4 md:px-6 relative z-10">

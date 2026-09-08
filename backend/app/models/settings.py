@@ -1,4 +1,5 @@
 from sqlalchemy import ForeignKey, Integer, String, UniqueConstraint
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
 
@@ -6,6 +7,7 @@ class SiteSetting(Base):
     __tablename__ = "site_settings"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, default=1)
+    profile: Mapped[dict] = mapped_column(JSONB, default=dict, server_default="{}", nullable=False)
     phone: Mapped[str] = mapped_column(String(50), default="")
     email: Mapped[str] = mapped_column(String(100), default="")
     address: Mapped[str] = mapped_column(String(300), default="")

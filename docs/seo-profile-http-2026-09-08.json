@@ -1,0 +1,182 @@
+[
+  {
+    "path": "/ru",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/ru/about",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/ru/contact",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/ru/services",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/ru/properties",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/ru/news",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/ru/reviews",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/ru/privacy",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/ru/terms",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/en",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/en/about",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/en/contact",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/en/services",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/en/properties",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/en/news",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/en/reviews",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/en/privacy",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/en/terms",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/tr",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/tr/about",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/tr/contact",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/tr/services",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/tr/properties",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/tr/news",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/tr/reviews",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/tr/privacy",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/tr/terms",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/ar",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/ar/about",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/ar/contact",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/ar/services",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/ar/properties",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/ar/news",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/ar/reviews",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/ar/privacy",
+    "status": 200,
+    "foreign_identity": false
+  },
+  {
+    "path": "/ar/terms",
+    "status": 200,
+    "foreign_identity": false
+  }
+]

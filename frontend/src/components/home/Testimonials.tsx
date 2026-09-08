@@ -3,14 +3,15 @@ import Link from 'next/link';
 import { ReviewCard } from '@/components/reviews/ReviewCard';
 import type { Locale } from '@/i18n/config';
 import { localizeHref } from '@/i18n/config';
-import { siteCopy } from '@/i18n/siteCopy';
+import { fetchSiteSettings } from '@/lib/api';
+import { getSiteCopy } from '@/lib/site-profile';
 import { fetchReviews } from '@/lib/api';
 import type { PublicReview } from '@/types';
 
 
 export async function Testimonials({ locale }: { locale: Locale }) {
-  const homeCopy = siteCopy[locale].home;
-  const reviewCopy = siteCopy[locale].reviews;
+  const homeCopy = getSiteCopy(locale, await fetchSiteSettings()).home;
+  const reviewCopy = getSiteCopy(locale, await fetchSiteSettings()).reviews;
   let reviews: PublicReview[] = [];
   try {
     const featured = await fetchReviews(locale, { featured: true, perPage: 3 });

@@ -6,12 +6,14 @@ import { Button } from '@/components/ui/Button';
 import { submitContact } from '@/lib/api';
 import { CheckCircle2 } from 'lucide-react';
 import { useLocale } from '@/context/LocaleContext';
-import { siteCopy } from '@/i18n/siteCopy';
+import { useSiteSettings } from '@/context/SiteSettingsContext';
+import { getSiteCopy } from '@/lib/site-profile';
 import { collectContactAttribution } from '@/lib/attribution';
 
 export function ContactForm({ propertyId, contextMessage }: { propertyId?: number; contextMessage?: string }) {
+  const { settings: siteSettings } = useSiteSettings();
   const { locale } = useLocale();
-  const copy = siteCopy[locale].form;
+  const copy = getSiteCopy(locale, siteSettings).form;
   const formId = useId();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);

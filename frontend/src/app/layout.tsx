@@ -6,27 +6,17 @@ import { AppShell } from '@/components/layout/AppShell';
 import { LocaleProvider } from '@/context/LocaleContext';
 import { assertLocale, documentLanguageTags, localeDirection } from '@/i18n/config';
 import { getMessages } from '@/i18n/messages';
+import { brandName } from '@/lib/site-profile';
 import { fetchSiteSettings } from '@/lib/api';
 
 export async function generateMetadata(): Promise<Metadata> {
+  const settings = await fetchSiteSettings();
+  const brand = brandName(settings);
   return {
-  metadataBase: new URL(getSiteOrigin()),
-  title: 'Rahat Home — Агентство недвижимости',
-  description: 'Продажа, покупка и аренда недвижимости. Найдите свой идеальный дом с Rahat Home.',
-  openGraph: {
-    title: 'Rahat Home — Агентство недвижимости',
-    description: 'Продажа, покупка и аренда недвижимости. Найдите свой идеальный дом с Rahat Home.',
-    siteName: process.env.NEXT_PUBLIC_SITE_NAME || 'Rahat Home',
-    type: 'website',
-    images: [{ url: '/og.png', width: 1200, height: 630, alt: 'Rahat Home — агентство недвижимости' }],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Rahat Home — Агентство недвижимости',
-    description: 'Продажа, покупка и аренда недвижимости. Найдите свой идеальный дом с Rahat Home.',
-    images: ['/og.png'],
-  },
-};
+    metadataBase: new URL(getSiteOrigin()),
+    title: brand,
+    icons: settings.profile?.icon_url ? { icon: settings.profile.icon_url, apple: settings.profile.icon_url } : undefined,
+  };
 }
 
 export default async function RootLayout({
@@ -43,15 +33,19 @@ export default async function RootLayout({
     '@context': 'https://schema.org',
     '@type': 'RealEstateAgent',
     '@id': `${siteUrl}/#organization`,
-    name: process.env.NEXT_PUBLIC_SITE_NAME || 'Rahat Home',
+    name: brandName(siteSettings),
+    legalName: siteSettings.profile?.legal_name || undefined,
+    logo: siteSettings.profile?.logo_url ? new URL(siteSettings.profile.logo_url, siteUrl).toString() : undefined,
     url: siteUrl,
-    telephone: siteSettings.phone,
-    email: siteSettings.email,
+    telephone: siteSettings.phone || undefined,
+    email: siteSettings.email || undefined,
     address: {
       '@type': 'PostalAddress',
-      addressLocality: 'Istanbul',
-      addressRegion: 'Beylikdüzü',
-      addressCountry: 'TR',
+      streetAddress: siteSettings.address || undefined,
+      addressLocality: siteSettings.profile?.address_locality || undefined,
+      addressRegion: siteSettings.profile?.address_region || undefined,
+      addressCountry: siteSettings.profile?.address_country || undefined,
+      postalCode: siteSettings.profile?.postal_code || undefined,
     },
     sameAs: [
       siteSettings.telegram,
@@ -74,10 +68,10 @@ export default async function RootLayout({
         <meta httpEquiv="Content-Language" content={documentLanguageTags[locale]} />
       </head>
       <body lang={documentLanguageTags[locale]} className="min-h-screen flex flex-col font-sans">
-        <script
+        {siteSettings.profile?.brand_name && <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organization).replace(/</g, '\\u003c') }}
-        />
+        />}
         <LocaleProvider locale={locale} messages={messages}>
           <AppShell siteSettings={siteSettings}>
             {children}

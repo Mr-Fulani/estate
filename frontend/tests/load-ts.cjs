@@ -11,6 +11,7 @@ module.exports = function loadTs(filename, mocks = {}) {
   target.require = (id) => {
     if (Object.hasOwn(mocks, id)) return mocks[id];
     if (id.startsWith('@/')) return module.exports(`${id.slice(2)}.ts`, mocks);
+    if (id.startsWith('.')) return module.exports(path.relative(path.resolve(__dirname, '../src'), path.resolve(path.dirname(full), `${id}.ts`)), mocks);
     return original(id);
   };
   target._compile(ts.transpileModule(fs.readFileSync(full, 'utf8'), {

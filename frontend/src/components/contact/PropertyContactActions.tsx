@@ -6,13 +6,14 @@ import { TrackedContactLink } from '@/components/contact/TrackedContactLink';
 import { TelegramIcon, WhatsappIcon } from '@/components/ui/SocialIcons';
 import { useLocale } from '@/context/LocaleContext';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
-import { siteCopy } from '@/i18n/siteCopy';
+import { getSiteCopy } from '@/lib/site-profile';
 
 
 export function PropertyContactActions({ propertyId }: { propertyId: number }) {
+  const { settings: siteSettings } = useSiteSettings();
   const { settings } = useSiteSettings();
   const { locale } = useLocale();
-  const copy = siteCopy[locale].property;
+  const copy = getSiteCopy(locale, siteSettings).property;
   const phoneHref = `tel:${settings.phone.replace(/[^+\d]/g, '')}`;
 
   if (!settings.phone && !settings.whatsapp && !settings.telegram) return null;

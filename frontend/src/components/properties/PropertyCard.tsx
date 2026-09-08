@@ -8,7 +8,8 @@ import { MapPin, Bed, Maximize, Layers } from 'lucide-react';
 import type { Locale } from '@/i18n/config';
 import { localizeHref } from '@/i18n/config';
 import { localizedCategoryName, localizedProperty, localizedStatus, roomLabel } from '@/i18n/domain';
-import { siteCopy } from '@/i18n/siteCopy';
+import { fetchSiteSettings } from '@/lib/api';
+import { getSiteCopy } from '@/lib/site-profile';
 import { CurrencyPrice } from '@/components/currency/CurrencyPrice';
 import { DevelopmentCard } from './DevelopmentCard';
 
@@ -17,10 +18,10 @@ interface PropertyCardProps {
   locale: Locale;
 }
 
-export function PropertyCard({ property: sourceProperty, locale }: PropertyCardProps) {
+export async function PropertyCard({ property: sourceProperty, locale }: PropertyCardProps) {
   if (sourceProperty.listing_kind === 'development') return <DevelopmentCard property={sourceProperty} locale={locale} />;
   const property = localizedProperty(sourceProperty, locale);
-  const copy = siteCopy[locale].property;
+  const copy = getSiteCopy(locale, await fetchSiteSettings()).property;
   // Use first image or a gradient placeholder
   const imageUrl = property.images && property.images.length > 0 
     ? property.images[0] 

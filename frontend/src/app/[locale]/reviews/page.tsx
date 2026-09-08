@@ -6,7 +6,8 @@ import { notFound } from 'next/navigation';
 import { ReviewCard } from '@/components/reviews/ReviewCard';
 import { ReviewForm } from '@/components/reviews/ReviewForm';
 import { isLocale } from '@/i18n/config';
-import { siteCopy } from '@/i18n/siteCopy';
+import { fetchSiteSettings } from '@/lib/api';
+import { getSiteCopy, brandName } from '@/lib/site-profile';
 import { fetchReviewInvitation, fetchReviews } from '@/lib/api';
 import { localizedPageMetadata } from '@/lib/seo';
 
@@ -23,11 +24,11 @@ export const dynamic = 'force-dynamic';
 export async function generateMetadata({ params, searchParams }: ReviewsPageProps): Promise<Metadata> {
   const [{ locale }, query] = await Promise.all([params, searchParams]);
   if (!isLocale(locale)) return {};
-  const copy = siteCopy[locale].reviews;
+  const copy = getSiteCopy(locale, await fetchSiteSettings()).reviews;
   const page = paginationPage(query.page);
   const pagination = await fetchReviews(locale, { page, perPage: 9 });
   assertPageExists(page, pagination.total, pagination.per_page);
-  const title = page > 1 ? `${copy.metaTitle} — ${page}` : copy.metaTitle;
+  const title = copy.metaTitle;
   return localizedPageMetadata(locale, '/reviews', title, copy.metaDescription, {
     canonicalSuffix: page > 1 ? `?page=${page}` : '',
   });
@@ -38,7 +39,7 @@ export default async function ReviewsPage({ params, searchParams }: ReviewsPageP
   const [{ locale }, query] = await Promise.all([params, searchParams]);
   if (!isLocale(locale)) notFound();
   const page = paginationPage(query.page);
-  const copy = siteCopy[locale].reviews;
+  const copy = getSiteCopy(locale, await fetchSiteSettings()).reviews;
   const [reviewsResult, invitation] = await Promise.all([
     fetchReviews(locale, { page, perPage: 9 }),
     query.token ? fetchReviewInvitation(query.token).catch(() => null) : Promise.resolve(null),
@@ -50,7 +51,7 @@ export default async function ReviewsPage({ params, searchParams }: ReviewsPageP
     <div className="min-h-screen bg-slate-50">
       <section className="border-b border-slate-200 bg-white py-10 sm:py-14 md:py-20">
         <div className="container mx-auto min-w-0 max-w-4xl px-3 text-center sm:px-4 md:px-6">
-          <p className="mb-3 text-sm font-bold uppercase tracking-[0.2em] text-secondary">Rahat Home</p>
+          <p className="mb-3 text-sm font-bold uppercase tracking-[0.2em] text-secondary">{brandName(await fetchSiteSettings())}</p>
           <h1 className="break-words text-3xl font-black tracking-tight text-slate-950 sm:text-4xl md:text-6xl">{copy.title}</h1>
           <p className="mx-auto mt-4 max-w-2xl break-words text-base leading-relaxed text-slate-600 sm:mt-5 sm:text-lg">{copy.description}</p>
         </div>

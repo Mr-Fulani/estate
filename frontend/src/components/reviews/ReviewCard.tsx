@@ -1,12 +1,13 @@
 import { BadgeCheck, Quote, Star } from 'lucide-react';
 
 import type { Locale } from '@/i18n/config';
-import { siteCopy } from '@/i18n/siteCopy';
+import { fetchSiteSettings } from '@/lib/api';
+import { getSiteCopy } from '@/lib/site-profile';
 import type { PublicReview } from '@/types';
 
 
-export function ReviewCard({ review, locale }: { review: PublicReview; locale: Locale }) {
-  const copy = siteCopy[locale].reviews;
+export async function ReviewCard({ review, locale }: { review: PublicReview; locale: Locale }) {
+  const copy = getSiteCopy(locale, await fetchSiteSettings()).reviews;
   return (
     <article className="relative flex h-full min-w-0 max-w-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 md:p-8">
       <Quote className="absolute end-4 top-4 h-8 w-8 text-primary/10 sm:end-6 sm:top-6 sm:h-10 sm:w-10" aria-hidden="true" />

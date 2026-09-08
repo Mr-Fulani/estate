@@ -1,5 +1,6 @@
 'use client';
 
+import { SiteProfileEditor } from '@/components/admin/SiteProfileEditor';
 import { useState, useEffect } from 'react';
 import { SiteSettings, SiteSettingsTranslation } from '@/types';
 import { fetchSiteSettings, updateSiteSettings } from '@/lib/api';
@@ -32,7 +33,7 @@ export default function AdminSettingsPage() {
         setSettings(data);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => { setError('Настройки недоступны. Обновите страницу и повторите попытку.'); setLoading(false); });
   }, []);
 
   const handleChange = (field: keyof SiteSettings, value: string) => {
@@ -82,6 +83,7 @@ export default function AdminSettingsPage() {
     }
   };
 
+  if (!loading && !settings) return <p role="alert" className="p-6 text-red-700">{error}</p>;
   if (loading || !settings) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -108,6 +110,8 @@ export default function AdminSettingsPage() {
           {error}
         </div>
       )}
+
+      <SiteProfileEditor profile={settings.profile || {}} onChange={profile=>{setSettings({...settings,profile});setSaved(false);}} />
 
       {/* Contact Info */}
       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">
@@ -141,7 +145,7 @@ export default function AdminSettingsPage() {
               type="email"
               value={settings.email}
               onChange={(e) => handleChange('email', e.target.value)}
-              placeholder="info@rahathome.com"
+              placeholder="Email компании"
               className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
@@ -155,7 +159,7 @@ export default function AdminSettingsPage() {
               type="text"
               value={settings.address}
               onChange={(e) => handleChange('address', e.target.value)}
-              placeholder="г. Москва, ул. Примерная, 1"
+              placeholder="Адрес офиса"
               className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>

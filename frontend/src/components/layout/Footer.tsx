@@ -1,22 +1,25 @@
 'use client';
 
 import Link from 'next/link';
+import { Brand } from '@/components/layout/Brand';
+import { brandName } from '@/lib/site-profile';
 import { usePathname } from 'next/navigation';
 import { Mail, MapPin, Phone } from 'lucide-react';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import { useLocale } from '@/context/LocaleContext';
 import { localizedSiteSettings } from '@/i18n/domain';
-import { siteCopy } from '@/i18n/siteCopy';
+import { getSiteCopy } from '@/lib/site-profile';
 import { TelegramIcon, WhatsappIcon, VkIcon, YoutubeIcon, InstagramIcon, FacebookIcon, MaxIcon } from '../ui/SocialIcons';
 import { TrackedContactLink } from '@/components/contact/TrackedContactLink';
 import type { ContactTrackData } from '@/types';
 
 export function Footer() {
+  const { settings: siteSettings } = useSiteSettings();
   const currentYear = new Date().getFullYear();
   const pathname = usePathname();
   const { settings } = useSiteSettings();
   const { locale, href } = useLocale();
-  const copy = siteCopy[locale].footer;
+  const copy = getSiteCopy(locale, siteSettings).footer;
   const localizedSettings = localizedSiteSettings(settings, locale);
 
   if (pathname?.startsWith('/admin')) {
@@ -41,10 +44,9 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
           {/* Brand */}
           <div>
-            <Link href={href('/')} className="notranslate inline-block mb-4" aria-label="Rahat Home" translate="no">
+            <Link href={href('/')} className="notranslate inline-block mb-4" aria-label={brandName(settings)} translate="no">
               <span className="text-2xl font-bold tracking-tight text-white">
-                <span className="md:hidden">RH<span className="text-secondary">.</span></span>
-                <span className="hidden md:inline">Rahat Home<span className="text-secondary">.</span></span>
+                <Brand />
               </span>
             </Link>
             <p className="mb-6 leading-relaxed text-sm text-slate-300">
@@ -115,7 +117,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-primary-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-center text-xs text-primary-300 md:text-start">
-          <p className="break-words">© {currentYear} Rahat Home. {copy.copyright}</p>
+          <p className="break-words">© {currentYear} {brandName(settings)}. {copy.copyright}</p>
           <div className="flex flex-wrap justify-center gap-4 md:justify-end">
             <Link href={href('/privacy')} className="hover:text-white transition-colors">{copy.privacy}</Link>
             <Link href={href('/terms')} className="hover:text-white transition-colors">{copy.terms}</Link>

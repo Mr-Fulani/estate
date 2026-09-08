@@ -149,7 +149,7 @@ async def send_test_notification(
     background_tasks.add_task(
         send_telegram_message,
         current.telegram_chat_id,
-        "<b>Rahat Home Admin</b>\nТестовое уведомление доставлено. Настройка работает.",
+        "<b>Администрирование</b>\nТестовое уведомление доставлено. Настройка работает.",
     )
     return TelegramActionResponse()
 
@@ -203,7 +203,7 @@ async def telegram_webhook(
         background_tasks.add_task(
             send_telegram_message,
             chat_id,
-            "Ссылка недействительна или истекла. Создайте новую в профиле Rahat Home Admin.",
+            "Ссылка недействительна или истекла. Создайте новую в профиле Администрирование.",
         )
         return TelegramActionResponse()
 
@@ -217,7 +217,7 @@ async def telegram_webhook(
         background_tasks.add_task(
             send_telegram_message,
             chat_id,
-            "Этот Telegram уже связан с другим аккаунтом Rahat Home Admin.",
+            "Этот Telegram уже связан с другим аккаунтом Администрирование.",
         )
         return TelegramActionResponse()
 
@@ -241,6 +241,6 @@ async def telegram_webhook(
     background_tasks.add_task(
         send_telegram_message,
         chat_id,
-        "<b>Telegram подключён</b>\nУведомления Rahat Home Admin включены. Настройки можно изменить в профиле.",
+        "<b>Telegram подключён</b>\nУведомления Администрирование включены. Настройки можно изменить в профиле.",
     )
     return TelegramActionResponse()

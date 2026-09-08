@@ -1,11 +1,12 @@
 import { Home, Key, TrendingUp, ShieldCheck } from 'lucide-react';
 import type { Locale } from '@/i18n/config';
-import { siteCopy } from '@/i18n/siteCopy';
+import { fetchSiteSettings } from '@/lib/api';
+import { getSiteCopy } from '@/lib/site-profile';
 
 const serviceIcons = [Home, Key, TrendingUp, ShieldCheck];
 
-export function Services({ locale }: { locale: Locale }) {
-  const copy = siteCopy[locale].home;
+export async function Services({ locale }: { locale: Locale }) {
+  const copy = getSiteCopy(locale, await fetchSiteSettings()).home;
   return (
     <section className="py-20 bg-white">
       <div className="container mx-auto px-4 md:px-6">

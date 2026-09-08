@@ -5,7 +5,8 @@ import { notFound } from 'next/navigation';
 
 import { NewsCard } from '@/components/news/NewsCard';
 import { isLocale, localizeHref } from '@/i18n/config';
-import { siteCopy } from '@/i18n/siteCopy';
+import { fetchSiteSettings } from '@/lib/api';
+import { getSiteCopy } from '@/lib/site-profile';
 import { fetchNews } from '@/lib/api';
 import { localizedPageMetadata } from '@/lib/seo';
 
@@ -19,11 +20,11 @@ export const dynamic = 'force-dynamic';
 export async function generateMetadata({ params, searchParams }: NewsListPageProps): Promise<Metadata> {
   const [{ locale }, query] = await Promise.all([params, searchParams]);
   if (!isLocale(locale)) return {};
-  const copy = siteCopy[locale].news;
+  const copy = getSiteCopy(locale, await fetchSiteSettings()).news;
   const page = paginationPage(query.page);
   const pagination = await fetchNews(locale, page, 9);
   assertPageExists(page, pagination.total, pagination.per_page);
-  const title = page > 1 ? `${copy.metaTitle} — ${copy.page} ${page}` : copy.metaTitle;
+  const title = copy.metaTitle;
   return localizedPageMetadata(locale, '/news', title, copy.metaDescription, {
     canonicalSuffix: page > 1 ? `?page=${page}` : '',
   });
@@ -37,7 +38,7 @@ export default async function NewsListPage({ params, searchParams }: NewsListPag
   const data = await fetchNews(locale, page, 9);
   assertPageExists(page, data.total, data.per_page);
   const totalPages = Math.ceil(data.total / data.per_page);
-  const copy = siteCopy[locale].news;
+  const copy = getSiteCopy(locale, await fetchSiteSettings()).news;
 
   return (
     <div className="min-h-screen bg-slate-50">

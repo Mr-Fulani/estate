@@ -6,14 +6,15 @@ import { PropertyGrid } from '@/components/properties/PropertyGrid';
 import type { Locale } from '@/i18n/config';
 import { localizeHref } from '@/i18n/config';
 import { getMessages } from '@/i18n/messages';
-import { siteCopy } from '@/i18n/siteCopy';
+import { fetchSiteSettings } from '@/lib/api';
+import { getSiteCopy } from '@/lib/site-profile';
 import { fetchCategories, fetchProperties } from '@/lib/api';
 
 export type PropertySearchParams = { [key: string]: string | string[] | undefined };
 
 export async function PropertiesPageContent({ searchParams, locale }: { searchParams: Promise<PropertySearchParams> | PropertySearchParams; locale: Locale }) {
   const resolvedParams = await searchParams;
-  const copy = siteCopy[locale].catalog;
+  const copy = getSiteCopy(locale, await fetchSiteSettings()).catalog;
   const messages = getMessages(locale);
   const params = propertyQuery(resolvedParams);
 

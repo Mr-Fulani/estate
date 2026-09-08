@@ -4,7 +4,7 @@ import { LoginForm } from './LoginForm';
 
 
 export const metadata: Metadata = {
-  title: 'Вход в админку — Rahat Home',
+  title: 'Вход в админку — Компания',
   robots: { index: false, follow: false },
 };
 

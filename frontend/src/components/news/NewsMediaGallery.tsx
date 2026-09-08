@@ -5,7 +5,8 @@ import { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Maximize2, Play, X } from 'lucide-react';
 
 import type { Locale } from '@/i18n/config';
-import { siteCopy } from '@/i18n/siteCopy';
+import { useSiteSettings } from '@/context/SiteSettingsContext';
+import { getSiteCopy } from '@/lib/site-profile';
 import { getYouTubeEmbedUrl } from '@/lib/youtube';
 import type { NewsMedia } from '@/types';
 
@@ -20,7 +21,8 @@ export function NewsMediaGallery({
   locale: Locale;
   coverImage?: string | null;
 }) {
-  const copy = siteCopy[locale].news;
+  const { settings: siteSettings } = useSiteSettings();
+  const copy = getSiteCopy(locale, siteSettings).news;
   const orderedMedia = [...media]
     .sort((first, second) => first.position - second.position)
     .filter((item) => item.media_type !== 'image' || item.url !== coverImage);

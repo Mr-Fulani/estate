@@ -43,7 +43,7 @@ async def update_settings(
 ):
     setting = await get_or_create_settings(db)
     
-    update_dict = data.model_dump(exclude_unset=True)
+    update_dict = data.model_dump(exclude_unset=True, by_alias=True)
     translations = update_dict.pop("translations", None)
     for field, value in update_dict.items():
         setattr(setting, field, value)

@@ -1,6 +1,8 @@
 'use client';
 
 import Link from 'next/link';
+import { Brand } from '@/components/layout/Brand';
+import { brandName } from '@/lib/site-profile';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Coins, Globe2, Menu, X, Phone } from 'lucide-react';
@@ -199,10 +201,9 @@ export function Header() {
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link href={href('/')} className="notranslate flex items-center gap-2 group" aria-label="Rahat Home" translate="no">
+          <Link href={href('/')} className="notranslate flex items-center gap-2 group" aria-label={brandName(settings)} translate="no">
             <span className="text-2xl font-bold tracking-tight text-primary">
-              <span className="md:hidden">RH<span className="text-secondary">.</span></span>
-              <span className="hidden md:inline">Rahat Home<span className="text-secondary">.</span></span>
+              <Brand />
             </span>
           </Link>
 

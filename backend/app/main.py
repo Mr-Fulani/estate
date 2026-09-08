@@ -11,7 +11,7 @@ settings = get_settings()
 
 is_production = settings.ENVIRONMENT == "production"
 app = FastAPI(
-    title="Rahat Home API",
+    title="Real Estate API",
     docs_url=None if is_production else "/docs",
     redoc_url=None if is_production else "/redoc",
     openapi_url=None if is_production else "/openapi.json",
@@ -62,4 +62,4 @@ app.include_router(telegram.router)
 
 @app.get("/")
 async def root():
-    return {"status": "ok", "project": "Rahat Home API"}
+    return {"status": "ok", "project": "Real Estate API"}

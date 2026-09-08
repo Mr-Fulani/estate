@@ -6,15 +6,17 @@ import { Category } from '@/types';
 import { Search, RotateCcw, SlidersHorizontal, Building2, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLocale } from '@/context/LocaleContext';
-import { siteCopy } from '@/i18n/siteCopy';
+import { useSiteSettings } from '@/context/SiteSettingsContext';
+import { getSiteCopy } from '@/lib/site-profile';
 import { localizedCategoryNavigationName } from '@/i18n/domain';
 import { useCurrency } from '@/context/CurrencyContext';
 import { startNavigationFeedback } from '@/components/layout/NavigationFeedback';
 
 export function PropertyFilter({ categories }: { categories: Category[] }) {
+  const { settings: siteSettings } = useSiteSettings();
   const router = useRouter();
   const { locale, href } = useLocale();
-  const copy = siteCopy[locale].catalog;
+  const copy = getSiteCopy(locale, siteSettings).catalog;
   const { currency, convert } = useCurrency();
   const searchParams = useSearchParams();
   const [isMobileOpen, setIsMobileOpen] = useState(false);

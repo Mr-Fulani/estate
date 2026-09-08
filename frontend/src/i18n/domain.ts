@@ -9,47 +9,7 @@ const categoryNames: Record<Locale, Record<string, string>> = {
   ar: { kvartira: 'شقة', dom: 'منزل', uchastok: 'أرض', kommerciya: 'عقار تجاري', villa: 'فيلا', villy: 'فلل' },
 };
 
-const officeAddresses: Record<'istanbul' | 'moscow', Record<Locale, string>> = {
-  istanbul: {
-    ru: 'г. Стамбул, Бейликдюзю', en: 'Istanbul, Beylikduzu', tr: 'İstanbul, Beylikdüzü', ar: 'إسطنبول، بيليك دوزو',
-  },
-  moscow: {
-    ru: 'г. Москва, Пресненская набережная, 12, Башня Федерация',
-    en: 'Moscow, 12 Presnenskaya Embankment, Federation Tower',
-    tr: 'Moskova, Presnenskaya Naberejnaya 12, Federasyon Kulesi',
-    ar: 'موسكو، جادة بريسنينسكايا 12، برج فيديراسيا',
-  },
-};
-
-const defaultWorkingHours: Record<Locale, string> = {
-  ru: 'Ежедневно с 9:00 до 21:00',
-  en: 'Daily, 9:00–21:00',
-  tr: 'Her gün 09:00–21:00',
-  ar: 'يومياً من 9:00 إلى 21:00',
-};
-
-function normalizeAddress(value: string): string {
-  return value
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLocaleLowerCase('ru-RU');
-}
-
-
-export function localizedOfficeAddress(locale: Locale, address: string): string {
-  const normalized = normalizeAddress(address);
-  const includesAny = (variants: string[]) => variants.some(
-    (variant) => normalized.includes(normalizeAddress(variant)),
-  );
-  const isBeylikduzuOffice = includesAny(['стамбул', 'istanbul'])
-    && includesAny(['бейликдюзю', 'beylikdüzü', 'beylikduzu']);
-
-  if (isBeylikduzuOffice) return officeAddresses.istanbul[locale];
-  const isMoscowOffice = includesAny(['москва', 'moscow'])
-    && includesAny(['преснен', 'presnen', 'federation', 'федерац']);
-  return isMoscowOffice ? officeAddresses.moscow[locale] : address;
-}
-
+export function localizedOfficeAddress(_locale: Locale, address: string): string { return address; }
 
 function localizedTranslation<T extends { locale: Locale }>(
   translations: T[] | undefined,
@@ -75,24 +35,8 @@ export function localizedCategoryName(
 
 
 export function localizedSiteSettings(settings: SiteSettings, locale: Locale): SiteSettingsTranslation {
-  const translation = localizedTranslation(settings.translations, locale);
-  if (translation) {
-    const isRussianFallback = translation.locale === 'ru' && locale !== 'ru';
-    return {
-      ...translation,
-      address: isRussianFallback ? localizedOfficeAddress(locale, translation.address) : translation.address,
-      working_hours: isRussianFallback && normalizeAddress(translation.working_hours).includes('ежедневно')
-        ? defaultWorkingHours[locale]
-        : translation.working_hours,
-    };
-  }
-  return {
-    locale: 'ru',
-    address: localizedOfficeAddress(locale, settings.address),
-    working_hours: locale !== 'ru' && normalizeAddress(settings.working_hours).includes('ежедневно')
-      ? defaultWorkingHours[locale]
-      : settings.working_hours,
-  };
+  return settings.translations?.find(item => item.locale === locale)
+    || { locale, address: settings.address, working_hours: settings.working_hours };
 }
 
 /** Navigation groups are plural; individual cards retain their category label. */

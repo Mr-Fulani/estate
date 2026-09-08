@@ -32,7 +32,7 @@ export function NewsForm({ initialData }: { initialData?: NewsAdminArticle }) {
   const [formData, setFormData] = useState<NewsFormData>({
     slug: initialData?.slug || '',
     cover_image: initialData?.cover_image || '',
-    author: initialData?.author || 'Rahat Home',
+    author: initialData?.author || '',
     is_published: initialData?.is_published ?? false,
     published_at: initialData?.published_at ? initialData.published_at.slice(0, 16) : '',
     translations: newsLocales.map((locale) => initialData?.translations.find((item) => item.locale === locale) || emptyTranslation(locale)),
@@ -170,7 +170,7 @@ export function NewsForm({ initialData }: { initialData?: NewsAdminArticle }) {
     const payload: NewsFormData = {
       slug: formData.slug?.trim() || undefined,
       cover_image: formData.cover_image?.trim() || null,
-      author: formData.author.trim() || 'Rahat Home',
+      author: formData.author.trim() || '',
       is_published: formData.is_published,
       published_at: formData.published_at ? new Date(formData.published_at).toISOString() : null,
       translations: translations.map((item) => ({

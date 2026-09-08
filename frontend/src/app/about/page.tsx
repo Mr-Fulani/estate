@@ -2,11 +2,13 @@
 
 import Image from 'next/image';
 import { useLocale } from '@/context/LocaleContext';
-import { siteCopy } from '@/i18n/siteCopy';
+import { useSiteSettings } from '@/context/SiteSettingsContext';
+import { getSiteCopy } from '@/lib/site-profile';
 
 export default function AboutPage() {
+  const { settings: siteSettings } = useSiteSettings();
   const { locale } = useLocale();
-  const copy = siteCopy[locale].about;
+  const copy = getSiteCopy(locale, siteSettings).about;
 
   return (
     <div className="bg-white">
@@ -26,13 +28,13 @@ export default function AboutPage() {
             </div>
           </div>
           <div className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-slate-200 shadow-sm">
-            <Image
-              src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+            {siteSettings.profile?.about_image_url && <Image
+              src={siteSettings.profile.about_image_url}
               alt={copy.approachTitle}
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"
-            />
+            />}
           </div>
         </section>
       </div>

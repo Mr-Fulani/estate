@@ -4,12 +4,13 @@ import { ArrowUpRight, CalendarDays, Newspaper } from 'lucide-react';
 
 import type { Locale } from '@/i18n/config';
 import { localizeHref } from '@/i18n/config';
-import { siteCopy } from '@/i18n/siteCopy';
+import { fetchSiteSettings } from '@/lib/api';
+import { getSiteCopy } from '@/lib/site-profile';
 import { formatDate } from '@/lib/utils';
 import type { NewsArticle } from '@/types';
 
-export function NewsCard({ article, locale }: { article: NewsArticle; locale: Locale }) {
-  const copy = siteCopy[locale].news;
+export async function NewsCard({ article, locale }: { article: NewsArticle; locale: Locale }) {
+  const copy = getSiteCopy(locale, await fetchSiteSettings()).news;
   const articleHref = localizeHref(locale, `/news/${article.slug}`);
 
   return (

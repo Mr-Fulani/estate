@@ -8,10 +8,11 @@ import { Testimonials } from '@/components/home/Testimonials';
 import { CurrencyConverter } from '@/components/currency/CurrencyConverter';
 import type { Locale } from '@/i18n/config';
 import { localizeHref } from '@/i18n/config';
-import { siteCopy } from '@/i18n/siteCopy';
+import { fetchSiteSettings } from '@/lib/api';
+import { getSiteCopy } from '@/lib/site-profile';
 
-export function HomePageContent({ locale }: { locale: Locale }) {
-  const copy = siteCopy[locale].home;
+export async function HomePageContent({ locale }: { locale: Locale }) {
+  const copy = getSiteCopy(locale, await fetchSiteSettings()).home;
   return (
     <div className="home-page relative isolate -mt-16 bg-primary-900 md:-mt-20">
       <Hero locale={locale} />
