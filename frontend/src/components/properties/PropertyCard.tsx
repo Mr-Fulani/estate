@@ -10,6 +10,7 @@ import { localizeHref } from '@/i18n/config';
 import { localizedCategoryName, localizedProperty, localizedStatus, roomLabel } from '@/i18n/domain';
 import { siteCopy } from '@/i18n/siteCopy';
 import { CurrencyPrice } from '@/components/currency/CurrencyPrice';
+import { DevelopmentCard } from './DevelopmentCard';
 
 interface PropertyCardProps {
   property: Property;
@@ -17,6 +18,7 @@ interface PropertyCardProps {
 }
 
 export function PropertyCard({ property: sourceProperty, locale }: PropertyCardProps) {
+  if (sourceProperty.listing_kind === 'development') return <DevelopmentCard property={sourceProperty} locale={locale} />;
   const property = localizedProperty(sourceProperty, locale);
   const copy = siteCopy[locale].property;
   // Use first image or a gradient placeholder

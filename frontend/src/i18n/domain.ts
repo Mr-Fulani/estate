@@ -95,6 +95,16 @@ export function localizedSiteSettings(settings: SiteSettings, locale: Locale): S
   };
 }
 
+/** Navigation groups are plural; individual cards retain their category label. */
+export function localizedCategoryNavigationName(
+  locale: Locale, slug?: string, fallback = '', translations?: CategoryTranslation[],
+): string {
+  if (slug === 'residential-development') {
+    return { ru: 'Жилые комплексы', en: 'Developments', tr: 'Konut projeleri', ar: 'مجمعات سكنية' }[locale];
+  }
+  return localizedCategoryName(locale, slug, fallback, translations);
+}
+
 
 export function localizedProperty(property: Property, locale: Locale): Property {
   const translation = localizedPropertyTranslation(property, locale);

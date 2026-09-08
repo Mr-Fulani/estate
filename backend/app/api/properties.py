@@ -1,10 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func, desc, asc, or_
+from sqlalchemy import select, func, desc, asc, or_, and_, case
 from sqlalchemy.orm import selectinload
 from typing import Literal, Optional
-from app.database import get_db
-from app.models.property import Property
+from app.database import AsyncSessionLocal, get_db
+from app.models.property import Property, PropertyUnitType
+from app.services.developments import sync_development
+from app.services.currency import get_exchange_rates
 from app.models.property_translation import PropertyTranslation
 from app.schemas.property import PropertyListResponse, PropertyResponse, PropertyCreate, PropertyUpdate
 from app.utils.slug import generate_slug
@@ -13,6 +15,17 @@ from app.models.admin_user import AdminUser
 from app.security import AuthContext, get_optional_auth_context, has_permission, require_permission
 
 router = APIRouter(prefix="/api/v1/properties", tags=["Properties"])
+
+
+async def price_multiplier_rub():
+    """The catalog's existing price-filter contract is RUB, irrespective of storage currency."""
+    try:
+        async with AsyncSessionLocal() as rate_db:
+            snapshot, _ = await get_exchange_rates(rate_db)
+            rates = dict(snapshot.rates)
+        return case(*[(Property.currency == code, rate) for code, rate in rates.items()], else_=None)
+    except Exception as exc:
+        raise HTTPException(503, "Currency rates are unavailable; try filtering by price later") from exc
 
 
 def sync_property_translations(
@@ -102,30 +115,33 @@ async def list_properties(
         )
         query = query.where(city_filter)
         count_query = count_query.where(city_filter)
-    if min_price is not None:
-        query = query.where(Property.price >= min_price)
-        count_query = count_query.where(Property.price >= min_price)
-    if max_price is not None:
-        query = query.where(Property.price <= max_price)
-        count_query = count_query.where(Property.price <= max_price)
-    if rooms is not None:
-        query = query.where(Property.rooms == rooms)
-        count_query = count_query.where(Property.rooms == rooms)
-    if min_rooms is not None:
-        query = query.where(Property.rooms >= min_rooms)
-        count_query = count_query.where(Property.rooms >= min_rooms)
-    if min_area is not None:
-        query = query.where(Property.area >= min_area)
-        count_query = count_query.where(Property.area >= min_area)
-    if max_area is not None:
-        query = query.where(Property.area <= max_area)
-        count_query = count_query.where(Property.area <= max_area)
+    multiplier = await price_multiplier_rub() if min_price is not None or max_price is not None or sort_by == "price" else 1
+    ordinary, unit_filters = [], []
+    for value, property_predicate, unit_predicate in [
+        (min_price, lambda v: Property.price * multiplier >= v, lambda v: PropertyUnitType.price_max * multiplier >= v),
+        (max_price, lambda v: Property.price * multiplier <= v, lambda v: PropertyUnitType.price_min * multiplier <= v),
+        (rooms, lambda v: Property.rooms == v, lambda v: PropertyUnitType.rooms == v),
+        (min_rooms, lambda v: Property.rooms >= v, lambda v: PropertyUnitType.rooms >= v),
+        (min_area, lambda v: Property.area >= v, lambda v: PropertyUnitType.area_max >= v),
+        (max_area, lambda v: Property.area <= v, lambda v: PropertyUnitType.area_min <= v),
+    ]:
+        if value is not None:
+            ordinary.append(property_predicate(value))
+            unit_filters.append(unit_predicate(value))
+    if ordinary:
+        # All filters must match the same apartment type, not different children.
+        match = or_(
+            and_(Property.listing_kind != "development", *ordinary),
+            and_(Property.listing_kind == "development", Property.unit_types.any(and_(*unit_filters))),
+        )
+        query = query.where(match)
+        count_query = count_query.where(match)
 
     # Sorting
     sort_columns = {
         "created_at": Property.created_at,
         "updated_at": Property.updated_at,
-        "price": Property.price,
+        "price": Property.price * multiplier,
         "area": Property.area,
         "rooms": Property.rooms,
     }
@@ -156,6 +172,7 @@ async def featured_properties(limit: int = 6, db: AsyncSession = Depends(get_db)
         select(Property)
         .options(selectinload(Property.category), selectinload(Property.translations))
         .where(Property.is_active == True, Property.is_featured == True)
+        .order_by(Property.created_at.desc(), Property.id.desc())
         .limit(limit)
     )
     result = await db.execute(query)
@@ -199,6 +216,9 @@ async def create_property(
 ):
     data = prop_data.model_dump()
     translations = data.pop("translations", [])
+    unit_types = data.pop("unit_types", [])
+    if prop_data.development is not None:
+        data["development"] = prop_data.development.model_dump(mode="json")
     locales = [translation["locale"] for translation in translations]
     if len(locales) != len(set(locales)):
         raise HTTPException(status_code=422, detail="Each property locale can be provided only once")
@@ -210,6 +230,8 @@ async def create_property(
         
     new_prop = Property(**data)
     new_prop.translations = [PropertyTranslation(**translation) for translation in translations]
+    new_prop.unit_types = []
+    sync_development(new_prop, unit_types)
     db.add(new_prop)
     await db.flush()
     add_audit_log(
@@ -246,6 +268,11 @@ async def update_property(
         
     update_data = prop_data.model_dump(exclude_unset=True)
     translations = update_data.pop("translations", None)
+    unit_types = update_data.pop("unit_types", None)
+    if "listing_kind" in update_data and update_data["listing_kind"] is None:
+        raise HTTPException(422, "Listing kind cannot be null")
+    if prop_data.development is not None:
+        update_data["development"] = prop_data.development.model_dump(mode="json")
     if "market_status" in update_data and "status_badge" not in update_data:
         update_data["status_badge"] = {
             "available": "Актуально", "reserved": "В брони", "sold": "Продано",
@@ -253,6 +280,7 @@ async def update_property(
         }.get(update_data["market_status"], property_obj.status_badge)
     for field, val in update_data.items():
         setattr(property_obj, field, val)
+    sync_development(property_obj, unit_types)
 
     if translations is not None:
         locales = [translation["locale"] for translation in translations]
@@ -267,7 +295,7 @@ async def update_property(
         "property.updated",
         "property",
         property_obj.id,
-        {"fields": sorted([*update_data.keys(), *(["translations"] if translations is not None else [])])},
+        {"fields": sorted([*update_data.keys(), *(["translations"] if translations is not None else []), *(["unit_types"] if unit_types is not None else [])])},
     )
     await db.commit()
     result = await db.execute(query)

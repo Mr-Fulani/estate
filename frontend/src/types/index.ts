@@ -53,6 +53,52 @@ export interface Property {
   translations?: PropertyTranslation[];
   created_at: string;
   updated_at: string;
+  listing_kind?: 'property' | 'development';
+  development?: DevelopmentProfile | null;
+  unit_types?: PropertyUnitType[];
+}
+
+export interface PropertyUnitType {
+  id?: number;
+  code: string;
+  rooms: number;
+  area_min: number | null;
+  area_max: number | null;
+  price_min: number | null;
+  price_max: number | null;
+  plans: string[];
+  plan_details?: PropertyPlanDetail[];
+  position: number;
+}
+
+export interface PropertyPlanDetail {
+  image: string;
+  code: string;
+  area_gross: number | null;
+  area_net: number | null;
+  area_with_balcony: number | null;
+}
+
+export interface DevelopmentCopy {
+  eyebrow: string;
+  headline: string;
+  story_title: string;
+  story: string;
+  location_description: string;
+  purchase_note: string;
+  amenities: string[];
+}
+
+export interface DevelopmentProfile {
+  is_demo?: boolean;
+  developer: string;
+  design_brand: string;
+  price_date: string | null;
+  price_status: 'indicative' | 'verified';
+  images_are_renders: boolean;
+  interior_images: string[];
+  brochure_url?: string | null;
+  translations: Partial<Record<Locale, DevelopmentCopy>>;
 }
 
 export interface PropertyTranslation {
@@ -276,6 +322,9 @@ export interface PropertyFormData {
   market_status?: 'available' | 'reserved' | 'sold' | 'rented' | 'archived';
   status_badge?: string | null;
   translations?: Array<Omit<PropertyTranslation, 'id'>>;
+  listing_kind?: 'property' | 'development';
+  development?: DevelopmentProfile | null;
+  unit_types?: PropertyUnitType[];
 }
 
 export interface SiteSettings {

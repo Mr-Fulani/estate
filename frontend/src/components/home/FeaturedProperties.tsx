@@ -11,7 +11,7 @@ export async function FeaturedProperties({ locale }: { locale: Locale }) {
   const copy = siteCopy[locale].home;
 
   return (
-    <section className="py-20 bg-slate-50">
+    <section id="featured-properties" className="scroll-mt-28 rounded-t-[2rem] bg-slate-50 py-20 shadow-[0_-24px_60px_-32px_rgba(15,23,42,0.65)] sm:rounded-t-[2.5rem]">
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div className="max-w-2xl">

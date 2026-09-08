@@ -193,7 +193,7 @@ export function Header() {
 
   return (
     <header
-      className="site-header fixed inset-x-0 top-0 z-[100] bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm"
+      className="site-header fixed inset-x-0 top-0 z-[100] bg-white border-b border-slate-200/80 shadow-sm"
       data-detached={isDetached}
     >
       <div className="container mx-auto px-4 md:px-6">

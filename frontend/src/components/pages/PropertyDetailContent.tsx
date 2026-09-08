@@ -11,6 +11,7 @@ import { hasPropertyLocale, localizedProperty } from '@/i18n/domain';
 import { siteCopy } from '@/i18n/siteCopy';
 import { fetchProperty } from '@/lib/api';
 import type { Property } from '@/types';
+import { DevelopmentPage } from '@/components/properties/DevelopmentPage';
 
 export async function PropertyDetailContent({ id, locale, initialProperty }: { id: string; locale: Locale; initialProperty?: Property }) {
   const property = initialProperty || await fetchProperty(id);
@@ -20,6 +21,16 @@ export async function PropertyDetailContent({ id, locale, initialProperty }: { i
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
   const canonicalUrl = new URL(`/${locale}/properties/${property.slug}`, siteUrl).toString();
   const absoluteImages = (property.images || []).map((image) => /^https?:\/\//i.test(image) ? image : new URL(image, siteUrl).toString());
+  if (property.listing_kind === 'development' && property.development) {
+    if (property.development.is_demo) return <DevelopmentPage property={property} locale={locale} />;
+    const developmentData = {
+      '@context': 'https://schema.org', '@type': 'ApartmentComplex',
+      name: localized.title, description: localized.description, url: canonicalUrl,
+      image: absoluteImages,
+      address: { '@type': 'PostalAddress', streetAddress: localized.address, addressLocality: localized.city, addressRegion: localized.district },
+    };
+    return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(developmentData).replace(/</g, '\\u003c') }} /><DevelopmentPage property={property} locale={locale} /></>;
+  }
   const availability = {
     available: 'https://schema.org/InStock',
     reserved: 'https://schema.org/LimitedAvailability',

@@ -1,14 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Search, Building, Home, Trees, Briefcase, Palmtree, type LucideIcon } from 'lucide-react';
+import { Search, Building, Building2, Home, Briefcase, Palmtree, type LucideIcon } from 'lucide-react';
 import { Category } from '@/types';
-import { fetchCategories } from '@/lib/api';
-import { cn } from '@/lib/utils';
 import { useLocale } from '@/context/LocaleContext';
 import { siteCopy } from '@/i18n/siteCopy';
-import { localizedCategoryName } from '@/i18n/domain';
+import { localizedCategoryNavigationName } from '@/i18n/domain';
 import { useCurrency } from '@/context/CurrencyContext';
 import { formatPrice } from '@/lib/utils';
 import { startNavigationFeedback } from '@/components/layout/NavigationFeedback';
@@ -16,19 +15,17 @@ import { startNavigationFeedback } from '@/components/layout/NavigationFeedback'
 const categoryIcons: Record<string, LucideIcon> = {
   kvartira: Building,
   dom: Home,
-  uchastok: Trees,
+  'residential-development': Building2,
   kommerciya: Briefcase,
   villy: Palmtree,
   villa: Palmtree,
 };
 
-export function HeroSearch() {
+export function HeroSearch({ categories = [] }: { categories: Category[] }) {
   const router = useRouter();
   const { locale, href } = useLocale();
   const copy = siteCopy[locale].home.search;
   const { currency, convert } = useCurrency();
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [maxPrice, setMaxPrice] = useState<string>('');
 
@@ -40,69 +37,57 @@ export function HeroSearch() {
     return `до ${formatted}`;
   };
 
-  useEffect(() => {
-    fetchCategories().then(setCategories).catch(console.error);
-  }, []);
+  const quickCategories = [['kvartira'], ['dom'], ['residential-development'], ['kommerciya'], ['villa', 'villy']]
+    .flatMap(slugs => categories.filter(category => slugs.includes(category.slug)).slice(0, 1));
 
-  const handleSearch = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+  const searchHref = (categoryId?: number) => {
     const params = new URLSearchParams();
     
     if (searchQuery.trim()) {
       params.append('search', searchQuery.trim());
     }
-    if (selectedCategory) {
-      params.append('category_id', selectedCategory);
+    if (categoryId) {
+      params.append('category_id', String(categoryId));
     }
     if (maxPrice) {
       params.append('max_price', maxPrice);
     }
 
     const queryString = params.toString();
+    return queryString ? `${href('/properties')}?${queryString}` : href('/properties');
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
     startNavigationFeedback();
-    router.push(queryString ? `${href('/properties')}?${queryString}` : href('/properties'));
+    router.push(searchHref());
   };
 
   return (
     <div className="w-full max-w-3xl">
       {/* Category Tabs */}
-      <div className="flex flex-wrap gap-1.5 p-1 bg-white/10 backdrop-blur-md rounded-2xl w-fit mb-3 border border-white/15">
-        <button
-          type="button"
-          onClick={() => setSelectedCategory('')}
-          aria-pressed={selectedCategory === ''}
-          className={cn(
-            'px-4 py-2 rounded-xl text-xs md:text-sm font-semibold transition-all',
-            selectedCategory === ''
-              ? 'bg-white text-primary shadow-md'
-              : 'text-white/90 hover:text-white hover:bg-white/10'
-          )}
+      <nav aria-label={siteCopy[locale].catalog.category} className="home-category-nav flex w-full flex-nowrap gap-1 overflow-x-auto rounded-2xl border border-white/15 bg-white/10 p-1 mb-3 backdrop-blur-md">
+        <Link
+          href={searchHref()}
+          className="shrink-0 whitespace-nowrap rounded-xl bg-white px-3 py-2.5 text-xs font-semibold text-primary shadow-md transition-colors"
         >
           {copy.all}
-        </button>
+        </Link>
 
-        {categories.map((cat) => {
-          const isSelected = selectedCategory === String(cat.id);
+        {quickCategories.map((cat) => {
           const Icon = categoryIcons[cat.slug] || Building;
           return (
-            <button
+            <Link
               key={cat.id}
-              type="button"
-              onClick={() => setSelectedCategory(String(cat.id))}
-              aria-pressed={isSelected}
-              className={cn(
-                'px-4 py-2 rounded-xl text-xs md:text-sm font-semibold transition-all flex items-center gap-1.5',
-                isSelected
-                  ? 'bg-white text-primary shadow-md'
-                  : 'text-white/90 hover:text-white hover:bg-white/10'
-              )}
+              href={searchHref(cat.id)}
+              className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl px-3 py-2.5 text-xs font-semibold text-white/90 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-secondary"
             >
               <Icon className="w-3.5 h-3.5" />
-              {localizedCategoryName(locale, cat.slug, cat.name, cat.translations)}
-            </button>
+              {localizedCategoryNavigationName(locale, cat.slug, cat.name, cat.translations)}
+            </Link>
           );
         })}
-      </div>
+      </nav>
 
       {/* Main Search Bar Form */}
       <form

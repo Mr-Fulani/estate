@@ -6,6 +6,7 @@
 
 - публичные маршруты `/ru`, `/en`, `/tr`, `/ar` с сохранением раздела при смене языка и полноценным RTL для арабского;
 - каталог, фильтры, пагинация, карточка объекта и адаптивная фотогалерея;
+- премиальные страницы жилых комплексов с вариантами квартир, интерьерной галереей и планировками; импорт ETRO описан в [docs/residential-developments.md](docs/residential-developments.md);
 - переводы названия, описания, адреса и маркетингового статуса объектов с управляемым fallback;
 - отдельные SEO title/description RU/EN/TR/AR для каждого объекта, URL по slug, canonical/hreflang, Open Graph/X, `RealEstateListing` JSON-LD и динамический sitemap;
 - блог с общим slug, переводами RU/EN/TR/AR и локализованными SEO/Open Graph/JSON-LD данными;

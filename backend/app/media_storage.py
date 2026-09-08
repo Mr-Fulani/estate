@@ -24,19 +24,27 @@ def detect_image_extension(content: bytes) -> str | None:
 
 
 async def save_news_image(content: bytes) -> str:
+    return await save_image(content, "news")
+
+
+async def save_image(content: bytes, collection: str) -> str:
+    if collection not in {"news", "properties"}:
+        raise ValueError("Unsupported media collection")
     extension = detect_image_extension(content)
     if extension is None:
         raise ValueError("Unsupported image format")
     filename = f"{uuid4().hex}{extension}"
-    target = NEWS_MEDIA_ROOT / filename
-    temporary = NEWS_MEDIA_ROOT / f".{filename}.tmp"
+    root = MEDIA_ROOT / collection
+    root.mkdir(parents=True, exist_ok=True)
+    target = root / filename
+    temporary = root / f".{filename}.tmp"
 
     def write_file() -> None:
         temporary.write_bytes(content)
         temporary.replace(target)
 
     await asyncio.to_thread(write_file)
-    return f"{settings.MEDIA_URL.rstrip('/')}/news/{filename}"
+    return f"{settings.MEDIA_URL.rstrip('/')}/{collection}/{filename}"
 
 
 async def delete_owned_news_file(url: str | None) -> None:

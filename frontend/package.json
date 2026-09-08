@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test:scroll": "node tests/run-scroll-tests.cjs",
+    "test:developments": "node --test tests/development-view.test.cjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",

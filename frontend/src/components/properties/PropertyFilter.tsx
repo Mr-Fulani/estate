@@ -7,7 +7,7 @@ import { Search, RotateCcw, SlidersHorizontal, Building2, MapPin } from 'lucide-
 import { cn } from '@/lib/utils';
 import { useLocale } from '@/context/LocaleContext';
 import { siteCopy } from '@/i18n/siteCopy';
-import { localizedCategoryName } from '@/i18n/domain';
+import { localizedCategoryNavigationName } from '@/i18n/domain';
 import { useCurrency } from '@/context/CurrencyContext';
 import { startNavigationFeedback } from '@/components/layout/NavigationFeedback';
 
@@ -163,6 +163,7 @@ export function PropertyFilter({ categories }: { categories: Category[] }) {
           <div className="relative">
             <select
               name="category_id"
+              aria-label={copy.category}
               value={filters.category_id}
               onChange={handleChange}
               className="w-full h-11 appearance-none rounded-xl border border-slate-200 bg-slate-50 px-3.5 pe-8 text-sm text-slate-800 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer"
@@ -170,7 +171,7 @@ export function PropertyFilter({ categories }: { categories: Category[] }) {
               <option value="">{copy.allCategories}</option>
               {categories.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {localizedCategoryName(locale, c.slug, c.name, c.translations)}
+                  {localizedCategoryNavigationName(locale, c.slug, c.name, c.translations)}
                 </option>
               ))}
             </select>

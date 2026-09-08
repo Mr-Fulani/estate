@@ -1,0 +1,16 @@
+{
+  "frames": 144,
+  "fps": 15,
+  "source_start": 3.52,
+  "duration": 9.6,
+  "source": "User-supplied ETRO.mp4, Google Drive file 1TgucrfOuL-nPSMxLZvnbYbsSwiEhkLHe",
+  "desktop": {
+    "width": 540,
+    "height": 960
+  },
+  "mobile": {
+    "width": 360,
+    "height": 640
+  },
+  "pattern": "frame-%03d.webp"
+}

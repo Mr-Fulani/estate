@@ -119,5 +119,7 @@ async def get_exchange_rates(db: AsyncSession) -> tuple[ExchangeRateSnapshot, bo
         except (httpx.HTTPError, ET.ParseError, KeyError, TypeError, ValueError):
             await db.rollback()
             if snapshot is not None:
+                # rollback expires ORM attributes even with expire_on_commit=False.
+                await db.refresh(snapshot)
                 return snapshot, True
             raise

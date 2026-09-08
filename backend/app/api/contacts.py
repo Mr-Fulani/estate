@@ -126,6 +126,10 @@ async def _restore_property_after_won(
     property_record: Property,
     db: AsyncSession,
 ) -> None:
+    if property_record.listing_kind == "development":
+        lead.previous_property_market_status = None
+        lead.previous_property_status_badge = None
+        return
     other_won = await _find_other_won_deal(property_record.id, lead.id, db)
     if other_won and other_won.outcome in PROPERTY_CLOSED_BADGES:
         property_record.market_status = other_won.outcome
@@ -165,6 +169,14 @@ async def list_contacts(
     return result.scalars().unique().all()
 
 
+async def _reject_demo_enquiry(property_id: int | None, db: AsyncSession) -> None:
+    if property_id is None:
+        return
+    item = await db.scalar(select(Property).where(Property.id == property_id))
+    if item and (item.development or {}).get("is_demo"):
+        raise HTTPException(422, "Demo developments do not accept enquiries")
+
+
 @router.post("", include_in_schema=False)
 @router.post("/", response_model=ContactResponse, status_code=status.HTTP_201_CREATED)
 async def create_contact(
@@ -179,6 +191,7 @@ async def create_contact(
         limit=settings.PUBLIC_FORM_RATE_LIMIT,
         window_minutes=settings.PUBLIC_RATE_WINDOW_MINUTES,
     )
+    await _reject_demo_enquiry(contact.property_id, db)
     new_contact = ContactRequest(
         **contact.model_dump(exclude={"website"}),
         status="new",
@@ -223,6 +236,7 @@ async def track_contact_action(
         limit=settings.PUBLIC_TRACK_RATE_LIMIT,
         window_minutes=settings.PUBLIC_RATE_WINDOW_MINUTES,
     )
+    await _reject_demo_enquiry(event.property_id, db)
     existing = None
     if event.session_id:
         dedupe_after = datetime.now(timezone.utc) - timedelta(minutes=30)
@@ -283,6 +297,7 @@ async def ingest_messenger_message(
     ):
         raise HTTPException(status_code=401, detail="Invalid CRM webhook secret")
 
+    await _reject_demo_enquiry(payload.property_id, db)
     if payload.external_message_id:
         existing_contact_id = await db.scalar(
             select(LeadActivity.contact_id).where(
@@ -409,20 +424,25 @@ async def update_contact(
         if next_outcome not in PROPERTY_CLOSED_BADGES:
             raise HTTPException(status_code=422, detail="Select sold or rented for a won deal")
 
-    for field, value in data.items():
-        setattr(lead, field, value)
-    lead.is_read = True
-
     property_record = (
         await _lock_property(lead.property_id, db) if lead.property_id is not None else None
     )
     if next_status == "won" and property_record is not None:
+        if property_record.listing_kind == "development":
+            raise HTTPException(
+                status_code=422,
+                detail="Продажу нужно оформить на конкретную квартиру, а не на весь жилой комплекс. Создайте отдельный объект квартиры и заявку на него.",
+            )
         conflict = await _find_other_won_deal(property_record.id, lead.id, db)
         if conflict is not None:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="This property already has another successful deal",
             )
+
+    for field, value in data.items():
+        setattr(lead, field, value)
+    lead.is_read = True
 
     now = datetime.now(timezone.utc)
     if next_status in {"won", "lost"} and next_status != old_status:
@@ -434,11 +454,12 @@ async def update_contact(
         await _restore_property_after_won(lead, property_record, db)
 
     if next_status == "won" and property_record is not None:
-        if old_status != "won":
-            lead.previous_property_market_status = property_record.market_status
-            lead.previous_property_status_badge = property_record.status_badge
-        property_record.market_status = next_outcome
-        property_record.status_badge = PROPERTY_CLOSED_BADGES[next_outcome]
+        if property_record.listing_kind != "development":
+            if old_status != "won":
+                lead.previous_property_market_status = property_record.market_status
+                lead.previous_property_status_badge = property_record.status_badge
+            property_record.market_status = next_outcome
+            property_record.status_badge = PROPERTY_CLOSED_BADGES[next_outcome]
 
         should_update_conversion = (
             old_status != "won"

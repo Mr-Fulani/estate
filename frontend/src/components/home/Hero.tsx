@@ -2,11 +2,13 @@ import Image from 'next/image';
 import { HeroSearch } from './HeroSearch';
 import type { Locale } from '@/i18n/config';
 import { siteCopy } from '@/i18n/siteCopy';
+import { fetchCategories } from '@/lib/api';
 
-export function Hero({ locale }: { locale: Locale }) {
+export async function Hero({ locale }: { locale: Locale }) {
   const copy = siteCopy[locale].home;
+  const categories = await fetchCategories();
   return (
-    <section className="sticky top-0 z-0 flex min-h-[100svh] items-center overflow-hidden bg-primary-900 py-16 md:py-24">
+    <section data-testid="home-hero" className="sticky top-0 z-0 flex min-h-[100svh] items-center overflow-hidden bg-primary-900 py-16 md:py-24">
       {/* Background image with overlay */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-r from-primary-900/95 via-primary-900/85 to-primary-900/60 z-10" />
@@ -34,7 +36,7 @@ export function Hero({ locale }: { locale: Locale }) {
           </p>
           
           {/* Interactive Search Component */}
-          <HeroSearch />
+          <HeroSearch categories={categories} />
 
         </div>
       </div>

@@ -31,7 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       properties.push(...(await fetchProperties({ per_page: 100, page })).items);
     }
     entries.push(...properties
-      .filter((property) => property.market_status !== 'archived')
+      .filter((property) => property.market_status !== 'archived' && !property.development?.is_demo)
       .flatMap((property) => {
         const availableLocales = propertyAvailableLocales(property);
         const path = `/properties/${property.slug}`;

@@ -9,7 +9,7 @@ import { useLocale } from '@/context/LocaleContext';
 import { siteCopy } from '@/i18n/siteCopy';
 import { collectContactAttribution } from '@/lib/attribution';
 
-export function ContactForm({ propertyId }: { propertyId?: number }) {
+export function ContactForm({ propertyId, contextMessage }: { propertyId?: number; contextMessage?: string }) {
   const { locale } = useLocale();
   const copy = siteCopy[locale].form;
   const formId = useId();
@@ -36,6 +36,7 @@ export function ContactForm({ propertyId }: { propertyId?: number }) {
     try {
       await submitContact({
         ...formData,
+        message: contextMessage ? `${contextMessage}\n${formData.message}` : formData.message,
         website: String(new FormData(e.currentTarget as HTMLFormElement).get('website') || ''),
         email: formData.email.trim() || undefined,
         phone: formData.phone.trim() || undefined,

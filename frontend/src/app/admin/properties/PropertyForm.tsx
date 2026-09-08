@@ -19,12 +19,16 @@ import {
   GripVertical,
   Languages,
   SearchCheck,
+  Eye,
 } from 'lucide-react';
 import { AdminActionSpinner } from '@/components/admin/AdminActionSpinner';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { startNavigationFeedback } from '@/components/layout/NavigationFeedback';
 import { localeLabels, locales, type Locale } from '@/i18n/config';
+import { DevelopmentEditor, PropertyImageUpload } from '@/components/admin/DevelopmentEditor';
+import { emptyDevelopment, preparePropertyForm, buildDevelopmentPreview } from '@/lib/development-view';
+import { DevelopmentPreview } from '@/components/admin/DevelopmentPreview';
 
 const sampleImages = [
   { name: 'Квартира премиум', url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80' },
@@ -47,6 +51,9 @@ export function PropertyForm({
   const isEditing = !!initialData;
 
   const [formData, setFormData] = useState<PropertyFormData>({
+    listing_kind: initialData?.listing_kind || 'property',
+    development: initialData?.development || null,
+    unit_types: initialData?.unit_types || [],
     title: initialData?.title || '',
     slug: initialData?.slug || '',
     description: initialData?.description || '',
@@ -83,15 +90,21 @@ export function PropertyForm({
     }),
   });
 
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const developmentPrices = (formData.unit_types || []).flatMap(unit => unit.price_min !== null && Number.isFinite(unit.price_min) ? [unit.price_min] : []);
   const [newImageUrl, setNewImageUrl] = useState('');
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
+  const [uploadsPending, setUploadsPending] = useState(0);
+  const onUploadBusy = (busy: boolean) => setUploadsPending(count => Math.max(0, count + (busy ? 1 : -1)));
   const [error, setError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
-    if (type === 'checkbox') {
+    if (name === 'listing_kind') {
+      setFormData(previous => ({ ...previous, listing_kind: value as PropertyFormData['listing_kind'], ...(value === 'development' ? { development: previous.development || emptyDevelopment, category_id: categories.find(category => category.slug === 'residential-development')?.id || previous.category_id, ...(!isEditing ? { is_active: false } : {}) } : {}) }));
+    } else if (type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked;
       setFormData((prev) => ({ ...prev, [name]: checked }));
     } else if (['price', 'area', 'rooms', 'floor', 'total_floors', 'year_built', 'category_id'].includes(name)) {
@@ -194,32 +207,9 @@ export function PropertyForm({
     setLoading(true);
 
     try {
-      const russian = formData.translations?.find((item) => item.locale === 'ru');
-      const payload: PropertyFormData = {
-        ...formData,
-        title: russian?.title.trim() || formData.title,
-        description: russian?.description?.trim() || '',
-        translations: formData.translations?.filter((item) => item.locale === 'ru' || [
-          item.title,
-          item.description,
-          item.city,
-          item.district,
-          item.address,
-          item.meta_title,
-          item.meta_description,
-          item.status_badge,
-        ].some((value) => value?.trim())).map((item) => ({
-          locale: item.locale,
-          title: item.title.trim() || formData.title.trim(),
-          description: item.description?.trim() || '',
-          city: item.city?.trim() || undefined,
-          district: item.district?.trim() || undefined,
-          address: item.address?.trim() || undefined,
-          meta_title: item.meta_title?.trim() || undefined,
-          meta_description: item.meta_description?.trim() || undefined,
-          status_badge: item.status_badge?.trim() || undefined,
-        })),
-      };
+      if (uploadsPending) throw new Error('Дождитесь завершения загрузки изображений');
+      if (formData.listing_kind === 'development' && !formData.unit_types?.length) throw new Error('Добавьте хотя бы один вариант квартиры');
+      const payload = preparePropertyForm(formData);
       if (isEditing && initialData) {
         await updateProperty(initialData.id, payload);
       } else {
@@ -236,7 +226,9 @@ export function PropertyForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full min-w-0 max-w-6xl space-y-8">
+    <form onSubmit={handleSubmit} className="w-full min-w-0 max-w-6xl" aria-busy={loading || uploadsPending > 0}>
+      {uploadsPending > 0 && <p role="status" className="mb-4 text-sm text-slate-600">Изображения загружаются. Редактирование продолжится после загрузки.</p>}
+      <fieldset disabled={loading || uploadsPending > 0} className="min-w-0 space-y-8">
       {/* Back button */}
       <div className="flex items-center justify-between">
         <Link
@@ -246,6 +238,7 @@ export function PropertyForm({
           <ArrowLeft className="w-4 h-4 mr-1.5" />
           Назад к списку объектов
         </Link>
+        {formData.listing_kind === 'development' && <button type="button" onClick={() => setPreviewOpen(true)} className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold"><Eye size={16} />Предпросмотр ЖК</button>}
       </div>
 
       {error && (
@@ -262,6 +255,9 @@ export function PropertyForm({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <label className="md:col-span-2 text-sm font-medium">Формат предложения
+            <select name="listing_kind" value={formData.listing_kind} onChange={handleChange} disabled={!!initialData?.unit_types?.length} className="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm"><option value="property">Отдельный объект</option><option value="development">Жилой комплекс с вариантами квартир</option></select>
+          </label>
           <div className="md:col-span-2 flex flex-col gap-1.5">
             <label className="text-xs font-semibold uppercase tracking-wider text-slate-600">
               Название объявления на русском *
@@ -292,6 +288,7 @@ export function PropertyForm({
             </label>
             <select
               name="category_id"
+              disabled={formData.listing_kind === 'development' && categories.some(category => category.slug === 'residential-development')}
               value={formData.category_id}
               onChange={handleChange}
               className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-medium cursor-pointer"
@@ -306,18 +303,23 @@ export function PropertyForm({
 
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold uppercase tracking-wider text-slate-600">
-              Стоимость (₽) *
+              {formData.listing_kind === 'development' ? 'Цена от (рассчитывается из вариантов)' : 'Стоимость *'}
             </label>
             <input
               type="number"
               name="price"
+              disabled={formData.listing_kind === 'development'}
               required
-              value={formData.price || ''}
+              value={formData.listing_kind === 'development' ? (developmentPrices.length ? Math.min(...developmentPrices) : '') : formData.price || ''}
               onChange={handleChange}
               placeholder="15000000"
               className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-semibold"
             />
           </div>
+
+          <label className="text-sm font-medium">Валюта цены
+            <select name="currency" value={formData.currency} onChange={handleChange} className="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm">{['RUB', 'USD', 'EUR', 'TRY'].map(value => <option value={value} key={value}>{value}</option>)}</select>
+          </label>
 
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold uppercase tracking-wider text-slate-600">Тип предложения</label>
@@ -339,6 +341,8 @@ export function PropertyForm({
           </div>
         </div>
       </div>
+
+      {formData.listing_kind === 'development' && <DevelopmentEditor profile={formData.development || emptyDevelopment} units={formData.unit_types || []} onProfile={development => setFormData(previous => ({ ...previous, development, is_featured: development.is_demo ? false : previous.is_featured }))} onUnits={unit_types => setFormData(previous => ({ ...previous, unit_types }))} onBusy={onUploadBusy} />}
 
       {/* 2. Location Card */}
       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">
@@ -399,7 +403,7 @@ export function PropertyForm({
           <h2 className="text-lg font-bold text-slate-900">Параметры и характеристики</h2>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        {formData.listing_kind === 'development' ? <p className="text-sm text-slate-500">Площади, спальни и цены задаются отдельно для каждого варианта квартиры выше. Пустые разделы не появятся на странице комплекса.</p> : <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold uppercase tracking-wider text-slate-600">
               Площадь (м²)
@@ -470,7 +474,7 @@ export function PropertyForm({
               className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-medium"
             />
           </div>
-        </div>
+        </div>}
 
         {/* Description */}
         <div className="flex flex-col gap-1.5 pt-2">
@@ -637,6 +641,7 @@ export function PropertyForm({
         </div>
 
         {/* Add Image Input */}
+        <PropertyImageUpload onBusy={onUploadBusy} onUploaded={urls => setFormData(previous => ({ ...previous, images: [...(previous.images || []), ...urls] }))} />
         <div className="flex gap-2">
           <input
             type="url"
@@ -852,7 +857,8 @@ export function PropertyForm({
             <input
               type="checkbox"
               name="is_featured"
-              checked={formData.is_featured}
+              checked={formData.development?.is_demo ? false : formData.is_featured}
+              disabled={formData.listing_kind === 'development' && formData.development?.is_demo}
               onChange={handleChange}
               className="w-5 h-5 text-secondary rounded border-slate-300 focus:ring-secondary cursor-pointer"
             />
@@ -875,14 +881,16 @@ export function PropertyForm({
 
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || uploadsPending > 0}
           aria-busy={loading}
           className="px-8 py-3 bg-primary hover:bg-primary-800 text-white rounded-xl text-sm font-bold flex items-center gap-2 transition-all shadow-md active:scale-95 disabled:opacity-50"
         >
           {loading ? <AdminActionSpinner /> : <Save className="w-4 h-4" />}
-          {loading ? 'Сохранение...' : isEditing ? 'Сохранить изменения' : 'Создать объект'}
+          {loading ? 'Сохранение...' : formData.listing_kind === 'development' && !formData.is_active ? 'Сохранить черновик' : isEditing ? 'Сохранить изменения' : 'Создать объект'}
         </button>
       </div>
+      </fieldset>
+      {previewOpen && <DevelopmentPreview property={buildDevelopmentPreview(formData, categories)} onClose={() => setPreviewOpen(false)} />}
     </form>
   );
 }

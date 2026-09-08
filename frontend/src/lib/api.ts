@@ -74,7 +74,10 @@ async function ensureAdminResponse(response: Response, fallback: string): Promis
   }
   if (!response.ok) {
     const error = await response.json().catch(() => ({ detail: fallback }));
-    throw new ApiError(error.detail || fallback, response.status);
+    const detail = Array.isArray(error.detail)
+      ? error.detail.map((item: { loc?: string[]; msg?: string }) => `${item.loc?.slice(1).join('.') || ''}: ${item.msg || fallback}`).join('; ')
+      : typeof error.detail === 'string' ? error.detail : fallback;
+    throw new ApiError(detail, response.status);
   }
   return response;
 }
@@ -269,9 +272,17 @@ export async function deleteNewsArticle(id: number | string): Promise<void> {
 }
 
 export async function uploadNewsImage(file: File): Promise<string> {
+  return uploadImage(file, 'news');
+}
+
+export async function uploadPropertyImage(file: File): Promise<string> {
+  return uploadImage(file, 'properties');
+}
+
+async function uploadImage(file: File, collection: 'news' | 'properties'): Promise<string> {
   const body = new FormData();
   body.append('file', file);
-  const res = await fetch(`${getApiBaseUrl()}/uploads/news`, {
+  const res = await fetch(`${getApiBaseUrl()}/uploads/${collection}`, {
     method: 'POST',
     headers: adminHeaders(),
     credentials: 'include',

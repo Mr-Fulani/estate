@@ -13,9 +13,10 @@ import { siteCopy } from '@/i18n/siteCopy';
 export function HomePageContent({ locale }: { locale: Locale }) {
   const copy = siteCopy[locale].home;
   return (
-    <div className="relative isolate -mt-16 md:-mt-20">
+    <div className="home-page relative isolate -mt-16 bg-primary-900 md:-mt-20">
       <Hero locale={locale} />
-      <div className="relative z-10 overflow-clip rounded-t-[2rem] bg-slate-50 shadow-[0_-24px_60px_-32px_rgba(15,23,42,0.65)] sm:rounded-t-[2.5rem]">
+      {/* Original cover-over-hero effect, without a page-tall overflow clip. */}
+      <div data-testid="home-content" className="relative z-10">
         <FeaturedProperties locale={locale} />
         <Services locale={locale} />
         <CurrencyConverter locale={locale} />

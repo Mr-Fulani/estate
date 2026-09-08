@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: PropertyPageProps): Promise<M
   const images = sourceProperty.images?.[0]
     ? [{ url: absoluteUrl(sourceProperty.images[0]), alt: property.title }]
     : [];
-  const indexable = sourceProperty.is_active && sourceProperty.market_status !== 'archived' && hasRequestedLocale;
+  const indexable = !sourceProperty.development?.is_demo && sourceProperty.is_active && sourceProperty.market_status !== 'archived' && hasRequestedLocale;
   const languages = Object.fromEntries([
     ...availableLocales.map((availableLocale) => [
       availableLocale,

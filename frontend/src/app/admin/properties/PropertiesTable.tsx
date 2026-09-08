@@ -239,14 +239,14 @@ export function PropertiesTable({
                         <button
                           type="button"
                           onClick={() => toggleFeatured(p)}
-                          disabled={pendingAction?.id === p.id}
+                          disabled={pendingAction?.id === p.id || !!p.development?.is_demo}
                           aria-busy={pendingAction?.id === p.id && pendingAction.action === 'featured'}
                           className={`p-1.5 rounded-lg transition-all ${
                             p.is_featured
                               ? 'text-amber-500 bg-amber-50 hover:bg-amber-100'
                               : 'text-slate-300 hover:text-slate-500 hover:bg-slate-100'
                           }`}
-                          title={p.is_featured ? 'В избранном на главной' : 'Добавить на главную'}
+                          title={p.development?.is_demo ? 'Демо-комплекс не показывается на главной' : p.is_featured ? 'В избранном на главной' : 'Добавить на главную'}
                         >
                           {pendingAction?.id === p.id && pendingAction.action === 'featured' ? <AdminActionSpinner /> : <Sparkles className="w-4 h-4" />}
                         </button>

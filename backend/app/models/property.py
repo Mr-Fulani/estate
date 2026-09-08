@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, String, Text, Numeric, Float, Boolean, ForeignKey, DateTime, JSON
+from sqlalchemy import Integer, String, Text, Numeric, Float, Boolean, ForeignKey, DateTime, JSON, UniqueConstraint, CheckConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.sql import func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -41,8 +41,37 @@ class Property(Base):
     
     images: Mapped[list[Any] | None] = mapped_column(JSON().with_variant(JSONB, 'postgresql'), default=list)
 
+    listing_kind: Mapped[str] = mapped_column(String(20), default="property", server_default="property")
+    development: Mapped[dict | None] = mapped_column(JSON().with_variant(JSONB, 'postgresql'), nullable=True)
+    unit_types: Mapped[list["PropertyUnitType"]] = relationship(
+        back_populates="property", cascade="all, delete-orphan", lazy="selectin",
+        order_by="PropertyUnitType.position",
+    )
+
     created_at: Mapped[str] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[str | None] = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
     def __repr__(self) -> str:
         return f"<Property {self.title}>"
+
+
+class PropertyUnitType(Base):
+    __tablename__ = "property_unit_types"
+    __table_args__ = (
+        UniqueConstraint("property_id", "code", name="uq_property_unit_code"),
+        CheckConstraint("(area_min IS NULL AND area_max IS NULL) OR (area_min IS NOT NULL AND area_max IS NOT NULL AND area_min > 0 AND area_max >= area_min)", name="ck_unit_area_range"),
+        CheckConstraint("(price_min IS NULL AND price_max IS NULL) OR (price_min IS NOT NULL AND price_max IS NOT NULL AND price_min > 0 AND price_max >= price_min)", name="ck_unit_price_range"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    property_id: Mapped[int] = mapped_column(ForeignKey("properties.id", ondelete="CASCADE"), index=True)
+    code: Mapped[str] = mapped_column(String(40))
+    rooms: Mapped[int] = mapped_column(Integer)
+    area_min: Mapped[float | None] = mapped_column(Float)
+    area_max: Mapped[float | None] = mapped_column(Float)
+    price_min: Mapped[float | None] = mapped_column(Numeric(12, 2))
+    price_max: Mapped[float | None] = mapped_column(Numeric(12, 2))
+    plans: Mapped[list[str]] = mapped_column(JSON().with_variant(JSONB, 'postgresql'), default=list)
+    plan_details: Mapped[list[dict]] = mapped_column(JSON().with_variant(JSONB, 'postgresql'), default=list, server_default='[]')
+    position: Mapped[int] = mapped_column(Integer, default=0)
+    property: Mapped[Property] = relationship(back_populates="unit_types")
