@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { assertPageExists, propertyQuery } from '@/lib/pagination';
 
 import { PropertyFilter } from '@/components/properties/PropertyFilter';
 import { PropertyGrid } from '@/components/properties/PropertyGrid';
@@ -14,25 +15,13 @@ export async function PropertiesPageContent({ searchParams, locale }: { searchPa
   const resolvedParams = await searchParams;
   const copy = siteCopy[locale].catalog;
   const messages = getMessages(locale);
-  const scalar = (key: string) => {
-    const value = resolvedParams?.[key];
-    return Array.isArray(value) ? value[0] : value;
-  };
-  const params: Parameters<typeof fetchProperties>[0] = {};
-  const search = scalar('search');
-  const city = scalar('city');
-  if (search) params.search = search;
-  if (city) params.city = city;
-  for (const key of ['category_id', 'min_price', 'max_price', 'rooms', 'min_rooms', 'min_area', 'max_area', 'page'] as const) {
-    const value = scalar(key);
-    if (value && Number.isFinite(Number(value))) params[key] = Number(value);
-  }
-  params.per_page = 12;
+  const params = propertyQuery(resolvedParams);
 
   const [data, categories] = await Promise.all([
     fetchProperties(params),
     fetchCategories(),
   ]);
+  assertPageExists(Number(params.page), data.total, data.per_page);
   const totalPages = Math.ceil(data.total / data.per_page);
   const pageHref = (targetPage: number) => {
     const query = new URLSearchParams();

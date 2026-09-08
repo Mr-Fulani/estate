@@ -1,3 +1,4 @@
+import { assertPageExists, paginationPage } from '@/lib/pagination';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -10,7 +11,7 @@ import { localizedPageMetadata } from '@/lib/seo';
 
 type NewsListPageProps = {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string | string[] }>;
 };
 
 export const dynamic = 'force-dynamic';
@@ -19,7 +20,9 @@ export async function generateMetadata({ params, searchParams }: NewsListPagePro
   const [{ locale }, query] = await Promise.all([params, searchParams]);
   if (!isLocale(locale)) return {};
   const copy = siteCopy[locale].news;
-  const page = Math.max(1, Number.parseInt(query.page || '1', 10) || 1);
+  const page = paginationPage(query.page);
+  const pagination = await fetchNews(locale, page, 9);
+  assertPageExists(page, pagination.total, pagination.per_page);
   const title = page > 1 ? `${copy.metaTitle} — ${copy.page} ${page}` : copy.metaTitle;
   return localizedPageMetadata(locale, '/news', title, copy.metaDescription, {
     canonicalSuffix: page > 1 ? `?page=${page}` : '',
@@ -30,9 +33,9 @@ export default async function NewsListPage({ params, searchParams }: NewsListPag
   const [{ locale }, query] = await Promise.all([params, searchParams]);
   if (!isLocale(locale)) notFound();
 
-  const requestedPage = Number.parseInt(query.page || '1', 10);
-  const page = Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1;
+  const page = paginationPage(query.page);
   const data = await fetchNews(locale, page, 9);
+  assertPageExists(page, data.total, data.per_page);
   const totalPages = Math.ceil(data.total / data.per_page);
   const copy = siteCopy[locale].news;
 

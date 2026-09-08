@@ -1,3 +1,4 @@
+import { assertPageExists, paginationPage } from '@/lib/pagination';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -12,7 +13,7 @@ import { localizedPageMetadata } from '@/lib/seo';
 
 type ReviewsPageProps = {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ page?: string; token?: string }>;
+  searchParams: Promise<{ page?: string | string[]; token?: string }>;
 };
 
 
@@ -23,7 +24,9 @@ export async function generateMetadata({ params, searchParams }: ReviewsPageProp
   const [{ locale }, query] = await Promise.all([params, searchParams]);
   if (!isLocale(locale)) return {};
   const copy = siteCopy[locale].reviews;
-  const page = Math.max(1, Number(query.page) || 1);
+  const page = paginationPage(query.page);
+  const pagination = await fetchReviews(locale, { page, perPage: 9 });
+  assertPageExists(page, pagination.total, pagination.per_page);
   const title = page > 1 ? `${copy.metaTitle} — ${page}` : copy.metaTitle;
   return localizedPageMetadata(locale, '/reviews', title, copy.metaDescription, {
     canonicalSuffix: page > 1 ? `?page=${page}` : '',
@@ -34,12 +37,13 @@ export async function generateMetadata({ params, searchParams }: ReviewsPageProp
 export default async function ReviewsPage({ params, searchParams }: ReviewsPageProps) {
   const [{ locale }, query] = await Promise.all([params, searchParams]);
   if (!isLocale(locale)) notFound();
-  const page = Math.max(1, Number(query.page) || 1);
+  const page = paginationPage(query.page);
   const copy = siteCopy[locale].reviews;
   const [reviewsResult, invitation] = await Promise.all([
-    fetchReviews(locale, { page, perPage: 9 }).catch(() => ({ items: [], total: 0, page, per_page: 9 })),
+    fetchReviews(locale, { page, perPage: 9 }),
     query.token ? fetchReviewInvitation(query.token).catch(() => null) : Promise.resolve(null),
   ]);
+  assertPageExists(page, reviewsResult.total, reviewsResult.per_page);
   const totalPages = Math.ceil(reviewsResult.total / reviewsResult.per_page);
 
   return (

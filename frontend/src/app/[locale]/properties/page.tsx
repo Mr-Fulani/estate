@@ -1,3 +1,5 @@
+import { assertPageExists, propertyQuery } from '@/lib/pagination';
+import { fetchProperties } from '@/lib/api';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -20,12 +22,16 @@ export async function generateMetadata({
   if (!isLocale(locale)) return {};
   const metadata = staticPageMetadata(locale, 'properties');
   const hasFilters = Object.entries(query).some(([key, value]) => key !== 'page' && value !== undefined && value !== '');
-  const rawPage = Array.isArray(query.page) ? query.page[0] : query.page;
-  const page = Math.max(1, Number(rawPage) || 1);
+  const filters = propertyQuery(query);
+  const page = Number(filters.page);
+  const data = await fetchProperties(filters);
+  assertPageExists(page, data.total, data.per_page);
   if (hasFilters) return { ...metadata, robots: { index: false, follow: true } };
   if (page <= 1) return metadata;
   return {
     ...metadata,
+    title: `${metadata.title} — ${page}`,
+    openGraph: { ...metadata.openGraph, url: `/${locale}/properties?page=${page}` },
     alternates: {
       canonical: `/${locale}/properties?page=${page}`,
       languages: localizedAlternates(`/properties?page=${page}`),
