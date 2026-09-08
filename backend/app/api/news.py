@@ -277,6 +277,7 @@ async def update_news(
             )
         },
     )
+    article.updated_at = datetime.now(timezone.utc)
     await db.commit()
     retained_media_urls = {article.cover_image, *(item.url for item in article.media)}
     await delete_owned_news_files(previous_media_urls - retained_media_urls)

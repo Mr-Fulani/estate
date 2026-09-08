@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from app.models.slug_alias import PropertySlugAlias
 from app.services.slug_history import ensure_slug_available, remember_slug
 from app.site_runtime import site_runtime
@@ -311,6 +312,7 @@ async def update_property(
         property_obj.id,
         {"fields": sorted([*update_data.keys(), *(["translations"] if translations is not None else []), *(["unit_types"] if unit_types is not None else [])])},
     )
+    property_obj.updated_at = datetime.now(timezone.utc)
     await db.commit()
     result = await db.execute(query)
     return result.scalars().first()

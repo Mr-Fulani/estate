@@ -39,6 +39,12 @@ class SeoDatabaseTests(unittest.IsolatedAsyncioTestCase):
                     with self.assertRaises(HTTPException) as conflict:
                         await ensure_slug_available(db, Property, PropertySlugAlias, 'seo-test-property')
                     self.assertEqual(conflict.exception.status_code, 409)
+                    from app.api.seo import sitemap_items
+                    sitemap = await sitemap_items(db, ['en','tr'])
+                    entry = next(item for item in sitemap['items'] if item['path']=='/properties/seo-test-final')
+                    self.assertEqual(entry['locales'], ['en'])
+                    self.assertNotIn('description', entry)
+                    self.assertNotIn('images', entry)
                     result = SiteSettingsResponse.model_validate(setting).model_dump(by_alias=True)
                     self.assertEqual(result['profile']['copy']['en']['about.intro'], 'Local team')
                     self.assertEqual(result['runtime']['default_locale'], os.getenv('SITE_DEFAULT_LOCALE', 'ru'))

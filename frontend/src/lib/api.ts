@@ -34,7 +34,7 @@ export class ApiError extends Error {
   }
 }
 
-function getApiBaseUrl(): string {
+export function getApiBaseUrl(): string {
   // If running on server (SSR/RSC) inside Docker or Node
   if (typeof window === 'undefined') {
     return process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://api:8000/api/v1';

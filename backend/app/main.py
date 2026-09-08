@@ -1,3 +1,4 @@
+from app.api.seo import router as seo_router
 from app.api.landing_pages import router as landing_pages_router
 from pathlib import Path
 
@@ -50,6 +51,7 @@ async def security_headers(request, call_next):
 
 # Routers
 app.include_router(landing_pages_router)
+app.include_router(seo_router)
 app.include_router(properties.router)
 app.include_router(categories.router)
 app.include_router(contacts.router)

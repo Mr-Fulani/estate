@@ -1,25 +1,30 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const load = require('./load-ts.cjs');
-test('sitemap keeps the same ordering beyond 100 properties and includes each URL once', async () => {
-  const all = Array.from({length: 101}, (_, i) => ({id:i+1, slug:`property-${i+1}`, translations:[{locale:'ru',title:'Property',description:'Description'}]}));
-  const calls=[];
-  const { default:sitemap } = load('app/sitemap.ts', {
-    '@/lib/site-config': {getSiteOrigin:()=> 'https://agency.com'},
-    '@/lib/api': {
-      fetchProperties:async params => {
-        calls.push(params);
-        const ordered=params.sort_by==='updated_at'? all:[...all].reverse();
-        return {items:ordered.slice((params.page-1)*100,params.page*100),total:101,per_page:100};
-      },
-      fetchLandingPages:async()=>[],
-      fetchNews:async()=>({items:[],total:0,per_page:50}),
-    },
-  });
-  const result=(await sitemap()).filter(entry=>entry.url.includes('/properties/property-'));
-  assert.equal(result.length,101);
-  assert.equal(new Set(result.map(entry=>entry.url)).size,101);
-  assert.ok(result.some(entry=>entry.url.endsWith('/property-101')));
-  assert.deepEqual(calls.map(({sort_by,order})=>({sort_by,order})),Array(2).fill({sort_by:'updated_at',order:'desc'}));
+const {buildSitemapEntries,sitemapParts,createSitemapCache}=require('./load-ts.cjs')('lib/sitemap-data.ts');
+test('101 resources produce the exact URL set without duplicates',()=>{
+ const items=Array.from({length:101},(_,i)=>({path:`/properties/property-${i+1}`,locales:['en','tr']}));
+ const entries=buildSitemapEntries('https://agency.com',['en','tr'],'en',items).filter(item=>item.url.includes('/properties/property-'));
+ assert.equal(entries.length,202);assert.equal(new Set(entries.map(item=>item.url)).size,202);
+ assert.ok(entries.some(item=>item.url.endsWith('/property-101')));
+ assert.equal(entries[0].languages['x-default'],'https://agency.com/en/properties/property-1');
+});
+test('large maps split below URL and byte limits and escape XML',()=>{
+ const entries=buildSitemapEntries('https://agency.com',['en'],'en',[{path:'/properties/a&b',locales:['en']}]);
+ const parts=sitemapParts(entries,3);
+ assert.equal(parts.length,4);
+ assert.ok(parts.every(part=>(part.match(/<url>/g)||[]).length<=3));
+ assert.match(parts.join(''),/a&amp;b/);
+});
+test('source failure never produces a successful partial map or crosses origins',async()=>{
+ let now=0;let calls=0;
+ const cache=createSitemapCache(()=>now,10,100);
+ const loader=async()=>{calls++;return ['all URLs'];};
+ assert.deepEqual(await cache('A',loader),{value:['all URLs'],stale:false});
+ await cache('A',loader);assert.equal(calls,1);
+ now=20;
+ const fail=async()=>{throw new Error('offline');};
+ assert.deepEqual(await cache('A',fail),{value:['all URLs'],stale:true});
+ await assert.rejects(()=>cache('B',fail),/offline/);
+ now=101;await assert.rejects(()=>cache('A',fail),/offline/);
 });
