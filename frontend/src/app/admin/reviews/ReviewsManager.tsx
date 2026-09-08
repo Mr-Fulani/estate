@@ -75,7 +75,7 @@ function ReviewEditor({ review, onUpdated, onDeleted }: { review: AdminReview; o
         <div className="flex flex-wrap gap-3">
           <label className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold"><input type="checkbox" checked={form.is_verified} onChange={(event) => setForm((current) => ({ ...current, is_verified: event.target.checked }))} />Подтверждённый клиент</label>
           <label className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold"><input type="checkbox" checked={form.is_featured} onChange={(event) => setForm((current) => ({ ...current, is_featured: event.target.checked }))} />Показывать на главной</label>
-          {form.property && <a href={`/ru/properties/${form.property.slug}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-primary"><ExternalLink className="h-4 w-4" />Открыть объект</a>}
+          {form.property && <a href={`/properties/${form.property.slug}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-primary"><ExternalLink className="h-4 w-4" />Открыть объект</a>}
           {form.has_active_invitation && <span className="inline-flex items-center rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-700">Активная ссылка-приглашение</span>}
         </div>
         <p className="text-xs text-slate-500">Контакт для проверки: {form.phone || form.email || 'не указан'}. Публично не показывается.</p>

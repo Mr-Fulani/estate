@@ -1,3 +1,4 @@
+import type { AttributionTouch } from '@/lib/attribution';
 import type { ImageDetails } from '@/lib/image-text';
 import type { Locale } from '@/i18n/config';
 
@@ -212,6 +213,8 @@ export interface ContactRequest {
   utm_campaign?: string | null;
   utm_content?: string | null;
   utm_term?: string | null;
+  first_touch?: AttributionTouch | null;
+  last_touch?: AttributionTouch | null;
   session_id?: string | null;
   external_conversation_id?: string | null;
   external_username?: string | null;
@@ -253,6 +256,8 @@ export interface ContactAttribution {
   utm_campaign?: string;
   utm_content?: string;
   utm_term?: string;
+  first_touch?: AttributionTouch | null;
+  last_touch?: AttributionTouch | null;
   session_id?: string;
 }
 

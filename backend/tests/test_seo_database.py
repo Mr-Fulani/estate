@@ -17,7 +17,7 @@ class SeoDatabaseTests(unittest.IsolatedAsyncioTestCase):
                 transaction = await connection.begin_nested()
                 async with AsyncSession(bind=connection, expire_on_commit=False) as db:
                     setting = SiteSetting(id=90001, profile={'brand_name':'Agency Beta', 'copy':{'en':{'about.intro':'Local team'}}}, translations=[])
-                    category = Category(name='Office', slug='seo-test-office')
+                    category = Category(name='SEO rollback office', slug='seo-test-office')
                     db.add_all([setting, category])
                     await db.flush()
                     prop = Property(title='Office', description='Complete description', price=100, currency='EUR', category_id=category.id, slug='seo-test-property', image_details={'/room.jpg': {'en': {'alt': 'Meeting room', 'caption': 'Second floor'}}})
@@ -41,11 +41,21 @@ class SeoDatabaseTests(unittest.IsolatedAsyncioTestCase):
                         await ensure_slug_available(db, Property, PropertySlugAlias, 'seo-test-property')
                     self.assertEqual(conflict.exception.status_code, 409)
                     from app.api.seo import sitemap_items
-                    sitemap = await sitemap_items(db, ['en','tr'])
+                    from app.site_runtime import site_runtime
+                    sitemap = await sitemap_items(db, site_runtime()['locales'])
                     entry = next(item for item in sitemap['items'] if item['path']=='/properties/seo-test-final')
-                    self.assertEqual(entry['locales'], ['en'])
+                    self.assertEqual(entry['locales'], [prop.content_locale])
                     self.assertNotIn('description', entry)
                     self.assertNotIn('images', entry)
+                    from app.models.contact import ContactRequest
+                    from app.schemas.contact import ContactCreate, ContactResponse
+                    request = ContactCreate(name='Fixture person', phone='123456789', message='Fixture enquiry', first_touch={'at':'2026-09-08T12:00:00Z','page_url':'https://agency.test/en?token=secret','utm_source':'organic'})
+                    lead = ContactRequest(**request.model_dump(mode='json', exclude={'website'}))
+                    db.add(lead)
+                    await db.flush()
+                    await db.refresh(lead)
+                    self.assertEqual(lead.first_touch['page_url'], 'https://agency.test/en')
+                    self.assertEqual(ContactResponse.model_validate(lead).first_touch.utm_source, 'organic')
                     result = SiteSettingsResponse.model_validate(setting).model_dump(by_alias=True)
                     self.assertEqual(result['profile']['copy']['en']['about.intro'], 'Local team')
                     self.assertEqual(result['runtime']['default_locale'], os.getenv('SITE_DEFAULT_LOCALE', 'ru'))

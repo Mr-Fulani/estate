@@ -16,6 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const brand = brandName(settings);
   return {
     metadataBase: new URL(getSiteOrigin()),
+    verification: process.env.GOOGLE_SITE_VERIFICATION ? { google: process.env.GOOGLE_SITE_VERIFICATION } : undefined,
     title: brand,
     robots: { index: readyForIndexing(settings), follow: true },
     icons: settings.profile?.icon_url ? { icon: settings.profile.icon_url, apple: settings.profile.icon_url } : undefined,

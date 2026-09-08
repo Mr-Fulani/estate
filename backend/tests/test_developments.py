@@ -186,7 +186,7 @@ class DevelopmentDatabaseTests(unittest.IsolatedAsyncioTestCase):
         ), self.request, self.user, self.db)
 
     async def list(self, **overrides):
-        params = dict(search=None, category_id=self.category_id, city=None, min_price=None,
+        params = dict(search=None, category_id=self.category_id, city=None, transaction_type=None, min_price=None,
                       max_price=None, rooms=None, min_rooms=None, min_area=None, max_area=None,
                       include_inactive=False, page=1, per_page=12, sort_by="created_at", order="desc",
                       db=self.db, auth_context=None)

@@ -37,6 +37,8 @@ class ContactRequest(Base):
     utm_campaign: Mapped[str | None] = mapped_column(String(160), nullable=True)
     utm_content: Mapped[str | None] = mapped_column(String(160), nullable=True)
     utm_term: Mapped[str | None] = mapped_column(String(160), nullable=True)
+    first_touch: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    last_touch: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     session_id: Mapped[str | None] = mapped_column(String(100), nullable=True, index=True)
     external_conversation_id: Mapped[str | None] = mapped_column(String(200), nullable=True, index=True)
     external_username: Mapped[str | None] = mapped_column(String(160), nullable=True)

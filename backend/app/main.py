@@ -40,6 +40,8 @@ app.add_middleware(
 @app.middleware("http")
 async def security_headers(request, call_next):
     response = await call_next(request)
+    if request.url.path.startswith("/api/"):
+        response.headers["X-Robots-Tag"] = "noindex, nofollow"
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"

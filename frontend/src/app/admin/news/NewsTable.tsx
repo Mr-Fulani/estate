@@ -77,7 +77,7 @@ export function NewsTable({ initialArticles }: { initialArticles: NewsAdminArtic
                   </div>
                 </div>
                 <div className="flex shrink-0 items-center gap-1 border-t border-slate-100 pt-3 sm:border-0 sm:pt-0">
-                  {article.is_published && <Link href={`/ru/news/${article.slug}`} target="_blank" className="rounded-lg p-2.5 text-slate-400 transition hover:bg-slate-100 hover:text-primary" title="Открыть на сайте"><ExternalLink className="h-4 w-4" /></Link>}
+                  {article.is_published && <Link href={`/news/${article.slug}`} target="_blank" className="rounded-lg p-2.5 text-slate-400 transition hover:bg-slate-100 hover:text-primary" title="Открыть на сайте"><ExternalLink className="h-4 w-4" /></Link>}
                   <Link href={`/admin/news/${article.id}/edit`} className="rounded-lg p-2.5 text-slate-600 transition hover:bg-primary/5 hover:text-primary" title="Редактировать"><Edit3 className="h-4 w-4" /></Link>
                   <button type="button" onClick={() => handleDelete(article)} disabled={deletingId === article.id} aria-busy={deletingId === article.id} className="rounded-lg p-2.5 text-slate-400 transition hover:bg-red-50 hover:text-red-600 disabled:opacity-40" title="Удалить">{deletingId === article.id ? <AdminActionSpinner /> : <Trash2 className="h-4 w-4" />}</button>
                 </div>

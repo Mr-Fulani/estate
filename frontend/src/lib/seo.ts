@@ -1,10 +1,11 @@
+import { legalCopy } from '@/i18n/legalCopy';
 import { readyForIndexing } from '@/lib/indexing';
 import { collectionsLabel } from '@/lib/landing-pages';
 import { getLocaleConfig } from '@/lib/runtime-locales';
 import type { Metadata } from 'next';
 import { openGraphLocales, type Locale } from '@/i18n/config';
 import { fetchSiteSettings } from '@/lib/api';
-import { brandName, getSiteCopy, type SeoPage } from '@/lib/site-profile';
+import { applyCopy, brandName, getSiteCopy, type SeoPage } from '@/lib/site-profile';
 
 export function localizedAlternates(path: string) {
   const { locales, defaultLocale } = getLocaleConfig();
@@ -41,11 +42,12 @@ export async function staticPageMetadata(locale: Locale, page: SeoPage): Promise
     about: copy.about.title, contact: copy.contact.title, news: copy.news.title, reviews: copy.reviews.title,
     privacy: copy.footer.privacy, terms: copy.footer.terms,
   };
+  const legal = applyCopy(legalCopy[locale], settings.profile?.copy?.[locale] || {}, brandName(settings), 'legal');
   const descriptions = {
     collections: copy.catalog.description,
     home: copy.home.description, properties: copy.catalog.description, services: copy.services.description,
     about: copy.about.intro, contact: copy.contact.description, news: copy.news.description,
-    reviews: copy.reviews.description, privacy: '', terms: '',
+    reviews: copy.reviews.description, privacy: legal.privacy.intro, terms: legal.terms.intro,
   };
   const label = labels[page];
   const title = label.includes(brandName(settings)) ? label : `${label} — ${brandName(settings)}`;

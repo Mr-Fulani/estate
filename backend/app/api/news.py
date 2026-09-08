@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from typing import Annotated, cast
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
-from sqlalchemy import func, or_, select
+from sqlalchemy import and_, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -72,11 +72,11 @@ def _sync_media(article: NewsArticle, media: list[NewsMediaBase]) -> None:
 
 def _public_article(article: NewsArticle, locale: LocaleCode) -> NewsPublicResponse:
     by_locale = {translation.locale: translation for translation in article.translations
-                 if translation.title.strip() and translation.excerpt.strip() and translation.content.strip()}
+                 if translation.locale in site_runtime()["locales"] and translation.title.strip() and translation.excerpt.strip() and translation.content.strip()}
     translation = by_locale.get(locale)
     translation = translation or by_locale.get(site_runtime()["default_locale"]) or next(iter(by_locale.values()), None)
     if translation is None:
-        raise HTTPException(status_code=500, detail="News translation is missing")
+        raise HTTPException(status_code=404, detail="No published translation in the active project languages")
 
     resolved_locale = cast(LocaleCode, translation.locale)
     return NewsPublicResponse(
@@ -102,6 +102,15 @@ def _public_article(article: NewsArticle, locale: LocaleCode) -> NewsPublicRespo
             if candidate in by_locale
         ],
     )
+
+
+def _has_public_translation():
+    return NewsArticle.translations.any(and_(
+        NewsTranslation.locale.in_(site_runtime()['locales']),
+        func.length(func.trim(NewsTranslation.title)) > 0,
+        func.length(func.trim(NewsTranslation.excerpt)) > 0,
+        func.length(func.trim(NewsTranslation.content)) > 0,
+    ))
 
 
 async def _load_article(db: AsyncSession, article_id: int) -> NewsArticle | None:
@@ -149,6 +158,7 @@ async def list_news(
     now = datetime.now(timezone.utc)
     published_filter = (
         (NewsArticle.is_published.is_(True))
+        & _has_public_translation()
         & or_(NewsArticle.published_at.is_(None), NewsArticle.published_at <= now)
     )
     total = (
@@ -158,7 +168,7 @@ async def list_news(
         select(NewsArticle)
         .options(selectinload(NewsArticle.translations), selectinload(NewsArticle.media))
         .where(published_filter)
-        .order_by(func.coalesce(NewsArticle.published_at, NewsArticle.created_at).desc())
+        .order_by(func.coalesce(NewsArticle.published_at, NewsArticle.created_at).desc(), NewsArticle.id.desc())
         .offset((page - 1) * per_page)
         .limit(per_page)
     )
@@ -180,6 +190,7 @@ async def get_news(slug: str, locale: LocaleCode = Query(site_runtime()["default
         .where(
             or_(NewsArticle.slug == slug, NewsArticle.id.in_(select(NewsSlugAlias.resource_id).where(NewsSlugAlias.slug == slug))),
             NewsArticle.is_published.is_(True),
+            _has_public_translation(),
             or_(NewsArticle.published_at.is_(None), NewsArticle.published_at <= now),
         )
     )

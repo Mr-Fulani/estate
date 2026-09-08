@@ -1,6 +1,7 @@
 'use client';
 
 import { Suspense } from 'react';
+import { AttributionTracker } from './AttributionTracker';
 import { usePathname } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -37,7 +38,7 @@ export function AppShell({
       >
         {skipLabel}
       </a>
-      <Suspense fallback={null}><NavigationFeedback /></Suspense>
+      <Suspense fallback={null}><NavigationFeedback />{!isAdmin && <AttributionTracker profile={siteSettings.profile} />}</Suspense>
       <SiteSettingsProvider initialSettings={siteSettings}>
         <CurrencyProvider>
           <Header />

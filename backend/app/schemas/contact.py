@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from typing import Literal, Optional
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator
 
 
 LeadStatus = Literal["new", "contacted", "qualified", "viewing", "negotiation", "won", "lost"]
@@ -13,7 +13,33 @@ LeadChannel = Literal[
 DealCurrency = Literal["RUB", "USD", "EUR", "TRY"]
 
 
+def clean_attribution_url(value):
+    if not value:
+        return value
+    from urllib.parse import urlsplit, urlunsplit
+    url = urlsplit(value)
+    if url.scheme not in {'http', 'https'} or not url.hostname or url.username or url.password:
+        raise ValueError('Attribution URL must be HTTP(S) without credentials')
+    return urlunsplit((url.scheme, url.netloc, url.path, '', ''))
+
+
+class AttributionTouch(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    at: datetime
+    page_url: str = Field(max_length=2000)
+    referrer: str | None = Field(default=None, max_length=2000)
+    utm_source: str | None = Field(default=None, max_length=120)
+    utm_medium: str | None = Field(default=None, max_length=120)
+    utm_campaign: str | None = Field(default=None, max_length=160)
+    utm_content: str | None = Field(default=None, max_length=160)
+    utm_term: str | None = Field(default=None, max_length=160)
+    _clean_urls = field_validator('page_url', 'referrer')(clean_attribution_url)
+
+
 class AttributionFields(BaseModel):
+    first_touch: AttributionTouch | None = None
+    last_touch: AttributionTouch | None = None
+    _clean_urls = field_validator('page_url', 'referrer')(clean_attribution_url)
     locale: Optional[Literal["ru", "en", "tr", "ar"]] = None
     source: str = Field(default="contact_form", max_length=80)
     page_url: Optional[str] = Field(default=None, max_length=2000)
@@ -102,6 +128,8 @@ class LeadPropertySummary(BaseModel):
 
 
 class ContactResponse(BaseModel):
+    first_touch: AttributionTouch | None = None
+    last_touch: AttributionTouch | None = None
     id: int
     name: Optional[str] = None
     email: Optional[EmailStr] = None

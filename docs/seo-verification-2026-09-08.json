@@ -1,0 +1,2154 @@
+{
+  "fixture": "Artificial companies Beta and Gamma in independent PostgreSQL databases; one production build and standalone output. Build-time origin and upstream deliberately differ from runtime.",
+  "http": [
+    {
+      "base_url": "http://127.0.0.1:18092",
+      "origin": "https://agency-beta.com",
+      "sitemap_count": 225,
+      "requests": 276,
+      "failures": [],
+      "records": [
+        {
+          "path": "/en",
+          "status": 200,
+          "bytes": 130305,
+          "ms": 597.4
+        },
+        {
+          "path": "/en/properties",
+          "status": 200,
+          "bytes": 153899,
+          "ms": 128.0
+        },
+        {
+          "path": "/en/collections",
+          "status": 200,
+          "bytes": 26310,
+          "ms": 66.4
+        },
+        {
+          "path": "/en/services",
+          "status": 200,
+          "bytes": 43530,
+          "ms": 57.5
+        },
+        {
+          "path": "/en/news",
+          "status": 200,
+          "bytes": 33744,
+          "ms": 187.8
+        },
+        {
+          "path": "/en/reviews",
+          "status": 200,
+          "bytes": 35291,
+          "ms": 47.0
+        },
+        {
+          "path": "/en/about",
+          "status": 200,
+          "bytes": 27553,
+          "ms": 26.6
+        },
+        {
+          "path": "/en/contact",
+          "status": 200,
+          "bytes": 32214,
+          "ms": 39.4
+        },
+        {
+          "path": "/en/privacy",
+          "status": 200,
+          "bytes": 29233,
+          "ms": 50.5
+        },
+        {
+          "path": "/en/terms",
+          "status": 200,
+          "bytes": 28709,
+          "ms": 67.4
+        },
+        {
+          "path": "/tr",
+          "status": 200,
+          "bytes": 131078,
+          "ms": 165.1
+        },
+        {
+          "path": "/tr/properties",
+          "status": 200,
+          "bytes": 153827,
+          "ms": 33.7
+        },
+        {
+          "path": "/tr/collections",
+          "status": 200,
+          "bytes": 26567,
+          "ms": 12.4
+        },
+        {
+          "path": "/tr/services",
+          "status": 200,
+          "bytes": 43777,
+          "ms": 15.0
+        },
+        {
+          "path": "/tr/news",
+          "status": 200,
+          "bytes": 34016,
+          "ms": 46.2
+        },
+        {
+          "path": "/tr/reviews",
+          "status": 200,
+          "bytes": 35726,
+          "ms": 24.0
+        },
+        {
+          "path": "/tr/about",
+          "status": 200,
+          "bytes": 27884,
+          "ms": 11.3
+        },
+        {
+          "path": "/tr/contact",
+          "status": 200,
+          "bytes": 32347,
+          "ms": 13.8
+        },
+        {
+          "path": "/tr/privacy",
+          "status": 200,
+          "bytes": 29636,
+          "ms": 11.7
+        },
+        {
+          "path": "/tr/terms",
+          "status": 200,
+          "bytes": 29087,
+          "ms": 12.3
+        },
+        {
+          "path": "/",
+          "status": 308,
+          "bytes": 3,
+          "ms": 3.3
+        },
+        {
+          "path": "/robots.txt",
+          "status": 200,
+          "bytes": 133,
+          "ms": 22.7
+        },
+        {
+          "path": "/sitemap.xml",
+          "status": 200,
+          "bytes": 98915,
+          "ms": 51.6
+        },
+        {
+          "path": "/en/properties/fixture-office-1",
+          "status": 200,
+          "bytes": 87580,
+          "ms": 85.3
+        },
+        {
+          "path": "/en/properties/fixture-office-2",
+          "status": 200,
+          "bytes": 87815,
+          "ms": 42.5
+        },
+        {
+          "path": "/tr/properties/fixture-office-2",
+          "status": 200,
+          "bytes": 92475,
+          "ms": 20.1
+        },
+        {
+          "path": "/en/properties/fixture-office-3",
+          "status": 200,
+          "bytes": 87815,
+          "ms": 38.4
+        },
+        {
+          "path": "/tr/properties/fixture-office-3",
+          "status": 200,
+          "bytes": 92475,
+          "ms": 19.5
+        },
+        {
+          "path": "/en/properties/fixture-office-4",
+          "status": 200,
+          "bytes": 87815,
+          "ms": 31.1
+        },
+        {
+          "path": "/tr/properties/fixture-office-4",
+          "status": 200,
+          "bytes": 92475,
+          "ms": 20.1
+        },
+        {
+          "path": "/en/properties/fixture-office-5",
+          "status": 200,
+          "bytes": 87817,
+          "ms": 36.4
+        },
+        {
+          "path": "/tr/properties/fixture-office-5",
+          "status": 200,
+          "bytes": 92477,
+          "ms": 22.4
+        },
+        {
+          "path": "/en/properties/fixture-office-6",
+          "status": 200,
+          "bytes": 87817,
+          "ms": 39.8
+        },
+        {
+          "path": "/tr/properties/fixture-office-6",
+          "status": 200,
+          "bytes": 92477,
+          "ms": 18.5
+        },
+        {
+          "path": "/en/properties/fixture-office-7",
+          "status": 200,
+          "bytes": 87651,
+          "ms": 30.9
+        },
+        {
+          "path": "/tr/properties/fixture-office-7",
+          "status": 200,
+          "bytes": 92307,
+          "ms": 22.5
+        },
+        {
+          "path": "/en/properties/fixture-office-8",
+          "status": 200,
+          "bytes": 87651,
+          "ms": 33.1
+        },
+        {
+          "path": "/tr/properties/fixture-office-8",
+          "status": 200,
+          "bytes": 92307,
+          "ms": 18.7
+        },
+        {
+          "path": "/en/properties/fixture-office-9",
+          "status": 200,
+          "bytes": 87651,
+          "ms": 34.1
+        },
+        {
+          "path": "/tr/properties/fixture-office-9",
+          "status": 200,
+          "bytes": 92307,
+          "ms": 16.8
+        },
+        {
+          "path": "/en/properties/fixture-office-10",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 32.1
+        },
+        {
+          "path": "/tr/properties/fixture-office-10",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 19.0
+        },
+        {
+          "path": "/en/properties/fixture-office-11",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 32.0
+        },
+        {
+          "path": "/tr/properties/fixture-office-11",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 16.8
+        },
+        {
+          "path": "/en/properties/fixture-office-12",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 32.0
+        },
+        {
+          "path": "/tr/properties/fixture-office-12",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 16.7
+        },
+        {
+          "path": "/en/properties/fixture-office-13",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 30.4
+        },
+        {
+          "path": "/tr/properties/fixture-office-13",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 18.4
+        },
+        {
+          "path": "/en/properties/fixture-office-14",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 31.4
+        },
+        {
+          "path": "/tr/properties/fixture-office-14",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 16.6
+        },
+        {
+          "path": "/en/properties/fixture-office-15",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 30.9
+        },
+        {
+          "path": "/tr/properties/fixture-office-15",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 18.5
+        },
+        {
+          "path": "/en/properties/fixture-office-16",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 30.8
+        },
+        {
+          "path": "/tr/properties/fixture-office-16",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 19.4
+        },
+        {
+          "path": "/en/properties/fixture-office-17",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 35.5
+        },
+        {
+          "path": "/tr/properties/fixture-office-17",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 16.4
+        },
+        {
+          "path": "/en/properties/fixture-office-18",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 28.7
+        },
+        {
+          "path": "/tr/properties/fixture-office-18",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 17.7
+        },
+        {
+          "path": "/en/properties/fixture-office-19",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 29.7
+        },
+        {
+          "path": "/tr/properties/fixture-office-19",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 17.4
+        },
+        {
+          "path": "/en/properties/fixture-office-20",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 31.4
+        },
+        {
+          "path": "/tr/properties/fixture-office-20",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 20.8
+        },
+        {
+          "path": "/en/properties/fixture-office-21",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 32.5
+        },
+        {
+          "path": "/tr/properties/fixture-office-21",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 16.7
+        },
+        {
+          "path": "/en/properties/fixture-office-22",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 32.5
+        },
+        {
+          "path": "/tr/properties/fixture-office-22",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 19.8
+        },
+        {
+          "path": "/en/properties/fixture-office-23",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 31.7
+        },
+        {
+          "path": "/tr/properties/fixture-office-23",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 17.8
+        },
+        {
+          "path": "/en/properties/fixture-office-24",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 47.2
+        },
+        {
+          "path": "/tr/properties/fixture-office-24",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 19.8
+        },
+        {
+          "path": "/en/properties/fixture-office-25",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 35.5
+        },
+        {
+          "path": "/tr/properties/fixture-office-25",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 20.1
+        },
+        {
+          "path": "/en/properties/fixture-office-26",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 29.9
+        },
+        {
+          "path": "/tr/properties/fixture-office-26",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 16.4
+        },
+        {
+          "path": "/en/properties/fixture-office-27",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 31.4
+        },
+        {
+          "path": "/tr/properties/fixture-office-27",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.7
+        },
+        {
+          "path": "/en/properties/fixture-office-28",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 30.7
+        },
+        {
+          "path": "/tr/properties/fixture-office-28",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.9
+        },
+        {
+          "path": "/en/properties/fixture-office-29",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 30.0
+        },
+        {
+          "path": "/tr/properties/fixture-office-29",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 18.6
+        },
+        {
+          "path": "/en/properties/fixture-office-30",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 32.0
+        },
+        {
+          "path": "/tr/properties/fixture-office-30",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 18.1
+        },
+        {
+          "path": "/en/properties/fixture-office-31",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 29.3
+        },
+        {
+          "path": "/tr/properties/fixture-office-31",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.8
+        },
+        {
+          "path": "/en/properties/fixture-office-32",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 28.5
+        },
+        {
+          "path": "/tr/properties/fixture-office-32",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 17.4
+        },
+        {
+          "path": "/en/properties/fixture-office-33",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 28.3
+        },
+        {
+          "path": "/tr/properties/fixture-office-33",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.9
+        },
+        {
+          "path": "/en/properties/fixture-office-34",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 29.5
+        },
+        {
+          "path": "/tr/properties/fixture-office-34",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 16.6
+        },
+        {
+          "path": "/en/properties/fixture-office-35",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 30.7
+        },
+        {
+          "path": "/tr/properties/fixture-office-35",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 17.2
+        },
+        {
+          "path": "/en/properties/fixture-office-36",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 28.4
+        },
+        {
+          "path": "/tr/properties/fixture-office-36",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 16.0
+        },
+        {
+          "path": "/en/properties/fixture-office-37",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 30.5
+        },
+        {
+          "path": "/tr/properties/fixture-office-37",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.9
+        },
+        {
+          "path": "/en/properties/fixture-office-38",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 28.5
+        },
+        {
+          "path": "/tr/properties/fixture-office-38",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.7
+        },
+        {
+          "path": "/en/properties/fixture-office-39",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 28.4
+        },
+        {
+          "path": "/tr/properties/fixture-office-39",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 16.0
+        },
+        {
+          "path": "/en/properties/fixture-office-40",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 29.0
+        },
+        {
+          "path": "/tr/properties/fixture-office-40",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 17.3
+        },
+        {
+          "path": "/en/properties/fixture-office-41",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 27.0
+        },
+        {
+          "path": "/tr/properties/fixture-office-41",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.4
+        },
+        {
+          "path": "/en/properties/fixture-office-42",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 30.2
+        },
+        {
+          "path": "/tr/properties/fixture-office-42",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 19.0
+        },
+        {
+          "path": "/en/properties/fixture-office-43",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 30.9
+        },
+        {
+          "path": "/tr/properties/fixture-office-43",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.3
+        },
+        {
+          "path": "/en/properties/fixture-office-44",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 31.3
+        },
+        {
+          "path": "/tr/properties/fixture-office-44",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.9
+        },
+        {
+          "path": "/en/properties/fixture-office-45",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 28.6
+        },
+        {
+          "path": "/tr/properties/fixture-office-45",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 22.4
+        },
+        {
+          "path": "/en/properties/fixture-office-46",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 33.8
+        },
+        {
+          "path": "/tr/properties/fixture-office-46",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 16.4
+        },
+        {
+          "path": "/en/properties/fixture-office-47",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 30.7
+        },
+        {
+          "path": "/tr/properties/fixture-office-47",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 16.8
+        },
+        {
+          "path": "/en/properties/fixture-office-48",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 26.9
+        },
+        {
+          "path": "/tr/properties/fixture-office-48",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 16.3
+        },
+        {
+          "path": "/en/properties/fixture-office-49",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 28.9
+        },
+        {
+          "path": "/tr/properties/fixture-office-49",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 14.9
+        },
+        {
+          "path": "/en/properties/fixture-office-50",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 27.3
+        },
+        {
+          "path": "/tr/properties/fixture-office-50",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 17.4
+        },
+        {
+          "path": "/en/properties/fixture-office-51",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 26.5
+        },
+        {
+          "path": "/tr/properties/fixture-office-51",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.2
+        },
+        {
+          "path": "/en/properties/fixture-office-52",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 30.6
+        },
+        {
+          "path": "/tr/properties/fixture-office-52",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.9
+        },
+        {
+          "path": "/en/properties/fixture-office-53",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 27.8
+        },
+        {
+          "path": "/tr/properties/fixture-office-53",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.9
+        },
+        {
+          "path": "/en/properties/fixture-office-54",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 27.7
+        },
+        {
+          "path": "/tr/properties/fixture-office-54",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.6
+        },
+        {
+          "path": "/en/properties/fixture-office-55",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 27.6
+        },
+        {
+          "path": "/tr/properties/fixture-office-55",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 17.4
+        },
+        {
+          "path": "/en/properties/fixture-office-56",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 28.0
+        },
+        {
+          "path": "/tr/properties/fixture-office-56",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.9
+        },
+        {
+          "path": "/en/properties/fixture-office-57",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 28.9
+        },
+        {
+          "path": "/tr/properties/fixture-office-57",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.6
+        },
+        {
+          "path": "/en/properties/fixture-office-58",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 31.5
+        },
+        {
+          "path": "/tr/properties/fixture-office-58",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.0
+        },
+        {
+          "path": "/en/properties/fixture-office-59",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 25.4
+        },
+        {
+          "path": "/tr/properties/fixture-office-59",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 14.5
+        },
+        {
+          "path": "/en/properties/fixture-office-60",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 25.9
+        },
+        {
+          "path": "/tr/properties/fixture-office-60",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.7
+        },
+        {
+          "path": "/en/properties/fixture-office-61",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 29.9
+        },
+        {
+          "path": "/tr/properties/fixture-office-61",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 16.1
+        },
+        {
+          "path": "/en/properties/fixture-office-62",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 28.0
+        },
+        {
+          "path": "/tr/properties/fixture-office-62",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 14.9
+        },
+        {
+          "path": "/en/properties/fixture-office-63",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 30.7
+        },
+        {
+          "path": "/tr/properties/fixture-office-63",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 16.2
+        },
+        {
+          "path": "/en/properties/fixture-office-64",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 30.0
+        },
+        {
+          "path": "/tr/properties/fixture-office-64",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.1
+        },
+        {
+          "path": "/en/properties/fixture-office-65",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 27.6
+        },
+        {
+          "path": "/tr/properties/fixture-office-65",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 16.4
+        },
+        {
+          "path": "/en/properties/fixture-office-66",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 26.4
+        },
+        {
+          "path": "/tr/properties/fixture-office-66",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.1
+        },
+        {
+          "path": "/en/properties/fixture-office-67",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 29.3
+        },
+        {
+          "path": "/tr/properties/fixture-office-67",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 14.8
+        },
+        {
+          "path": "/en/properties/fixture-office-68",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 29.9
+        },
+        {
+          "path": "/tr/properties/fixture-office-68",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 16.5
+        },
+        {
+          "path": "/en/properties/fixture-office-69",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 38.3
+        },
+        {
+          "path": "/tr/properties/fixture-office-69",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.6
+        },
+        {
+          "path": "/en/properties/fixture-office-70",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 28.5
+        },
+        {
+          "path": "/tr/properties/fixture-office-70",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 16.8
+        },
+        {
+          "path": "/en/properties/fixture-office-71",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 28.4
+        },
+        {
+          "path": "/tr/properties/fixture-office-71",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.3
+        },
+        {
+          "path": "/en/properties/fixture-office-72",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 30.3
+        },
+        {
+          "path": "/tr/properties/fixture-office-72",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.5
+        },
+        {
+          "path": "/en/properties/fixture-office-73",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 28.5
+        },
+        {
+          "path": "/tr/properties/fixture-office-73",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.1
+        },
+        {
+          "path": "/en/properties/fixture-office-74",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 27.3
+        },
+        {
+          "path": "/tr/properties/fixture-office-74",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.5
+        },
+        {
+          "path": "/en/properties/fixture-office-75",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 27.6
+        },
+        {
+          "path": "/tr/properties/fixture-office-75",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 16.6
+        },
+        {
+          "path": "/en/properties/fixture-office-76",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 26.6
+        },
+        {
+          "path": "/tr/properties/fixture-office-76",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 17.3
+        },
+        {
+          "path": "/en/properties/fixture-office-77",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 28.8
+        },
+        {
+          "path": "/tr/properties/fixture-office-77",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.1
+        },
+        {
+          "path": "/en/properties/fixture-office-78",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 26.5
+        },
+        {
+          "path": "/tr/properties/fixture-office-78",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.2
+        },
+        {
+          "path": "/en/properties/fixture-office-79",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 28.2
+        },
+        {
+          "path": "/tr/properties/fixture-office-79",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.2
+        },
+        {
+          "path": "/en/properties/fixture-office-80",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 27.0
+        },
+        {
+          "path": "/tr/properties/fixture-office-80",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 17.2
+        },
+        {
+          "path": "/en/properties/fixture-office-81",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 31.6
+        },
+        {
+          "path": "/tr/properties/fixture-office-81",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.0
+        },
+        {
+          "path": "/en/properties/fixture-office-82",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 28.2
+        },
+        {
+          "path": "/tr/properties/fixture-office-82",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.6
+        },
+        {
+          "path": "/en/properties/fixture-office-83",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 26.5
+        },
+        {
+          "path": "/tr/properties/fixture-office-83",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.0
+        },
+        {
+          "path": "/en/properties/fixture-office-84",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 26.9
+        },
+        {
+          "path": "/tr/properties/fixture-office-84",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 14.2
+        },
+        {
+          "path": "/en/properties/fixture-office-85",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 28.4
+        },
+        {
+          "path": "/tr/properties/fixture-office-85",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 17.1
+        },
+        {
+          "path": "/en/properties/fixture-office-86",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 25.1
+        },
+        {
+          "path": "/tr/properties/fixture-office-86",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 13.2
+        },
+        {
+          "path": "/en/properties/fixture-office-87",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 26.7
+        },
+        {
+          "path": "/tr/properties/fixture-office-87",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.0
+        },
+        {
+          "path": "/en/properties/fixture-office-88",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 24.8
+        },
+        {
+          "path": "/tr/properties/fixture-office-88",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.8
+        },
+        {
+          "path": "/en/properties/fixture-office-89",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 33.4
+        },
+        {
+          "path": "/tr/properties/fixture-office-89",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 16.0
+        },
+        {
+          "path": "/en/properties/fixture-office-90",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 27.1
+        },
+        {
+          "path": "/tr/properties/fixture-office-90",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 16.3
+        },
+        {
+          "path": "/en/properties/fixture-office-91",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 26.9
+        },
+        {
+          "path": "/tr/properties/fixture-office-91",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 15.1
+        },
+        {
+          "path": "/en/properties/fixture-office-92",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 33.1
+        },
+        {
+          "path": "/tr/properties/fixture-office-92",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 16.5
+        },
+        {
+          "path": "/en/properties/fixture-office-93",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 27.7
+        },
+        {
+          "path": "/tr/properties/fixture-office-93",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 16.1
+        },
+        {
+          "path": "/en/properties/fixture-office-94",
+          "status": 200,
+          "bytes": 87701,
+          "ms": 27.8
+        },
+        {
+          "path": "/tr/properties/fixture-office-94",
+          "status": 200,
+          "bytes": 92348,
+          "ms": 14.6
+        },
+        {
+          "path": "/en/properties/fixture-office-95",
+          "status": 200,
+          "bytes": 87703,
+          "ms": 29.8
+        },
+        {
+          "path": "/tr/properties/fixture-office-95",
+          "status": 200,
+          "bytes": 92350,
+          "ms": 16.9
+        },
+        {
+          "path": "/en/properties/fixture-office-96",
+          "status": 200,
+          "bytes": 87703,
+          "ms": 26.5
+        },
+        {
+          "path": "/tr/properties/fixture-office-96",
+          "status": 200,
+          "bytes": 92350,
+          "ms": 15.4
+        },
+        {
+          "path": "/en/properties/fixture-office-97",
+          "status": 200,
+          "bytes": 87703,
+          "ms": 28.8
+        },
+        {
+          "path": "/tr/properties/fixture-office-97",
+          "status": 200,
+          "bytes": 92350,
+          "ms": 14.6
+        },
+        {
+          "path": "/en/properties/fixture-office-98",
+          "status": 200,
+          "bytes": 87703,
+          "ms": 27.7
+        },
+        {
+          "path": "/tr/properties/fixture-office-98",
+          "status": 200,
+          "bytes": 92350,
+          "ms": 14.9
+        },
+        {
+          "path": "/en/properties/fixture-office-99",
+          "status": 200,
+          "bytes": 87703,
+          "ms": 29.7
+        },
+        {
+          "path": "/tr/properties/fixture-office-99",
+          "status": 200,
+          "bytes": 92350,
+          "ms": 14.8
+        },
+        {
+          "path": "/en/properties/fixture-office-100",
+          "status": 200,
+          "bytes": 87749,
+          "ms": 25.3
+        },
+        {
+          "path": "/tr/properties/fixture-office-100",
+          "status": 200,
+          "bytes": 92385,
+          "ms": 16.2
+        },
+        {
+          "path": "/en/properties/fixture-office-101",
+          "status": 200,
+          "bytes": 87749,
+          "ms": 25.1
+        },
+        {
+          "path": "/tr/properties/fixture-office-101",
+          "status": 200,
+          "bytes": 92385,
+          "ms": 14.4
+        },
+        {
+          "path": "/en/properties/fixture-residences",
+          "status": 200,
+          "bytes": 53288,
+          "ms": 27.7
+        },
+        {
+          "path": "/en/news/fixture-guide",
+          "status": 200,
+          "bytes": 40146,
+          "ms": 34.1
+        },
+        {
+          "path": "/en/collections/fixture-offices",
+          "status": 200,
+          "bytes": 146111,
+          "ms": 49.9
+        },
+        {
+          "path": "/tr/collections/fixture-offices",
+          "status": 200,
+          "bytes": 145937,
+          "ms": 22.0
+        },
+        {
+          "path": "/en/properties?page=0",
+          "status": 404,
+          "bytes": 13437,
+          "ms": 18.1
+        },
+        {
+          "path": "/en/properties?page=0",
+          "status": 404,
+          "bytes": 13437,
+          "ms": 11.7
+        },
+        {
+          "path": "/en/properties?page=-1",
+          "status": 404,
+          "bytes": 13440,
+          "ms": 11.9
+        },
+        {
+          "path": "/en/properties?page=-1",
+          "status": 404,
+          "bytes": 13440,
+          "ms": 61.3
+        },
+        {
+          "path": "/en/properties?page=1.2",
+          "status": 404,
+          "bytes": 13443,
+          "ms": 20.6
+        },
+        {
+          "path": "/en/properties?page=1.2",
+          "status": 404,
+          "bytes": 13443,
+          "ms": 16.9
+        },
+        {
+          "path": "/en/properties?page=Infinity",
+          "status": 404,
+          "bytes": 13458,
+          "ms": 29.6
+        },
+        {
+          "path": "/en/properties?page=Infinity",
+          "status": 404,
+          "bytes": 13458,
+          "ms": 13.0
+        },
+        {
+          "path": "/en/properties?page=abc",
+          "status": 404,
+          "bytes": 13443,
+          "ms": 12.4
+        },
+        {
+          "path": "/en/properties?page=abc",
+          "status": 404,
+          "bytes": 13443,
+          "ms": 11.7
+        },
+        {
+          "path": "/en/properties?page=999999",
+          "status": 404,
+          "bytes": 13538,
+          "ms": 33.0
+        },
+        {
+          "path": "/en/properties?page=999999",
+          "status": 404,
+          "bytes": 13452,
+          "ms": 12.9
+        },
+        {
+          "path": "/en/properties?page=1&page=2",
+          "status": 404,
+          "bytes": 13473,
+          "ms": 11.4
+        },
+        {
+          "path": "/en/properties?page=1&page=2",
+          "status": 404,
+          "bytes": 13473,
+          "ms": 13.3
+        },
+        {
+          "path": "/en/news?page=0",
+          "status": 404,
+          "bytes": 13425,
+          "ms": 13.8
+        },
+        {
+          "path": "/en/news?page=0",
+          "status": 404,
+          "bytes": 13425,
+          "ms": 66.3
+        },
+        {
+          "path": "/en/news?page=-1",
+          "status": 404,
+          "bytes": 13428,
+          "ms": 44.1
+        },
+        {
+          "path": "/en/news?page=-1",
+          "status": 404,
+          "bytes": 13428,
+          "ms": 41.0
+        },
+        {
+          "path": "/en/news?page=1.2",
+          "status": 404,
+          "bytes": 13431,
+          "ms": 10.6
+        },
+        {
+          "path": "/en/news?page=1.2",
+          "status": 404,
+          "bytes": 13431,
+          "ms": 10.4
+        },
+        {
+          "path": "/en/news?page=Infinity",
+          "status": 404,
+          "bytes": 13446,
+          "ms": 12.2
+        },
+        {
+          "path": "/en/news?page=Infinity",
+          "status": 404,
+          "bytes": 13446,
+          "ms": 12.1
+        },
+        {
+          "path": "/en/news?page=abc",
+          "status": 404,
+          "bytes": 13431,
+          "ms": 11.0
+        },
+        {
+          "path": "/en/news?page=abc",
+          "status": 404,
+          "bytes": 13431,
+          "ms": 10.7
+        },
+        {
+          "path": "/en/news?page=999999",
+          "status": 404,
+          "bytes": 13526,
+          "ms": 26.3
+        },
+        {
+          "path": "/en/news?page=999999",
+          "status": 404,
+          "bytes": 13440,
+          "ms": 12.2
+        },
+        {
+          "path": "/en/news?page=1&page=2",
+          "status": 404,
+          "bytes": 13461,
+          "ms": 13.5
+        },
+        {
+          "path": "/en/news?page=1&page=2",
+          "status": 404,
+          "bytes": 13461,
+          "ms": 12.1
+        },
+        {
+          "path": "/en/reviews?page=0",
+          "status": 404,
+          "bytes": 13431,
+          "ms": 11.4
+        },
+        {
+          "path": "/en/reviews?page=0",
+          "status": 404,
+          "bytes": 13431,
+          "ms": 11.9
+        },
+        {
+          "path": "/en/reviews?page=-1",
+          "status": 404,
+          "bytes": 13434,
+          "ms": 12.3
+        },
+        {
+          "path": "/en/reviews?page=-1",
+          "status": 404,
+          "bytes": 13434,
+          "ms": 12.6
+        },
+        {
+          "path": "/en/reviews?page=1.2",
+          "status": 404,
+          "bytes": 13437,
+          "ms": 15.2
+        },
+        {
+          "path": "/en/reviews?page=1.2",
+          "status": 404,
+          "bytes": 13437,
+          "ms": 13.1
+        },
+        {
+          "path": "/en/reviews?page=Infinity",
+          "status": 404,
+          "bytes": 13452,
+          "ms": 13.0
+        },
+        {
+          "path": "/en/reviews?page=Infinity",
+          "status": 404,
+          "bytes": 13452,
+          "ms": 10.7
+        },
+        {
+          "path": "/en/reviews?page=abc",
+          "status": 404,
+          "bytes": 13437,
+          "ms": 12.0
+        },
+        {
+          "path": "/en/reviews?page=abc",
+          "status": 404,
+          "bytes": 13437,
+          "ms": 12.2
+        },
+        {
+          "path": "/en/reviews?page=999999",
+          "status": 404,
+          "bytes": 13532,
+          "ms": 22.7
+        },
+        {
+          "path": "/en/reviews?page=999999",
+          "status": 404,
+          "bytes": 13446,
+          "ms": 11.2
+        },
+        {
+          "path": "/en/reviews?page=1&page=2",
+          "status": 404,
+          "bytes": 13467,
+          "ms": 11.3
+        },
+        {
+          "path": "/en/reviews?page=1&page=2",
+          "status": 404,
+          "bytes": 13467,
+          "ms": 11.1
+        },
+        {
+          "path": "/en?utm_source=smoke",
+          "status": 200,
+          "bytes": 130942,
+          "ms": 21.7
+        },
+        {
+          "path": "/en/reviews?token=fixture",
+          "status": 200,
+          "bytes": 35690,
+          "ms": 36.2
+        },
+        {
+          "path": "/en/properties/fixture-old-office",
+          "status": 308,
+          "bytes": 10571,
+          "ms": 37.0
+        },
+        {
+          "path": "/en/properties/6",
+          "status": 308,
+          "bytes": 10537,
+          "ms": 29.6
+        },
+        {
+          "path": "/en",
+          "status": 200,
+          "bytes": 130873,
+          "ms": 21.7
+        },
+        {
+          "path": "/icon?e51895b6b0c9e821",
+          "status": 200,
+          "bytes": 1090,
+          "ms": 589.6
+        }
+      ]
+    },
+    {
+      "base_url": "http://127.0.0.1:18093",
+      "origin": "https://agency-gamma.com",
+      "sitemap_count": 0,
+      "requests": 69,
+      "failures": [],
+      "records": [
+        {
+          "path": "/en",
+          "status": 200,
+          "bytes": 130189,
+          "ms": 697.3
+        },
+        {
+          "path": "/en/properties",
+          "status": 200,
+          "bytes": 153775,
+          "ms": 121.0
+        },
+        {
+          "path": "/en/collections",
+          "status": 200,
+          "bytes": 26191,
+          "ms": 49.5
+        },
+        {
+          "path": "/en/services",
+          "status": 200,
+          "bytes": 43411,
+          "ms": 33.2
+        },
+        {
+          "path": "/en/news",
+          "status": 200,
+          "bytes": 33631,
+          "ms": 55.6
+        },
+        {
+          "path": "/en/reviews",
+          "status": 200,
+          "bytes": 35182,
+          "ms": 40.6
+        },
+        {
+          "path": "/en/about",
+          "status": 200,
+          "bytes": 27435,
+          "ms": 24.9
+        },
+        {
+          "path": "/en/contact",
+          "status": 200,
+          "bytes": 32097,
+          "ms": 26.0
+        },
+        {
+          "path": "/en/privacy",
+          "status": 200,
+          "bytes": 29114,
+          "ms": 38.0
+        },
+        {
+          "path": "/en/terms",
+          "status": 200,
+          "bytes": 28600,
+          "ms": 49.9
+        },
+        {
+          "path": "/tr",
+          "status": 200,
+          "bytes": 130962,
+          "ms": 209.8
+        },
+        {
+          "path": "/tr/properties",
+          "status": 200,
+          "bytes": 153703,
+          "ms": 60.6
+        },
+        {
+          "path": "/tr/collections",
+          "status": 200,
+          "bytes": 26448,
+          "ms": 17.1
+        },
+        {
+          "path": "/tr/services",
+          "status": 200,
+          "bytes": 43658,
+          "ms": 24.2
+        },
+        {
+          "path": "/tr/news",
+          "status": 200,
+          "bytes": 33903,
+          "ms": 121.0
+        },
+        {
+          "path": "/tr/reviews",
+          "status": 200,
+          "bytes": 35617,
+          "ms": 29.2
+        },
+        {
+          "path": "/tr/about",
+          "status": 200,
+          "bytes": 27766,
+          "ms": 13.3
+        },
+        {
+          "path": "/tr/contact",
+          "status": 200,
+          "bytes": 32230,
+          "ms": 15.5
+        },
+        {
+          "path": "/tr/privacy",
+          "status": 200,
+          "bytes": 29517,
+          "ms": 15.4
+        },
+        {
+          "path": "/tr/terms",
+          "status": 200,
+          "bytes": 28978,
+          "ms": 12.9
+        },
+        {
+          "path": "/",
+          "status": 308,
+          "bytes": 3,
+          "ms": 3.8
+        },
+        {
+          "path": "/robots.txt",
+          "status": 200,
+          "bytes": 89,
+          "ms": 25.2
+        },
+        {
+          "path": "/sitemap.xml",
+          "status": 200,
+          "bytes": 150,
+          "ms": 9.5
+        },
+        {
+          "path": "/en/properties?page=0",
+          "status": 404,
+          "bytes": 13300,
+          "ms": 26.0
+        },
+        {
+          "path": "/en/properties?page=0",
+          "status": 404,
+          "bytes": 13300,
+          "ms": 16.7
+        },
+        {
+          "path": "/en/properties?page=-1",
+          "status": 404,
+          "bytes": 13303,
+          "ms": 17.4
+        },
+        {
+          "path": "/en/properties?page=-1",
+          "status": 404,
+          "bytes": 13303,
+          "ms": 17.6
+        },
+        {
+          "path": "/en/properties?page=1.2",
+          "status": 404,
+          "bytes": 13306,
+          "ms": 20.6
+        },
+        {
+          "path": "/en/properties?page=1.2",
+          "status": 404,
+          "bytes": 13306,
+          "ms": 18.1
+        },
+        {
+          "path": "/en/properties?page=Infinity",
+          "status": 404,
+          "bytes": 13321,
+          "ms": 18.9
+        },
+        {
+          "path": "/en/properties?page=Infinity",
+          "status": 404,
+          "bytes": 13321,
+          "ms": 16.2
+        },
+        {
+          "path": "/en/properties?page=abc",
+          "status": 404,
+          "bytes": 13306,
+          "ms": 14.8
+        },
+        {
+          "path": "/en/properties?page=abc",
+          "status": 404,
+          "bytes": 13306,
+          "ms": 17.2
+        },
+        {
+          "path": "/en/properties?page=999999",
+          "status": 404,
+          "bytes": 13401,
+          "ms": 31.1
+        },
+        {
+          "path": "/en/properties?page=999999",
+          "status": 404,
+          "bytes": 13315,
+          "ms": 17.0
+        },
+        {
+          "path": "/en/properties?page=1&page=2",
+          "status": 404,
+          "bytes": 13336,
+          "ms": 16.9
+        },
+        {
+          "path": "/en/properties?page=1&page=2",
+          "status": 404,
+          "bytes": 13336,
+          "ms": 16.2
+        },
+        {
+          "path": "/en/news?page=0",
+          "status": 404,
+          "bytes": 13288,
+          "ms": 16.0
+        },
+        {
+          "path": "/en/news?page=0",
+          "status": 404,
+          "bytes": 13288,
+          "ms": 19.8
+        },
+        {
+          "path": "/en/news?page=-1",
+          "status": 404,
+          "bytes": 13291,
+          "ms": 24.1
+        },
+        {
+          "path": "/en/news?page=-1",
+          "status": 404,
+          "bytes": 13291,
+          "ms": 18.6
+        },
+        {
+          "path": "/en/news?page=1.2",
+          "status": 404,
+          "bytes": 13294,
+          "ms": 15.4
+        },
+        {
+          "path": "/en/news?page=1.2",
+          "status": 404,
+          "bytes": 13294,
+          "ms": 16.0
+        },
+        {
+          "path": "/en/news?page=Infinity",
+          "status": 404,
+          "bytes": 13309,
+          "ms": 15.5
+        },
+        {
+          "path": "/en/news?page=Infinity",
+          "status": 404,
+          "bytes": 13309,
+          "ms": 18.1
+        },
+        {
+          "path": "/en/news?page=abc",
+          "status": 404,
+          "bytes": 13294,
+          "ms": 15.4
+        },
+        {
+          "path": "/en/news?page=abc",
+          "status": 404,
+          "bytes": 13294,
+          "ms": 15.2
+        },
+        {
+          "path": "/en/news?page=999999",
+          "status": 404,
+          "bytes": 13389,
+          "ms": 29.8
+        },
+        {
+          "path": "/en/news?page=999999",
+          "status": 404,
+          "bytes": 13303,
+          "ms": 18.3
+        },
+        {
+          "path": "/en/news?page=1&page=2",
+          "status": 404,
+          "bytes": 13324,
+          "ms": 17.8
+        },
+        {
+          "path": "/en/news?page=1&page=2",
+          "status": 404,
+          "bytes": 13324,
+          "ms": 16.4
+        },
+        {
+          "path": "/en/reviews?page=0",
+          "status": 404,
+          "bytes": 13294,
+          "ms": 16.0
+        },
+        {
+          "path": "/en/reviews?page=0",
+          "status": 404,
+          "bytes": 13294,
+          "ms": 14.6
+        },
+        {
+          "path": "/en/reviews?page=-1",
+          "status": 404,
+          "bytes": 13297,
+          "ms": 15.0
+        },
+        {
+          "path": "/en/reviews?page=-1",
+          "status": 404,
+          "bytes": 13297,
+          "ms": 18.0
+        },
+        {
+          "path": "/en/reviews?page=1.2",
+          "status": 404,
+          "bytes": 13300,
+          "ms": 14.4
+        },
+        {
+          "path": "/en/reviews?page=1.2",
+          "status": 404,
+          "bytes": 13300,
+          "ms": 15.1
+        },
+        {
+          "path": "/en/reviews?page=Infinity",
+          "status": 404,
+          "bytes": 13315,
+          "ms": 16.4
+        },
+        {
+          "path": "/en/reviews?page=Infinity",
+          "status": 404,
+          "bytes": 13315,
+          "ms": 17.0
+        },
+        {
+          "path": "/en/reviews?page=abc",
+          "status": 404,
+          "bytes": 13300,
+          "ms": 14.6
+        },
+        {
+          "path": "/en/reviews?page=abc",
+          "status": 404,
+          "bytes": 13300,
+          "ms": 17.7
+        },
+        {
+          "path": "/en/reviews?page=999999",
+          "status": 404,
+          "bytes": 13395,
+          "ms": 27.9
+        },
+        {
+          "path": "/en/reviews?page=999999",
+          "status": 404,
+          "bytes": 13309,
+          "ms": 15.1
+        },
+        {
+          "path": "/en/reviews?page=1&page=2",
+          "status": 404,
+          "bytes": 13330,
+          "ms": 14.4
+        },
+        {
+          "path": "/en/reviews?page=1&page=2",
+          "status": 404,
+          "bytes": 13330,
+          "ms": 14.6
+        },
+        {
+          "path": "/en?utm_source=smoke",
+          "status": 200,
+          "bytes": 130826,
+          "ms": 30.4
+        },
+        {
+          "path": "/en/reviews?token=fixture",
+          "status": 200,
+          "bytes": 35577,
+          "ms": 37.8
+        },
+        {
+          "path": "/en",
+          "status": 200,
+          "bytes": 130757,
+          "ms": 30.1
+        },
+        {
+          "path": "/icon?e51895b6b0c9e821",
+          "status": 200,
+          "bytes": 1221,
+          "ms": 255.6
+        }
+      ]
+    }
+  ],
+  "extra": [
+    {
+      "port": 18092,
+      "browser_api_brand": "Agency Beta",
+      "status": 200
+    },
+    {
+      "port": 18093,
+      "browser_api_brand": "Agency Gamma",
+      "status": 200
+    },
+    {
+      "preview_path": "/en",
+      "unauthenticated_status": 401
+    },
+    {
+      "preview_path": "/robots.txt",
+      "unauthenticated_status": 401
+    },
+    {
+      "preview_path": "/api/backend/settings",
+      "unauthenticated_status": 401
+    },
+    {
+      "preview_path": "/_next/image?url=%2Fresidences%2Fetro%2Fexterior-01.webp&w=640&q=75",
+      "unauthenticated_status": 401
+    },
+    {
+      "preview_authorized": 200,
+      "robots": "noindex, follow"
+    },
+    {
+      "standalone": 200
+    }
+  ],
+  "browser": {
+    "form_status": 200,
+    "kind": "form",
+    "first_touch": {
+      "at": "2026-09-08T17:37:26.097000Z",
+      "page_url": "http://127.0.0.1:18094/en",
+      "referrer": null,
+      "utm_source": "seo-browser",
+      "utm_medium": null,
+      "utm_campaign": "fixture",
+      "utm_content": null,
+      "utm_term": null
+    },
+    "last_touch": {
+      "at": "2026-09-08T17:37:26.097000Z",
+      "page_url": "http://127.0.0.1:18094/en",
+      "referrer": null,
+      "utm_source": "seo-browser",
+      "utm_medium": null,
+      "utm_campaign": "fixture",
+      "utm_content": null,
+      "utm_term": null
+    },
+    "conversion_page": "http://127.0.0.1:18094/en/properties/fixture-office-101",
+    "console_errors": []
+  }
+}

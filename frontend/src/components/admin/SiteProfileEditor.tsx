@@ -22,6 +22,11 @@ export function SiteProfileEditor({ profile, onChange }: {profile: SiteProfile; 
   const [search, setSearch] = useState('');
   const fields = copyFields({...siteCopy[locale], legal: legalCopy[locale]}).filter(([key, text]) => key.startsWith(`${section}.`) && (!search || text.toLowerCase().includes(search.toLowerCase())));
   return <div className="space-y-6 rounded-2xl border border-slate-200 bg-white p-6">
+    <fieldset className="space-y-3 rounded-xl border p-4"><legend>Источники обращений</legend>
+      <label className="flex gap-2 text-sm"><input type="checkbox" checked={profile.attribution_enabled !== false} onChange={event => onChange({...profile, attribution_enabled: event.target.checked})} />Сохранять первый и последний источник визита</label>
+      <label className="block text-sm">Срок хранения в браузере: 0 — вкладка, 1–90 — дни<input type="number" min={0} max={90} value={profile.attribution_retention_days || 0} onChange={event => onChange({...profile, attribution_retention_days: Number(event.target.value)})} className="ms-3 w-20 rounded border p-2" /></label>
+      <p className="text-xs text-slate-500">Используйте срок, соответствующий политике компании. Передача в CRM происходит при обращении или клике в контакт.</p>
+    </fieldset>
     <label className="flex items-start gap-3 text-sm font-semibold"><input type="checkbox" checked={profile.content_reviewed || false} onChange={event=>onChange({...profile,content_reviewed:event.target.checked})}/>Тексты, услуги и данные компании проверены для публикации</label>
     <h2 className="text-lg font-bold">Компания, изображения и SEO</h2>
     <p className="text-sm text-slate-500">Домен задаётся при развёртывании. Здесь хранится информация именно этой компании. Для изображений используйте адрес HTTPS или путь к загруженному файлу.</p>

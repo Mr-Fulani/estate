@@ -222,8 +222,9 @@ export function LeadsTable({ initialLeads }: { initialLeads: ContactRequest[] })
                     <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">Клиент и источник</h4>
                     {lead.phone && <a href={`tel:${lead.phone}`} className="flex items-center gap-2 text-sm font-semibold text-slate-800 hover:text-primary"><Phone className="h-4 w-4 text-secondary" />{lead.phone}</a>}
                     {lead.email && <a href={`mailto:${lead.email}`} className="flex items-center gap-2 text-sm text-slate-700 hover:text-primary"><Mail className="h-4 w-4" />{lead.email}</a>}
-                    {lead.property && <Link href={`/ru/properties/${lead.property.slug}`} target="_blank" className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"><ExternalLink className="h-4 w-4" />Открыть объект</Link>}
+                    {lead.property && <Link href={`/properties/${lead.property.slug}`} target="_blank" className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"><ExternalLink className="h-4 w-4" />Открыть объект</Link>}
                     <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-xs text-slate-600">
+                      {([['Первый источник', lead.first_touch], ['Последний источник', lead.last_touch]] as const).map(([label, touch]) => touch && <div key={label} className="col-span-2 rounded border p-3"><dt className="font-semibold">{label}</dt><dd className="break-all text-xs">{[touch.utm_source, touch.utm_medium, touch.utm_campaign].filter(Boolean).join(' / ') || touch.referrer || 'Прямой / источник не передан'}<br />{touch.page_url}<br />{new Date(touch.at).toLocaleString('ru-RU')}</dd></div>)}
                       <dt className="font-semibold">UTM source</dt><dd>{lead.utm_source || '—'}</dd>
                       <dt className="font-semibold">Кампания</dt><dd>{lead.utm_campaign || '—'}</dd>
                       <dt className="font-semibold">Язык</dt><dd>{lead.locale?.toUpperCase() || '—'}</dd>

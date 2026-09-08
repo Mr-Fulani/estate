@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { 
   Category,
   CategoryTranslation,
@@ -37,7 +38,7 @@ export class ApiError extends Error {
 export function getApiBaseUrl(): string {
   // If running on server (SSR/RSC) inside Docker or Node
   if (typeof window === 'undefined') {
-    return process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://api:8000/api/v1';
+    return process.env.INTERNAL_API_URL || 'http://api:8000/api/v1';
   }
   // If running in client browser
   return '/api/backend';
@@ -579,14 +580,15 @@ export const fallbackSiteSettings: SiteSettings = {
   phone: '', email: '', address: '', working_hours: '', translations: [],
 };
 
-export async function fetchSiteSettings(): Promise<SiteSettings> {
+// React memoization is per server render; public data still revalidates after 300 seconds.
+export const fetchSiteSettings = cache(async (): Promise<SiteSettings> => {
   const res = await fetch(`${getApiBaseUrl()}/settings`, {
     next: { revalidate: 300 }, signal: AbortSignal.timeout(10000),
   });
   // An outage must never turn into another company's contact details or an editable empty record.
   if (!res.ok) throw new ApiError('Site settings are temporarily unavailable', res.status);
   return await res.json();
-}
+});
 
 
 export async function updateSiteSettings(data: Partial<SiteSettings>): Promise<SiteSettings> {

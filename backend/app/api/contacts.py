@@ -193,7 +193,7 @@ async def create_contact(
     )
     await _reject_demo_enquiry(contact.property_id, db)
     new_contact = ContactRequest(
-        **contact.model_dump(exclude={"website"}),
+        **contact.model_dump(mode="json", exclude={"website"}),
         status="new",
         is_read=False,
     )
@@ -266,7 +266,7 @@ async def track_contact_action(
         return await _get_lead(existing.id, db)
 
     new_contact = ContactRequest(
-        **event.model_dump(),
+        **event.model_dump(mode="json"),
         status="new",
         is_read=False,
         message=f"Переход в канал связи: {event.channel}",

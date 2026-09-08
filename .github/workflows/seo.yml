@@ -1,0 +1,90 @@
+name: SEO template regression
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  seo:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_DB: estate_seo_test
+        ports: ['5432:5432']
+        options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      RUN_DB_TESTS: '1'
+      DATABASE_URL: postgresql+asyncpg://postgres@127.0.0.1:5432/estate_seo_test
+      SEO_TEST_DATABASE_URL: postgresql+asyncpg://postgres@127.0.0.1:5432/estate_seo_test
+      MEDIA_ROOT: /tmp/estate-seo-ci-media
+      SITE_LOCALES: en,tr
+      SITE_DEFAULT_LOCALE: en
+      SITE_CURRENCIES: EUR,USD
+      SITE_DEFAULT_CURRENCY: EUR
+      CATALOG_CURRENCY: EUR
+      SITE_URL: https://agency-beta.com
+      INTERNAL_API_URL: http://127.0.0.1:8000/api/v1
+      DEPLOYMENT_ENV: production
+      INDEXING_ENABLED: 'true'
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r backend/requirements.txt
+      - run: npm ci
+        working-directory: frontend
+      - run: python -m app.migrate
+        working-directory: backend
+      - run: python -m unittest discover -s tests
+        working-directory: backend
+      - run: npm run test:seo && npm run test:developments && npm run test:scroll && npx tsc --noEmit --incremental false && npx eslint src
+        working-directory: frontend
+      - run: python -m tests.seed_seo_fixture
+        working-directory: backend
+      - name: Independent second company database
+        working-directory: backend
+        run: |
+          python -m tests.create_seo_secondary_database
+          DATABASE_URL=postgresql+asyncpg://postgres@127.0.0.1:5432/estate_seo_test_b python -m app.migrate
+          DATABASE_URL=postgresql+asyncpg://postgres@127.0.0.1:5432/estate_seo_test_b python -m tests.seed_seo_fixture
+      - run: npm run build
+        working-directory: frontend
+      - name: Start isolated production build
+        run: |
+          (cd backend && python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 > /tmp/estate-seo-api.log 2>&1) &
+          (cd frontend && npm run start -- --hostname 127.0.0.1 --port 3000 > /tmp/estate-seo-web.log 2>&1) &
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:3000/api/backend/settings > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          exit 1
+      - name: HTTP metadata, sitemap, redirects and status codes
+        run: python scripts/seo-smoke.py --base-url http://127.0.0.1:3000 --origin https://agency-beta.com --expected-sitemap-count 225 --forbidden 'Rahat Home' --redirect /en/properties/fixture-old-office=/en/properties/fixture-office-1 --report seo-http.json
+      - name: Same build, another origin, indexing disabled
+        run: |
+          (cd backend && DATABASE_URL=postgresql+asyncpg://postgres@127.0.0.1:5432/estate_seo_test_b python -m uvicorn app.main:app --host 127.0.0.1 --port 8001 > /tmp/estate-seo-api-b.log 2>&1) &
+          (cd frontend && SITE_URL=https://agency-gamma.com INTERNAL_API_URL=http://127.0.0.1:8001/api/v1 INDEXING_ENABLED=false npm run start -- --hostname 127.0.0.1 --port 3001 > /tmp/estate-seo-web-disabled.log 2>&1) &
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:3001/api/backend/settings > /dev/null; then break; fi
+            sleep 1
+          done
+          python scripts/seo-smoke.py --base-url http://127.0.0.1:3001 --origin https://agency-gamma.com --indexing off --expected-sitemap-count 0 --forbidden 'https://agency-beta.com' --forbidden 'Agency Beta' --report seo-disabled-http.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: seo-http-evidence
+          path: |
+            seo-http.json
+            seo-disabled-http.json
+            /tmp/estate-seo-*.log
