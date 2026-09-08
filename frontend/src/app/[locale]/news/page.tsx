@@ -1,3 +1,5 @@
+import { indexableQuery } from '@/lib/query-policy';
+import type { SearchQuery } from '@/lib/pagination';
 import { assertPageExists, paginationPage } from '@/lib/pagination';
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -12,7 +14,7 @@ import { localizedPageMetadata } from '@/lib/seo';
 
 type NewsListPageProps = {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ page?: string | string[] }>;
+  searchParams: Promise<SearchQuery>;
 };
 
 export const dynamic = 'force-dynamic';
@@ -27,6 +29,7 @@ export async function generateMetadata({ params, searchParams }: NewsListPagePro
   const title = copy.metaTitle;
   return localizedPageMetadata(locale, '/news', title, copy.metaDescription, {
     canonicalSuffix: page > 1 ? `?page=${page}` : '',
+    index: indexableQuery(query),
   });
 }
 

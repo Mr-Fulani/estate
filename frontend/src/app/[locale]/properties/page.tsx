@@ -1,3 +1,4 @@
+import { indexableQuery } from '@/lib/query-policy';
 import { assertPageExists, propertyQuery } from '@/lib/pagination';
 import { fetchProperties } from '@/lib/api';
 import type { Metadata } from 'next';
@@ -21,7 +22,7 @@ export async function generateMetadata({
   const [{ locale }, query] = await Promise.all([params, searchParams]);
   if (!isLocale(locale)) return {};
   const metadata = await staticPageMetadata(locale, 'properties');
-  const hasFilters = Object.entries(query).some(([key, value]) => key !== 'page' && value !== undefined && value !== '');
+  const hasFilters = !indexableQuery(query);
   const filters = propertyQuery(query);
   const page = Number(filters.page);
   const data = await fetchProperties(filters);

@@ -15,6 +15,8 @@
 
 | SEO-01 / P1 | Единый профиль компании, SEO и тексты в админке, изображения только из настроек; удалены бренд и география из общих исходников | 9 frontend tests, 6 backend tests, TypeScript, ESLint, production build; 36 HTTP-проверок Agency Beta |
 
+| SEO-08 / P2 | Tracking не меняет индексируемость; token/preview получают noindex, private no-store и no-referrer | Тесты классификации query и заголовков proxy, TypeScript, ESLint |
+
 SEO-03: `77424b1`; SEO-02: `0f7d16f`.
 
 Последующие пункты выполняются в порядке технических зависимостей. Публикация на сервере, Search Console и полевые метрики требуют работающего публичного сайта и не считаются проверенными локально.

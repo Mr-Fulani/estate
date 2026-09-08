@@ -51,6 +51,11 @@ export async function proxy(request: NextRequest) {
     requestHeaders.set('x-estate-locale', firstSegment);
     const response = NextResponse.next({ request: { headers: requestHeaders } });
     response.headers.set('Content-Language', documentLanguageTags[firstSegment]);
+    if (request.nextUrl.searchParams.has('token') || request.nextUrl.searchParams.has('preview')) {
+      response.headers.set('X-Robots-Tag', 'noindex, follow');
+      response.headers.set('Cache-Control', 'private, no-store, max-age=0');
+      response.headers.set('Referrer-Policy', 'no-referrer');
+    }
     return response;
   }
 

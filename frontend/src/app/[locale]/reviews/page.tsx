@@ -1,3 +1,5 @@
+import { indexableQuery } from '@/lib/query-policy';
+import type { SearchQuery } from '@/lib/pagination';
 import { assertPageExists, paginationPage } from '@/lib/pagination';
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -14,7 +16,7 @@ import { localizedPageMetadata } from '@/lib/seo';
 
 type ReviewsPageProps = {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ page?: string | string[]; token?: string }>;
+  searchParams: Promise<SearchQuery>;
 };
 
 
@@ -31,6 +33,7 @@ export async function generateMetadata({ params, searchParams }: ReviewsPageProp
   const title = copy.metaTitle;
   return localizedPageMetadata(locale, '/reviews', title, copy.metaDescription, {
     canonicalSuffix: page > 1 ? `?page=${page}` : '',
+    index: indexableQuery(query),
   });
 }
 
@@ -38,11 +41,12 @@ export async function generateMetadata({ params, searchParams }: ReviewsPageProp
 export default async function ReviewsPage({ params, searchParams }: ReviewsPageProps) {
   const [{ locale }, query] = await Promise.all([params, searchParams]);
   if (!isLocale(locale)) notFound();
+  const token = typeof query.token === 'string' ? query.token : undefined;
   const page = paginationPage(query.page);
   const copy = getSiteCopy(locale, await fetchSiteSettings()).reviews;
   const [reviewsResult, invitation] = await Promise.all([
     fetchReviews(locale, { page, perPage: 9 }),
-    query.token ? fetchReviewInvitation(query.token).catch(() => null) : Promise.resolve(null),
+    token ? fetchReviewInvitation(token).catch(() => null) : Promise.resolve(null),
   ]);
   assertPageExists(page, reviewsResult.total, reviewsResult.per_page);
   const totalPages = Math.ceil(reviewsResult.total / reviewsResult.per_page);
@@ -68,8 +72,8 @@ export default async function ReviewsPage({ params, searchParams }: ReviewsPageP
             {totalPages > 1 && <nav className="mt-10 flex items-center justify-center gap-3" aria-label="Pagination">{page > 1 && <Link href={`/${locale}/reviews?page=${page - 1}`} className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700">←</Link>}<span className="text-sm font-semibold text-slate-500">{page} / {totalPages}</span>{page < totalPages && <Link href={`/${locale}/reviews?page=${page + 1}`} className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700">→</Link>}</nav>}
           </section>
           <aside className="min-w-0 lg:sticky lg:top-24 lg:self-start">
-            {query.token && !invitation && <p className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-900">{copy.invitationInvalid}</p>}
-            <ReviewForm locale={locale} token={invitation ? query.token : undefined} initialName={invitation?.reviewer_name || ''} propertyTitle={invitation?.property_title || undefined} />
+            {token && !invitation && <p className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-900">{copy.invitationInvalid}</p>}
+            <ReviewForm locale={locale} token={invitation ? token : undefined} initialName={invitation?.reviewer_name || ''} propertyTitle={invitation?.property_title || undefined} />
           </aside>
         </div>
       </div>
