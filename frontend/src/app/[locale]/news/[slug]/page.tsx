@@ -1,3 +1,4 @@
+import { getSiteOrigin } from '@/lib/site-config';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -17,7 +18,7 @@ export const dynamic = 'force-dynamic';
 
 function absoluteUrl(value: string): string {
   if (/^https?:\/\//i.test(value)) return value;
-  return new URL(value, process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').toString();
+  return new URL(value, getSiteOrigin()).toString();
 }
 
 export async function generateMetadata({ params }: NewsArticlePageProps): Promise<Metadata> {

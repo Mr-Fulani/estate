@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint .",
     "test:scroll": "node tests/run-scroll-tests.cjs",
-    "test:developments": "node --test tests/development-view.test.cjs"
+    "test:developments": "node --test tests/development-view.test.cjs",
+    "test:seo": "node --test tests/seo-*.test.cjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",

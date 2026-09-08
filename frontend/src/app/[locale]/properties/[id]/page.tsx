@@ -1,3 +1,4 @@
+import { getSiteOrigin } from '@/lib/site-config';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -12,7 +13,7 @@ type PropertyPageProps = { params: Promise<{ locale: string; id: string }> };
 
 function absoluteUrl(value: string): string {
   if (/^https?:\/\//i.test(value)) return value;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const siteUrl = getSiteOrigin();
   return new URL(value, siteUrl).toString();
 }
 

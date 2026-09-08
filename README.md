@@ -92,7 +92,7 @@ npm ci
 npm run dev
 ```
 
-Браузер обращается к API через same-origin прокси `/api/backend`, поэтому защищённые cookie не передаются между разными доменами. `INTERNAL_API_URL` используется серверным рендерингом и прокси внутри Docker. `NEXT_PUBLIC_SITE_URL` задаёт базовый URL canonical и социальных метаданных.
+Браузер обращается к API через same-origin прокси `/api/backend`, поэтому защищённые cookie не передаются между разными доменами. `INTERNAL_API_URL` используется серверным рендерингом и прокси внутри Docker. `SITE_URL` задаёт базовый URL canonical и социальных метаданных во время запуска сервера, поэтому один образ можно использовать на разных доменах. В production обязателен реальный HTTPS origin без пути и query; `NEXT_PUBLIC_SITE_URL` больше не используется. Передавайте `SITE_URL` контейнеру web через environment/env_file. `DEPLOYMENT_ENV=test` разрешён только для изолированных тестов.
 
 ## Миграции
 

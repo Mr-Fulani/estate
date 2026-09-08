@@ -1,3 +1,4 @@
+import { getSiteOrigin } from '@/lib/site-config';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
@@ -18,7 +19,7 @@ export async function PropertyDetailContent({ id, locale, initialProperty }: { i
   const copy = siteCopy[locale].property;
   if (!property) notFound();
   const localized = localizedProperty(property, locale);
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const siteUrl = getSiteOrigin();
   const canonicalUrl = new URL(`/${locale}/properties/${property.slug}`, siteUrl).toString();
   const absoluteImages = (property.images || []).map((image) => /^https?:\/\//i.test(image) ? image : new URL(image, siteUrl).toString());
   if (property.listing_kind === 'development' && property.development) {

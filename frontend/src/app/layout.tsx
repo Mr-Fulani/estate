@@ -1,3 +1,4 @@
+import { getSiteOrigin } from '@/lib/site-config';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import './globals.css';
@@ -7,8 +8,9 @@ import { assertLocale, documentLanguageTags, localeDirection } from '@/i18n/conf
 import { getMessages } from '@/i18n/messages';
 import { fetchSiteSettings } from '@/lib/api';
 
-export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+  metadataBase: new URL(getSiteOrigin()),
   title: 'Rahat Home — Агентство недвижимости',
   description: 'Продажа, покупка и аренда недвижимости. Найдите свой идеальный дом с Rahat Home.',
   openGraph: {
@@ -25,6 +27,7 @@ export const metadata: Metadata = {
     images: ['/og.png'],
   },
 };
+}
 
 export default async function RootLayout({
   children,
@@ -35,7 +38,7 @@ export default async function RootLayout({
   const locale = assertLocale(requestHeaders.get('x-estate-locale') || 'ru');
   const messages = getMessages(locale);
   const siteSettings = await fetchSiteSettings();
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const siteUrl = getSiteOrigin();
   const organization = {
     '@context': 'https://schema.org',
     '@type': 'RealEstateAgent',

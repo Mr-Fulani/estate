@@ -1,3 +1,4 @@
+import { getSiteOrigin } from '@/lib/site-config';
 import type { MetadataRoute } from 'next';
 
 import { locales, type Locale } from '@/i18n/config';
@@ -9,7 +10,7 @@ export const dynamic = 'force-dynamic';
 
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/$/, '');
+  const siteUrl = (getSiteOrigin()).replace(/\/$/, '');
   const absolute = (path: string) => `${siteUrl}${path}`;
   const languageAlternates = (path: string, availableLocales: readonly Locale[]) => Object.fromEntries([
     ...availableLocales.map((locale) => [locale, absolute(`/${locale}${path}`)]),

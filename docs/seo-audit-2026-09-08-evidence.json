@@ -1,0 +1,6021 @@
+{
+  "audit_date": "2026-09-08",
+  "source_commit": "da941d7548f6e2d9e9af4b24d1e85b9a426afee6",
+  "scope": "Pre-deployment source and local production HTTP audit; not a crawl of a published site.",
+  "validation": {
+    "next_production_build": "passed, including TypeScript",
+    "eslint_src": "passed, zero errors or warnings",
+    "http_primary_count": 65,
+    "http_extra_count": 5,
+    "static_pages": 36,
+    "static_statuses": {
+      "200": 36
+    },
+    "static_h1_counts": {
+      "1": 36
+    },
+    "structured_data": "JSON syntax parsed; Google rich-result eligibility not tested"
+  },
+  "fixture": {
+    "server": "http://127.0.0.1:18080/api/v1",
+    "site": "http://127.0.0.1:18081",
+    "property_count": 101,
+    "category": {
+      "slug": "commercial",
+      "name": "Office"
+    },
+    "locales": [
+      "ru",
+      "en"
+    ],
+    "property_1": {
+      "en_title": "Office 1",
+      "en_description": null,
+      "ru_description": "Описание офиса на русском языке."
+    },
+    "article_count": 1,
+    "article_locales": [
+      "ru"
+    ],
+    "review_count": 0,
+    "business_city": "Lisbon",
+    "business_phone": "+351 200 000 000",
+    "business_email": "contact@audit-b.example",
+    "notes": [
+      "Application source was copied unchanged; node_modules and public were symlinked into temporary copy.",
+      "Fixture API simulated public GET endpoints and sorting/pagination. No real database, seed or migration was run.",
+      "The 101 properties are sorted by different dates to expose the sitemap pagination defect.",
+      "Primary User-Agent was Googlebot; extra requests used Twitterbot. No claim of actual search-engine rendering is made.",
+      "Requested routes and expected fixtures are retained here; raw HTML and probe programs remain in the temporary work directory."
+    ]
+  },
+  "domain_reuse": {
+    "build_environment": {
+      "NEXT_PUBLIC_SITE_URL": "https://audit-b.example",
+      "NEXT_PUBLIC_SITE_NAME": "Audit Agency B"
+    },
+    "runtime_environment": {
+      "NEXT_PUBLIC_SITE_URL": "https://audit-c.example",
+      "NEXT_PUBLIC_SITE_NAME": "Audit Agency C"
+    },
+    "observed": "Canonical, Open Graph, organization, sitemap and robots retained build-time domain B; several titles/H1 still used Rahat Home.",
+    "interpretation": "Expected NEXT_PUBLIC build-time behavior; incompatible with runtime-only reassignment of one artifact, but separate builds per project remain possible."
+  },
+  "fallback_probe": {
+    "method": "Actual frontend/src/lib/api.ts transpiled with TypeScript and executed with fetch returning HTTP 503",
+    "result": {
+      "phone": "+90 (552) 123-00-00",
+      "email": "support@rahathome.com",
+      "address": "г. Стамбул, Бейликдюзю",
+      "telegram": "https://t.me/rahat_home"
+    }
+  },
+  "brand_scan": {
+    "root": "frontend/src",
+    "pattern": "Rahat Home|rahathome\\.com|rahat_home",
+    "occurrences": 126,
+    "files": 16
+  },
+  "sitemap_requests": [
+    {
+      "path": "/api/v1/properties",
+      "query": {
+        "per_page": "100",
+        "page": "1",
+        "sort_by": "updated_at",
+        "order": "desc"
+      }
+    },
+    {
+      "path": "/api/v1/properties",
+      "query": {
+        "per_page": "100",
+        "page": "2"
+      }
+    }
+  ],
+  "http_results": [
+    {
+      "path": "/ru",
+      "status": 200,
+      "title": "Rahat Home — агентство недвижимости",
+      "description": [
+        "Подбор, покупка и продажа недвижимости с полным сопровождением."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/ru"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Rahat Home — агентство недвижимости"
+        },
+        {
+          "property": "og:description",
+          "content": "Подбор, покупка и продажа недвижимости с полным сопровождением."
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ru_RU"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Rahat Home — агентство недвижимости"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ru-RU",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Найдите идеальную недвижимость с Rahat Home"
+      ]
+    },
+    {
+      "path": "/ru/properties",
+      "status": 200,
+      "title": "Недвижимость в Стамбуле — каталог Rahat Home",
+      "description": [
+        "Квартиры, виллы и коммерческая недвижимость в Стамбуле. Подбор, проверка и сопровождение сделки."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/ru/properties"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/properties"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Недвижимость в Стамбуле — каталог Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Квартиры, виллы и коммерческая недвижимость в Стамбуле. Подбор, проверка и сопровождение сделки."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ru/properties"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ru_RU"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Недвижимость в Стамбуле — каталог Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ru-RU",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Каталог недвижимости"
+      ]
+    },
+    {
+      "path": "/ru/services",
+      "status": 200,
+      "title": "Услуги по недвижимости в Турции — Rahat Home",
+      "description": [
+        "Подбор, покупка, продажа и аренда недвижимости в Турции, юридическая проверка и сопровождение."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/ru/services"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/services"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/services"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/services"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/services"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/services"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Услуги по недвижимости в Турции — Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Подбор, покупка, продажа и аренда недвижимости в Турции, юридическая проверка и сопровождение."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ru/services"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ru_RU"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Услуги по недвижимости в Турции — Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ru-RU",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Комплексные решения в сфере недвижимости"
+      ]
+    },
+    {
+      "path": "/ru/news",
+      "status": 200,
+      "title": "Новости и статьи о недвижимости — Rahat Home",
+      "description": [
+        "Аналитика рынка, советы по покупке и продаже, юридические разборы и новости Rahat Home."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/ru/news"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/news"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/news"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/news"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/news"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/news"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Новости и статьи о недвижимости — Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Аналитика рынка, советы по покупке и продаже, юридические разборы и новости Rahat Home."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ru/news"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ru_RU"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Новости и статьи о недвижимости — Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ru-RU",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Полезное о недвижимости"
+      ]
+    },
+    {
+      "path": "/ru/reviews",
+      "status": 200,
+      "title": "Отзывы клиентов об Rahat Home",
+      "description": [
+        "Подтверждённые отзывы клиентов о покупке, продаже и аренде недвижимости с Rahat Home."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/ru/reviews"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/reviews"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/reviews"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/reviews"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/reviews"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/reviews"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Отзывы клиентов об Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Подтверждённые отзывы клиентов о покупке, продаже и аренде недвижимости с Rahat Home."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ru/reviews"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ru_RU"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Отзывы клиентов об Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ru-RU",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Отзывы клиентов"
+      ]
+    },
+    {
+      "path": "/ru/about",
+      "status": 200,
+      "title": "О компании Rahat Home",
+      "description": [
+        "Rahat Home помогает покупать, продавать и арендовать недвижимость в Стамбуле с прозрачным сопровождением."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/ru/about"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/about"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/about"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/about"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/about"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/about"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "О компании Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Rahat Home помогает покупать, продавать и арендовать недвижимость в Стамбуле с прозрачным сопровождением."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ru/about"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ru_RU"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "О компании Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ru-RU",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "О компании Rahat Home"
+      ]
+    },
+    {
+      "path": "/ru/contact",
+      "status": 200,
+      "title": "Контакты Rahat Home — Стамбул, Бейликдюзю",
+      "description": [
+        "Свяжитесь с Rahat Home по вопросам покупки, продажи и аренды недвижимости в Стамбуле."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/ru/contact"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/contact"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/contact"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/contact"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/contact"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/contact"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Контакты Rahat Home — Стамбул, Бейликдюзю"
+        },
+        {
+          "property": "og:description",
+          "content": "Свяжитесь с Rahat Home по вопросам покупки, продажи и аренды недвижимости в Стамбуле."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ru/contact"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ru_RU"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Контакты Rahat Home — Стамбул, Бейликдюзю"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ru-RU",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Свяжитесь с нами"
+      ]
+    },
+    {
+      "path": "/ru/privacy",
+      "status": 200,
+      "title": "Политика конфиденциальности — Rahat Home",
+      "description": [
+        "Как Rahat Home собирает, использует и защищает персональные данные посетителей сайта и клиентов."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/ru/privacy"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/privacy"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/privacy"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/privacy"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/privacy"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/privacy"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Политика конфиденциальности — Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Как Rahat Home собирает, использует и защищает персональные данные посетителей сайта и клиентов."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ru/privacy"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ru_RU"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Политика конфиденциальности — Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ru-RU",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Политика конфиденциальности"
+      ]
+    },
+    {
+      "path": "/ru/terms",
+      "status": 200,
+      "title": "Условия использования — Rahat Home",
+      "description": [
+        "Условия использования сайта Rahat Home и опубликованной информации о недвижимости."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/ru/terms"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/terms"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/terms"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/terms"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/terms"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/terms"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Условия использования — Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Условия использования сайта Rahat Home и опубликованной информации о недвижимости."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ru/terms"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ru_RU"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Условия использования — Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ru-RU",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Пользовательское соглашение"
+      ]
+    },
+    {
+      "path": "/en",
+      "status": 200,
+      "title": "Rahat Home — real estate agency",
+      "description": [
+        "Property search, purchase and sales with end-to-end support."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/en"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Rahat Home — real estate agency"
+        },
+        {
+          "property": "og:description",
+          "content": "Property search, purchase and sales with end-to-end support."
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "en_US"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Rahat Home — real estate agency"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "en-GB",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Find the right property with Rahat Home"
+      ]
+    },
+    {
+      "path": "/en/properties",
+      "status": 200,
+      "title": "Istanbul property listings — Rahat Home",
+      "description": [
+        "Apartments, villas and commercial property in Istanbul with due diligence and end-to-end transaction support."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/en/properties"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/properties"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Istanbul property listings — Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Apartments, villas and commercial property in Istanbul with due diligence and end-to-end transaction support."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/en/properties"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "en_US"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Istanbul property listings — Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "en-GB",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Property catalogue"
+      ]
+    },
+    {
+      "path": "/en/services",
+      "status": 200,
+      "title": "Real estate services in Türkiye — Rahat Home",
+      "description": [
+        "Property search, purchase, sale and rental in Türkiye with legal due diligence and transaction support."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/en/services"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/services"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/services"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/services"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/services"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/services"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Real estate services in Türkiye — Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Property search, purchase, sale and rental in Türkiye with legal due diligence and transaction support."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/en/services"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "en_US"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Real estate services in Türkiye — Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "en-GB",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Complete real estate solutions"
+      ]
+    },
+    {
+      "path": "/en/news",
+      "status": 200,
+      "title": "Real estate news and insight — Rahat Home",
+      "description": [
+        "Market analysis, buying and selling advice, legal explainers and Rahat Home news."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/en/news"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/news"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/news"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/news"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/news"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/news"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Real estate news and insight — Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Market analysis, buying and selling advice, legal explainers and Rahat Home news."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/en/news"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "en_US"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Real estate news and insight — Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "en-GB",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Real estate, explained"
+      ]
+    },
+    {
+      "path": "/en/reviews",
+      "status": 200,
+      "title": "Rahat Home client reviews",
+      "description": [
+        "Verified client reviews about buying, selling and renting property with Rahat Home."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/en/reviews"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/reviews"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/reviews"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/reviews"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/reviews"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/reviews"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Rahat Home client reviews"
+        },
+        {
+          "property": "og:description",
+          "content": "Verified client reviews about buying, selling and renting property with Rahat Home."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/en/reviews"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "en_US"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Rahat Home client reviews"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "en-GB",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Client reviews"
+      ]
+    },
+    {
+      "path": "/en/about",
+      "status": 200,
+      "title": "About Rahat Home",
+      "description": [
+        "Rahat Home helps clients buy, sell and rent property in Istanbul with clear, end-to-end support."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/en/about"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/about"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/about"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/about"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/about"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/about"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "About Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Rahat Home helps clients buy, sell and rent property in Istanbul with clear, end-to-end support."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/en/about"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "en_US"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "About Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "en-GB",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "About Rahat Home"
+      ]
+    },
+    {
+      "path": "/en/contact",
+      "status": 200,
+      "title": "Contact Rahat Home — Beylikdüzü, Istanbul",
+      "description": [
+        "Contact Rahat Home about buying, selling or renting property in Istanbul."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/en/contact"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/contact"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/contact"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/contact"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/contact"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/contact"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Contact Rahat Home — Beylikdüzü, Istanbul"
+        },
+        {
+          "property": "og:description",
+          "content": "Contact Rahat Home about buying, selling or renting property in Istanbul."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/en/contact"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "en_US"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Contact Rahat Home — Beylikdüzü, Istanbul"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "en-GB",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Contact us"
+      ]
+    },
+    {
+      "path": "/en/privacy",
+      "status": 200,
+      "title": "Privacy policy — Rahat Home",
+      "description": [
+        "How Rahat Home collects, uses and protects website visitor and client personal data."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/en/privacy"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/privacy"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/privacy"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/privacy"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/privacy"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/privacy"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Privacy policy — Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "How Rahat Home collects, uses and protects website visitor and client personal data."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/en/privacy"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "en_US"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Privacy policy — Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "en-GB",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Privacy policy"
+      ]
+    },
+    {
+      "path": "/en/terms",
+      "status": 200,
+      "title": "Terms of use — Rahat Home",
+      "description": [
+        "Terms for using the Rahat Home website and its published property information."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/en/terms"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/terms"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/terms"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/terms"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/terms"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/terms"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Terms of use — Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Terms for using the Rahat Home website and its published property information."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/en/terms"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "en_US"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Terms of use — Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "en-GB",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Terms of use"
+      ]
+    },
+    {
+      "path": "/tr",
+      "status": 200,
+      "title": "Rahat Home — gayrimenkul danışmanlığı",
+      "description": [
+        "Uçtan uca destekle gayrimenkul arama, satın alma ve satış hizmetleri."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/tr"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Rahat Home — gayrimenkul danışmanlığı"
+        },
+        {
+          "property": "og:description",
+          "content": "Uçtan uca destekle gayrimenkul arama, satın alma ve satış hizmetleri."
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "tr_TR"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Rahat Home — gayrimenkul danışmanlığı"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "tr-TR",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Doğru gayrimenkulü Rahat Home ile bulun"
+      ]
+    },
+    {
+      "path": "/tr/properties",
+      "status": 200,
+      "title": "İstanbul gayrimenkul ilanları — Rahat Home",
+      "description": [
+        "İstanbul’da daire, villa ve ticari gayrimenkuller. Seçim, inceleme ve işlem sürecinde uçtan uca destek."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/tr/properties"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/properties"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "İstanbul gayrimenkul ilanları — Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "İstanbul’da daire, villa ve ticari gayrimenkuller. Seçim, inceleme ve işlem sürecinde uçtan uca destek."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/tr/properties"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "tr_TR"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "İstanbul gayrimenkul ilanları — Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "tr-TR",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Gayrimenkul ilanları"
+      ]
+    },
+    {
+      "path": "/tr/services",
+      "status": 200,
+      "title": "Türkiye gayrimenkul hizmetleri — Rahat Home",
+      "description": [
+        "Gayrimenkul arama, alım, satım ve kiralama; hukuki inceleme ve işlem danışmanlığı."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/tr/services"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/services"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/services"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/services"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/services"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/services"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Türkiye gayrimenkul hizmetleri — Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Gayrimenkul arama, alım, satım ve kiralama; hukuki inceleme ve işlem danışmanlığı."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/tr/services"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "tr_TR"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Türkiye gayrimenkul hizmetleri — Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "tr-TR",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Kapsamlı gayrimenkul çözümleri"
+      ]
+    },
+    {
+      "path": "/tr/news",
+      "status": 200,
+      "title": "Gayrimenkul haberleri ve analizleri — Rahat Home",
+      "description": [
+        "Piyasa analizleri, alım satım önerileri, hukuki rehberler ve Rahat Home haberleri."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/tr/news"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/news"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/news"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/news"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/news"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/news"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Gayrimenkul haberleri ve analizleri — Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Piyasa analizleri, alım satım önerileri, hukuki rehberler ve Rahat Home haberleri."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/tr/news"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "tr_TR"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Gayrimenkul haberleri ve analizleri — Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "tr-TR",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Gayrimenkulü yakından tanıyın"
+      ]
+    },
+    {
+      "path": "/tr/reviews",
+      "status": 200,
+      "title": "Rahat Home müşteri yorumları",
+      "description": [
+        "Rahat Home ile gayrimenkul alım, satım ve kiralama süreçlerine ait doğrulanmış müşteri yorumları."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/tr/reviews"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/reviews"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/reviews"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/reviews"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/reviews"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/reviews"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Rahat Home müşteri yorumları"
+        },
+        {
+          "property": "og:description",
+          "content": "Rahat Home ile gayrimenkul alım, satım ve kiralama süreçlerine ait doğrulanmış müşteri yorumları."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/tr/reviews"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "tr_TR"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Rahat Home müşteri yorumları"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "tr-TR",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Müşteri yorumları"
+      ]
+    },
+    {
+      "path": "/tr/about",
+      "status": 200,
+      "title": "Rahat Home hakkında",
+      "description": [
+        "Rahat Home, İstanbul’da gayrimenkul alım, satım ve kiralama süreçlerinde şeffaf ve kapsamlı destek sunar."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/tr/about"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/about"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/about"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/about"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/about"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/about"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Rahat Home hakkında"
+        },
+        {
+          "property": "og:description",
+          "content": "Rahat Home, İstanbul’da gayrimenkul alım, satım ve kiralama süreçlerinde şeffaf ve kapsamlı destek sunar."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/tr/about"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "tr_TR"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Rahat Home hakkında"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "tr-TR",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Rahat Home hakkında"
+      ]
+    },
+    {
+      "path": "/tr/contact",
+      "status": 200,
+      "title": "Rahat Home iletişim — Beylikdüzü, İstanbul",
+      "description": [
+        "İstanbul’da gayrimenkul alım, satım veya kiralama hakkında Rahat Home ile iletişime geçin."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/tr/contact"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/contact"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/contact"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/contact"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/contact"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/contact"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Rahat Home iletişim — Beylikdüzü, İstanbul"
+        },
+        {
+          "property": "og:description",
+          "content": "İstanbul’da gayrimenkul alım, satım veya kiralama hakkında Rahat Home ile iletişime geçin."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/tr/contact"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "tr_TR"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Rahat Home iletişim — Beylikdüzü, İstanbul"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "tr-TR",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Bize ulaşın"
+      ]
+    },
+    {
+      "path": "/tr/privacy",
+      "status": 200,
+      "title": "Gizlilik politikası — Rahat Home",
+      "description": [
+        "Rahat Home’in site ziyaretçisi ve müşteri kişisel verilerini nasıl topladığı, kullandığı ve koruduğu."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/tr/privacy"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/privacy"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/privacy"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/privacy"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/privacy"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/privacy"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Gizlilik politikası — Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Rahat Home’in site ziyaretçisi ve müşteri kişisel verilerini nasıl topladığı, kullandığı ve koruduğu."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/tr/privacy"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "tr_TR"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Gizlilik politikası — Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "tr-TR",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Gizlilik politikası"
+      ]
+    },
+    {
+      "path": "/tr/terms",
+      "status": 200,
+      "title": "Kullanım koşulları — Rahat Home",
+      "description": [
+        "Rahat Home web sitesinin ve yayınlanan gayrimenkul bilgilerinin kullanım koşulları."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/tr/terms"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/terms"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/terms"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/terms"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/terms"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/terms"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Kullanım koşulları — Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Rahat Home web sitesinin ve yayınlanan gayrimenkul bilgilerinin kullanım koşulları."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/tr/terms"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "tr_TR"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Kullanım koşulları — Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "tr-TR",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Kullanım koşulları"
+      ]
+    },
+    {
+      "path": "/ar",
+      "status": 200,
+      "title": "Rahat Home — وكالة عقارية",
+      "description": [
+        "البحث عن العقارات وشراؤها وبيعها مع دعم متكامل."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/ar"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Rahat Home — وكالة عقارية"
+        },
+        {
+          "property": "og:description",
+          "content": "البحث عن العقارات وشراؤها وبيعها مع دعم متكامل."
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ar_AE"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Rahat Home — وكالة عقارية"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ar-AE",
+      "direction": "rtl",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "اعثر على العقار المناسب مع Rahat Home"
+      ]
+    },
+    {
+      "path": "/ar/properties",
+      "status": 200,
+      "title": "عقارات إسطنبول — دليل Rahat Home",
+      "description": [
+        "شقق وفلل وعقارات تجارية في إسطنبول مع الفحص القانوني والدعم الكامل لإتمام الصفقة."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/ar/properties"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/properties"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "عقارات إسطنبول — دليل Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "شقق وفلل وعقارات تجارية في إسطنبول مع الفحص القانوني والدعم الكامل لإتمام الصفقة."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ar/properties"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ar_AE"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "عقارات إسطنبول — دليل Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ar-AE",
+      "direction": "rtl",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "دليل العقارات"
+      ]
+    },
+    {
+      "path": "/ar/services",
+      "status": 200,
+      "title": "الخدمات العقارية في تركيا — Rahat Home",
+      "description": [
+        "البحث عن العقارات وشراؤها وبيعها واستئجارها في تركيا مع الفحص القانوني ودعم الصفقة."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/ar/services"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/services"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/services"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/services"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/services"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/services"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "الخدمات العقارية في تركيا — Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "البحث عن العقارات وشراؤها وبيعها واستئجارها في تركيا مع الفحص القانوني ودعم الصفقة."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ar/services"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ar_AE"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "الخدمات العقارية في تركيا — Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ar-AE",
+      "direction": "rtl",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "حلول عقارية متكاملة"
+      ]
+    },
+    {
+      "path": "/ar/news",
+      "status": 200,
+      "title": "أخبار وتحليلات العقارات — Rahat Home",
+      "description": [
+        "تحليلات السوق ونصائح الشراء والبيع والأدلة القانونية وأخبار Rahat Home."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/ar/news"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/news"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/news"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/news"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/news"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/news"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "أخبار وتحليلات العقارات — Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "تحليلات السوق ونصائح الشراء والبيع والأدلة القانونية وأخبار Rahat Home."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ar/news"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ar_AE"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "أخبار وتحليلات العقارات — Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ar-AE",
+      "direction": "rtl",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "العقارات بوضوح"
+      ]
+    },
+    {
+      "path": "/ar/reviews",
+      "status": 200,
+      "title": "آراء عملاء Rahat Home",
+      "description": [
+        "آراء موثقة حول شراء العقارات وبيعها واستئجارها مع Rahat Home."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/ar/reviews"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/reviews"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/reviews"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/reviews"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/reviews"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/reviews"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "آراء عملاء Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "آراء موثقة حول شراء العقارات وبيعها واستئجارها مع Rahat Home."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ar/reviews"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ar_AE"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "آراء عملاء Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ar-AE",
+      "direction": "rtl",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "آراء العملاء"
+      ]
+    },
+    {
+      "path": "/ar/about",
+      "status": 200,
+      "title": "عن Rahat Home",
+      "description": [
+        "تساعد Rahat Home العملاء على شراء العقارات وبيعها واستئجارها في إسطنبول بدعم واضح ومتكامل."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/ar/about"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/about"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/about"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/about"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/about"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/about"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "عن Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "تساعد Rahat Home العملاء على شراء العقارات وبيعها واستئجارها في إسطنبول بدعم واضح ومتكامل."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ar/about"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ar_AE"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "عن Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ar-AE",
+      "direction": "rtl",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "عن Rahat Home"
+      ]
+    },
+    {
+      "path": "/ar/contact",
+      "status": 200,
+      "title": "تواصل مع Rahat Home — بيليك دوزو، إسطنبول",
+      "description": [
+        "تواصل مع Rahat Home بشأن شراء العقارات أو بيعها أو استئجارها في إسطنبول."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/ar/contact"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/contact"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/contact"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/contact"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/contact"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/contact"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "تواصل مع Rahat Home — بيليك دوزو، إسطنبول"
+        },
+        {
+          "property": "og:description",
+          "content": "تواصل مع Rahat Home بشأن شراء العقارات أو بيعها أو استئجارها في إسطنبول."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ar/contact"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ar_AE"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "تواصل مع Rahat Home — بيليك دوزو، إسطنبول"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ar-AE",
+      "direction": "rtl",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "تواصل معنا"
+      ]
+    },
+    {
+      "path": "/ar/privacy",
+      "status": 200,
+      "title": "سياسة الخصوصية — Rahat Home",
+      "description": [
+        "كيفية جمع Rahat Home للبيانات الشخصية لزوار الموقع والعملاء واستخدامها وحمايتها."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/ar/privacy"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/privacy"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/privacy"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/privacy"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/privacy"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/privacy"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "سياسة الخصوصية — Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "كيفية جمع Rahat Home للبيانات الشخصية لزوار الموقع والعملاء واستخدامها وحمايتها."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ar/privacy"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ar_AE"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "سياسة الخصوصية — Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ar-AE",
+      "direction": "rtl",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "سياسة الخصوصية"
+      ]
+    },
+    {
+      "path": "/ar/terms",
+      "status": 200,
+      "title": "شروط الاستخدام — Rahat Home",
+      "description": [
+        "شروط استخدام موقع Rahat Home ومعلومات العقارات المنشورة فيه."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/ar/terms"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/terms"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/terms"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/terms"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/terms"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/terms"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "شروط الاستخدام — Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "شروط استخدام موقع Rahat Home ومعلومات العقارات المنشورة فيه."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ar/terms"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ar_AE"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "شروط الاستخدام — Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ar-AE",
+      "direction": "rtl",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "شروط الاستخدام"
+      ]
+    },
+    {
+      "path": "/",
+      "status": 308,
+      "content_type": null,
+      "redirect_location": "/ru"
+    },
+    {
+      "path": "/about",
+      "status": 308,
+      "content_type": null,
+      "redirect_location": "/ru/about"
+    },
+    {
+      "path": "/ru/",
+      "status": 308,
+      "content_type": null,
+      "redirect_location": "/ru"
+    },
+    {
+      "path": "/de/about",
+      "status": 308,
+      "content_type": null,
+      "redirect_location": "/ru/de/about"
+    },
+    {
+      "path": "/ru/missing-audit-page",
+      "status": 404,
+      "title": "Rahat Home — Агентство недвижимости404: This page could not be found.",
+      "description": [
+        "Продажа, покупка и аренда недвижимости. Найдите свой идеальный дом с Rahat Home."
+      ],
+      "robots": [
+        "noindex"
+      ],
+      "canonical": [],
+      "alternates": [],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Rahat Home — Агентство недвижимости"
+        },
+        {
+          "property": "og:description",
+          "content": "Продажа, покупка и аренда недвижимости. Найдите свой идеальный дом с Rahat Home."
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Rahat Home — агентство недвижимости"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ru-RU",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "404"
+      ]
+    },
+    {
+      "path": "/ru/properties/1",
+      "status": 200,
+      "title": "Офис 1 — Central, Lisbon | Rahat Home",
+      "description": [
+        "Описание офиса на русском языке."
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "canonical": [
+        "https://audit-b.example/ru/properties/audit-office-1"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/properties/audit-office-1"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/properties/audit-office-1"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/properties/audit-office-1"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Офис 1 — Central, Lisbon | Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Описание офиса на русском языке."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ru/properties/audit-office-1"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ru_RU"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ru-RU",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateListing",
+          "name": "Офис 1",
+          "description": "Описание офиса на русском языке.",
+          "url": "https://audit-b.example/ru/properties/audit-office-1",
+          "datePosted": "2026-01-01T00:00:00.000Z",
+          "dateModified": "2026-09-08T00:00:00.000Z",
+          "inLanguage": "ru",
+          "about": {
+            "@type": "House",
+            "name": "Офис 1",
+            "floorSize": {
+              "@type": "QuantitativeValue",
+              "value": 90,
+              "unitCode": "MTK"
+            },
+            "numberOfRooms": 3,
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Audit Street 1",
+              "addressLocality": "Lisbon",
+              "addressRegion": "Central"
+            }
+          },
+          "offers": {
+            "@type": "Offer",
+            "url": "https://audit-b.example/ru/properties/audit-office-1",
+            "price": 250000,
+            "priceCurrency": "EUR",
+            "availability": "https://schema.org/InStock",
+            "businessFunction": "http://purl.org/goodrelations/v1#Sell"
+          }
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Офис 1"
+      ]
+    },
+    {
+      "path": "/ru/properties/audit-office-1",
+      "status": 200,
+      "title": "Офис 1 — Central, Lisbon | Rahat Home",
+      "description": [
+        "Описание офиса на русском языке."
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "canonical": [
+        "https://audit-b.example/ru/properties/audit-office-1"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/properties/audit-office-1"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/properties/audit-office-1"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/properties/audit-office-1"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Офис 1 — Central, Lisbon | Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Описание офиса на русском языке."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ru/properties/audit-office-1"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ru_RU"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ru-RU",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateListing",
+          "name": "Офис 1",
+          "description": "Описание офиса на русском языке.",
+          "url": "https://audit-b.example/ru/properties/audit-office-1",
+          "datePosted": "2026-01-01T00:00:00.000Z",
+          "dateModified": "2026-09-08T00:00:00.000Z",
+          "inLanguage": "ru",
+          "about": {
+            "@type": "House",
+            "name": "Офис 1",
+            "floorSize": {
+              "@type": "QuantitativeValue",
+              "value": 90,
+              "unitCode": "MTK"
+            },
+            "numberOfRooms": 3,
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Audit Street 1",
+              "addressLocality": "Lisbon",
+              "addressRegion": "Central"
+            }
+          },
+          "offers": {
+            "@type": "Offer",
+            "url": "https://audit-b.example/ru/properties/audit-office-1",
+            "price": 250000,
+            "priceCurrency": "EUR",
+            "availability": "https://schema.org/InStock",
+            "businessFunction": "http://purl.org/goodrelations/v1#Sell"
+          }
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Офис 1"
+      ]
+    },
+    {
+      "path": "/en/properties/audit-office-1",
+      "status": 200,
+      "title": "Office 1 — Central, Lisbon | Rahat Home",
+      "description": [
+        "Описание офиса на русском языке."
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "canonical": [
+        "https://audit-b.example/en/properties/audit-office-1"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/properties/audit-office-1"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/properties/audit-office-1"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/properties/audit-office-1"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Office 1 — Central, Lisbon | Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Описание офиса на русском языке."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/en/properties/audit-office-1"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "en_US"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "en-GB",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateListing",
+          "name": "Office 1",
+          "description": "Описание офиса на русском языке.",
+          "url": "https://audit-b.example/en/properties/audit-office-1",
+          "datePosted": "2026-01-01T00:00:00.000Z",
+          "dateModified": "2026-09-08T00:00:00.000Z",
+          "inLanguage": "en",
+          "about": {
+            "@type": "House",
+            "name": "Office 1",
+            "floorSize": {
+              "@type": "QuantitativeValue",
+              "value": 90,
+              "unitCode": "MTK"
+            },
+            "numberOfRooms": 3,
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Audit Street 1",
+              "addressLocality": "Lisbon",
+              "addressRegion": "Central"
+            }
+          },
+          "offers": {
+            "@type": "Offer",
+            "url": "https://audit-b.example/en/properties/audit-office-1",
+            "price": 250000,
+            "priceCurrency": "EUR",
+            "availability": "https://schema.org/InStock",
+            "businessFunction": "http://purl.org/goodrelations/v1#Sell"
+          }
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Office 1"
+      ]
+    },
+    {
+      "path": "/tr/properties/audit-office-1",
+      "status": 200,
+      "title": "Офис 1 — Central, Lisbon | Rahat Home",
+      "description": [
+        "Описание офиса на русском языке."
+      ],
+      "robots": [
+        "noindex, follow"
+      ],
+      "canonical": [
+        "https://audit-b.example/ru/properties/audit-office-1"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/properties/audit-office-1"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/properties/audit-office-1"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/properties/audit-office-1"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Офис 1 — Central, Lisbon | Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Описание офиса на русском языке."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ru/properties/audit-office-1"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ru_RU"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "tr-TR",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateListing",
+          "name": "Офис 1",
+          "description": "Описание офиса на русском языке.",
+          "url": "https://audit-b.example/tr/properties/audit-office-1",
+          "datePosted": "2026-01-01T00:00:00.000Z",
+          "dateModified": "2026-09-08T00:00:00.000Z",
+          "inLanguage": "tr",
+          "about": {
+            "@type": "House",
+            "name": "Офис 1",
+            "floorSize": {
+              "@type": "QuantitativeValue",
+              "value": 90,
+              "unitCode": "MTK"
+            },
+            "numberOfRooms": 3,
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Audit Street 1",
+              "addressLocality": "Lisbon",
+              "addressRegion": "Central"
+            }
+          },
+          "offers": {
+            "@type": "Offer",
+            "url": "https://audit-b.example/tr/properties/audit-office-1",
+            "price": 250000,
+            "priceCurrency": "EUR",
+            "availability": "https://schema.org/InStock",
+            "businessFunction": "http://purl.org/goodrelations/v1#Sell"
+          }
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Офис 1"
+      ]
+    },
+    {
+      "path": "/ar/properties/audit-office-1",
+      "status": 200,
+      "title": "Office 1 — Central, Lisbon | Rahat Home",
+      "description": [
+        "Описание офиса на русском языке."
+      ],
+      "robots": [
+        "noindex, follow"
+      ],
+      "canonical": [
+        "https://audit-b.example/en/properties/audit-office-1"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/properties/audit-office-1"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/properties/audit-office-1"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/properties/audit-office-1"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Office 1 — Central, Lisbon | Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Описание офиса на русском языке."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/en/properties/audit-office-1"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "en_US"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ar-AE",
+      "direction": "rtl",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateListing",
+          "name": "Office 1",
+          "description": "Описание офиса на русском языке.",
+          "url": "https://audit-b.example/ar/properties/audit-office-1",
+          "datePosted": "2026-01-01T00:00:00.000Z",
+          "dateModified": "2026-09-08T00:00:00.000Z",
+          "inLanguage": "ar",
+          "about": {
+            "@type": "House",
+            "name": "Office 1",
+            "floorSize": {
+              "@type": "QuantitativeValue",
+              "value": 90,
+              "unitCode": "MTK"
+            },
+            "numberOfRooms": 3,
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Audit Street 1",
+              "addressLocality": "Lisbon",
+              "addressRegion": "Central"
+            }
+          },
+          "offers": {
+            "@type": "Offer",
+            "url": "https://audit-b.example/ar/properties/audit-office-1",
+            "price": 250000,
+            "priceCurrency": "EUR",
+            "availability": "https://schema.org/InStock",
+            "businessFunction": "http://purl.org/goodrelations/v1#Sell"
+          }
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Office 1"
+      ]
+    },
+    {
+      "path": "/ru/properties/nonexistent-audit",
+      "status": 200,
+      "title": "Rahat Home",
+      "description": [
+        "Подбор, покупка и продажа недвижимости с полным сопровождением."
+      ],
+      "robots": [
+        "noindex",
+        "noindex, nofollow"
+      ],
+      "canonical": [
+        "https://audit-b.example/ru"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Rahat Home — агентство недвижимости"
+        },
+        {
+          "property": "og:description",
+          "content": "Подбор, покупка и продажа недвижимости с полным сопровождением."
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ru_RU"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Rahat Home — агентство недвижимости"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ru-RU",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": []
+    },
+    {
+      "path": "/ru/properties?page=2",
+      "status": 200,
+      "title": "Недвижимость в Стамбуле — каталог Rahat Home",
+      "description": [
+        "Квартиры, виллы и коммерческая недвижимость в Стамбуле. Подбор, проверка и сопровождение сделки."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/ru/properties?page=2"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/properties?page=2"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/properties?page=2"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/properties?page=2"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/properties?page=2"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/properties?page=2"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Недвижимость в Стамбуле — каталог Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Квартиры, виллы и коммерческая недвижимость в Стамбуле. Подбор, проверка и сопровождение сделки."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ru/properties"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ru_RU"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Недвижимость в Стамбуле — каталог Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ru-RU",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Каталог недвижимости"
+      ]
+    },
+    {
+      "path": "/ru/properties?page=999",
+      "status": 200,
+      "title": "Недвижимость в Стамбуле — каталог Rahat Home",
+      "description": [
+        "Квартиры, виллы и коммерческая недвижимость в Стамбуле. Подбор, проверка и сопровождение сделки."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/ru/properties?page=999"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/properties?page=999"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/properties?page=999"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/properties?page=999"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/properties?page=999"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/properties?page=999"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Недвижимость в Стамбуле — каталог Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Квартиры, виллы и коммерческая недвижимость в Стамбуле. Подбор, проверка и сопровождение сделки."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ru/properties"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ru_RU"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Недвижимость в Стамбуле — каталог Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ru-RU",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Каталог недвижимости"
+      ]
+    },
+    {
+      "path": "/ru/properties?page=0",
+      "status": 200,
+      "title": "Недвижимость в Стамбуле — каталог Rahat Home",
+      "description": [
+        "Квартиры, виллы и коммерческая недвижимость в Стамбуле. Подбор, проверка и сопровождение сделки."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/ru/properties"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/properties"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Недвижимость в Стамбуле — каталог Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Квартиры, виллы и коммерческая недвижимость в Стамбуле. Подбор, проверка и сопровождение сделки."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ru/properties"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ru_RU"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Недвижимость в Стамбуле — каталог Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ru-RU",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": []
+    },
+    {
+      "path": "/ru/properties?page=1.5",
+      "status": 200,
+      "title": "Недвижимость в Стамбуле — каталог Rahat Home",
+      "description": [
+        "Квартиры, виллы и коммерческая недвижимость в Стамбуле. Подбор, проверка и сопровождение сделки."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/ru/properties?page=1.5"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/properties?page=1.5"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/properties?page=1.5"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/properties?page=1.5"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/properties?page=1.5"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/properties?page=1.5"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Недвижимость в Стамбуле — каталог Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Квартиры, виллы и коммерческая недвижимость в Стамбуле. Подбор, проверка и сопровождение сделки."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ru/properties"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ru_RU"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Недвижимость в Стамбуле — каталог Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ru-RU",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": []
+    },
+    {
+      "path": "/ru/properties?utm_source=audit",
+      "status": 200,
+      "title": "Недвижимость в Стамбуле — каталог Rahat Home",
+      "description": [
+        "Квартиры, виллы и коммерческая недвижимость в Стамбуле. Подбор, проверка и сопровождение сделки."
+      ],
+      "robots": [
+        "noindex, follow"
+      ],
+      "canonical": [
+        "https://audit-b.example/ru/properties"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/properties"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Недвижимость в Стамбуле — каталог Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Квартиры, виллы и коммерческая недвижимость в Стамбуле. Подбор, проверка и сопровождение сделки."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ru/properties"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ru_RU"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Недвижимость в Стамбуле — каталог Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ru-RU",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Каталог недвижимости"
+      ]
+    },
+    {
+      "path": "/ru/properties?category_id=1",
+      "status": 200,
+      "title": "Недвижимость в Стамбуле — каталог Rahat Home",
+      "description": [
+        "Квартиры, виллы и коммерческая недвижимость в Стамбуле. Подбор, проверка и сопровождение сделки."
+      ],
+      "robots": [
+        "noindex, follow"
+      ],
+      "canonical": [
+        "https://audit-b.example/ru/properties"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/properties"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/properties"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Недвижимость в Стамбуле — каталог Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Квартиры, виллы и коммерческая недвижимость в Стамбуле. Подбор, проверка и сопровождение сделки."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ru/properties"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ru_RU"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Недвижимость в Стамбуле — каталог Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ru-RU",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Каталог недвижимости"
+      ]
+    },
+    {
+      "path": "/ru/news?page=999",
+      "status": 200,
+      "title": "Новости и статьи о недвижимости — Rahat Home — Страница 999",
+      "description": [
+        "Аналитика рынка, советы по покупке и продаже, юридические разборы и новости Rahat Home."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/ru/news?page=999"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/news?page=999"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/news?page=999"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/news?page=999"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/news?page=999"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/news?page=999"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Новости и статьи о недвижимости — Rahat Home — Страница 999"
+        },
+        {
+          "property": "og:description",
+          "content": "Аналитика рынка, советы по покупке и продаже, юридические разборы и новости Rahat Home."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ru/news?page=999"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ru_RU"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Новости и статьи о недвижимости — Rahat Home — Страница 999"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ru-RU",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Полезное о недвижимости"
+      ]
+    },
+    {
+      "path": "/ru/reviews?page=999",
+      "status": 200,
+      "title": "Отзывы клиентов об Rahat Home — 999",
+      "description": [
+        "Подтверждённые отзывы клиентов о покупке, продаже и аренде недвижимости с Rahat Home."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/ru/reviews?page=999"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/reviews?page=999"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/reviews?page=999"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/reviews?page=999"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/reviews?page=999"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/reviews?page=999"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Отзывы клиентов об Rahat Home — 999"
+        },
+        {
+          "property": "og:description",
+          "content": "Подтверждённые отзывы клиентов о покупке, продаже и аренде недвижимости с Rahat Home."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ru/reviews?page=999"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ru_RU"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Отзывы клиентов об Rahat Home — 999"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ru-RU",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Отзывы клиентов"
+      ]
+    },
+    {
+      "path": "/ru/reviews?token=audit-invalid-token",
+      "status": 200,
+      "title": "Отзывы клиентов об Rahat Home",
+      "description": [
+        "Подтверждённые отзывы клиентов о покупке, продаже и аренде недвижимости с Rahat Home."
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/ru/reviews"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/reviews"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en/reviews"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr/reviews"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar/reviews"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/reviews"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Отзывы клиентов об Rahat Home"
+        },
+        {
+          "property": "og:description",
+          "content": "Подтверждённые отзывы клиентов о покупке, продаже и аренде недвижимости с Rahat Home."
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ru/reviews"
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ru_RU"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Отзывы клиентов об Rahat Home"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ru-RU",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Отзывы клиентов"
+      ]
+    },
+    {
+      "path": "/ru/news/audit-article",
+      "status": 200,
+      "title": "Тестовая статья",
+      "description": [
+        "Обзор рынка"
+      ],
+      "robots": [],
+      "canonical": [
+        "https://audit-b.example/ru/news/audit-article"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/news/audit-article"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/news/audit-article"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Тестовая статья"
+        },
+        {
+          "property": "og:description",
+          "content": "Обзор рынка"
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ru/news/audit-article"
+        },
+        {
+          "property": "og:locale",
+          "content": "ru_RU"
+        },
+        {
+          "property": "og:type",
+          "content": "article"
+        }
+      ],
+      "lang": "ru-RU",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "Article",
+          "headline": "Тестовая статья",
+          "description": "Обзор рынка",
+          "image": [],
+          "datePublished": "2026-09-01T00:00:00Z",
+          "mainEntityOfPage": "https://audit-b.example/ru/news/audit-article",
+          "author": {
+            "@type": "Organization",
+            "name": "Audit Agency"
+          },
+          "inLanguage": "ru"
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Тестовая статья"
+      ]
+    },
+    {
+      "path": "/ar/news/audit-article",
+      "status": 200,
+      "title": "Тестовая статья",
+      "description": [
+        "Обзор рынка"
+      ],
+      "robots": [
+        "noindex, follow"
+      ],
+      "canonical": [
+        "https://audit-b.example/ru/news/audit-article"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru/news/audit-article"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru/news/audit-article"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Тестовая статья"
+        },
+        {
+          "property": "og:description",
+          "content": "Обзор рынка"
+        },
+        {
+          "property": "og:url",
+          "content": "https://audit-b.example/ru/news/audit-article"
+        },
+        {
+          "property": "og:locale",
+          "content": "ru_RU"
+        },
+        {
+          "property": "og:type",
+          "content": "article"
+        }
+      ],
+      "lang": "ar-AE",
+      "direction": "rtl",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "Article",
+          "headline": "Тестовая статья",
+          "description": "Обзор рынка",
+          "image": [],
+          "datePublished": "2026-09-01T00:00:00Z",
+          "mainEntityOfPage": "https://audit-b.example/ru/news/audit-article",
+          "author": {
+            "@type": "Organization",
+            "name": "Audit Agency"
+          },
+          "inLanguage": "ru"
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Тестовая статья"
+      ]
+    },
+    {
+      "path": "/ru/news/audit-nonexistent",
+      "status": 200,
+      "title": "Новости и статьи о недвижимости — Rahat Home",
+      "description": [
+        "Подбор, покупка и продажа недвижимости с полным сопровождением."
+      ],
+      "robots": [
+        "noindex"
+      ],
+      "canonical": [
+        "https://audit-b.example/ru"
+      ],
+      "alternates": [
+        {
+          "rel": "alternate",
+          "hreflang": "ru",
+          "href": "https://audit-b.example/ru"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://audit-b.example/en"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "tr",
+          "href": "https://audit-b.example/tr"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "ar",
+          "href": "https://audit-b.example/ar"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://audit-b.example/ru"
+        }
+      ],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Rahat Home — агентство недвижимости"
+        },
+        {
+          "property": "og:description",
+          "content": "Подбор, покупка и продажа недвижимости с полным сопровождением."
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:locale",
+          "content": "ru_RU"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Rahat Home — агентство недвижимости"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ru-RU",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": []
+    },
+    {
+      "path": "/admin",
+      "status": 307,
+      "content_type": null,
+      "redirect_location": "/admin/login?returnTo=%2Fadmin"
+    },
+    {
+      "path": "/admin/login",
+      "status": 200,
+      "title": "Вход в админку — Rahat Home",
+      "description": [
+        "Продажа, покупка и аренда недвижимости. Найдите свой идеальный дом с Rahat Home."
+      ],
+      "robots": [
+        "noindex, nofollow"
+      ],
+      "canonical": [],
+      "alternates": [],
+      "og": [
+        {
+          "property": "og:title",
+          "content": "Rahat Home — Агентство недвижимости"
+        },
+        {
+          "property": "og:description",
+          "content": "Продажа, покупка и аренда недвижимости. Найдите свой идеальный дом с Rahat Home."
+        },
+        {
+          "property": "og:site_name",
+          "content": "Audit Agency B"
+        },
+        {
+          "property": "og:image",
+          "content": "https://audit-b.example/og.png"
+        },
+        {
+          "property": "og:image:width",
+          "content": "1200"
+        },
+        {
+          "property": "og:image:height",
+          "content": "630"
+        },
+        {
+          "property": "og:image:alt",
+          "content": "Rahat Home — агентство недвижимости"
+        },
+        {
+          "property": "og:type",
+          "content": "website"
+        }
+      ],
+      "lang": "ru-RU",
+      "direction": "ltr",
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "@id": "https://audit-b.example/#organization",
+          "name": "Audit Agency B",
+          "url": "https://audit-b.example",
+          "telephone": "+351 200 000 000",
+          "email": "contact@audit-b.example",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Istanbul",
+            "addressRegion": "Beylikdüzü",
+            "addressCountry": "TR"
+          },
+          "sameAs": []
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "h1": [
+        "Все объекты, обращения и сделки — в одном месте."
+      ]
+    },
+    {
+      "path": "/robots.txt",
+      "status": 200,
+      "body": "User-Agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/\n\nHost: https://audit-b.example\nSitemap: https://audit-b.example/sitemap.xml\n",
+      "content_type": "text/plain"
+    },
+    {
+      "path": "/sitemap.xml",
+      "status": 200,
+      "url_count": 239,
+      "unique_url_count": 237,
+      "duplicates": {
+        "https://audit-b.example/ru/properties/audit-office-1": 2,
+        "https://audit-b.example/en/properties/audit-office-1": 2
+      },
+      "missing_properties": [
+        101
+      ],
+      "content_type": "application/xml"
+    },
+    {
+      "path": "/og.png",
+      "status": 200,
+      "content_type": "image/png"
+    },
+    {
+      "path": "/icon",
+      "status": 308,
+      "content_type": null,
+      "redirect_location": "/ru/icon"
+    }
+  ],
+  "extra_http_results": [
+    {
+      "path": "/icon?7c3226d279f50b7c",
+      "status": 404,
+      "final_url": "http://127.0.0.1:18081/ru/icon?7c3226d279f50b7c=",
+      "content_type": "text/html; charset=utf-8",
+      "robots": [
+        "noindex"
+      ],
+      "canonicals": []
+    },
+    {
+      "path": "/ru/icon",
+      "status": 404,
+      "final_url": "http://127.0.0.1:18081/ru/icon",
+      "content_type": "text/html; charset=utf-8",
+      "robots": [
+        "noindex"
+      ],
+      "canonicals": []
+    },
+    {
+      "path": "/ru/properties?page=Infinity",
+      "status": 200,
+      "final_url": "http://127.0.0.1:18081/ru/properties?page=Infinity",
+      "content_type": "text/html; charset=utf-8",
+      "robots": [],
+      "canonicals": [
+        "https://audit-b.example/ru/properties?page=Infinity"
+      ]
+    },
+    {
+      "path": "/ru/reviews?page=1.5",
+      "status": 200,
+      "final_url": "http://127.0.0.1:18081/ru/reviews?page=1.5",
+      "content_type": "text/html; charset=utf-8",
+      "robots": [],
+      "canonicals": [
+        "https://audit-b.example/ru/reviews?page=1.5"
+      ]
+    },
+    {
+      "path": "/ru/news/audit-nonexistent",
+      "status": 200,
+      "final_url": "http://127.0.0.1:18081/ru/news/audit-nonexistent",
+      "content_type": "text/html; charset=utf-8",
+      "robots": [
+        "noindex"
+      ],
+      "canonicals": [
+        "https://audit-b.example/ru"
+      ]
+    }
+  ],
+  "not_measured": [
+    "Real production content and database",
+    "Search Console/index coverage/rankings",
+    "Keyword volumes/competitors/backlinks",
+    "Production DNS/TLS/redirects",
+    "Real Core Web Vitals or Lighthouse score",
+    "Interactive mobile visual/hydration audit"
+  ]
+}
