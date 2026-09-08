@@ -1,10 +1,11 @@
+import { landingLocales } from '@/lib/landing-pages';
 import { getLocaleConfig, defaultAvailableLocale } from '@/lib/runtime-locales';
 import { getSiteOrigin } from '@/lib/site-config';
 import type { MetadataRoute } from 'next';
 
 import { type Locale } from '@/i18n/config';
 import { propertyAvailableLocales } from '@/i18n/domain';
-import { fetchNews, fetchProperties } from '@/lib/api';
+import { fetchNews, fetchProperties, fetchLandingPages } from '@/lib/api';
 
 
 export const dynamic = 'force-dynamic';
@@ -18,7 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...availableLocales.map((locale) => [locale, absolute(`/${locale}${path}`)]),
     ['x-default', absolute(`/${defaultAvailableLocale(availableLocales)}${path}`)],
   ]);
-  const staticPaths = ['', '/properties', '/services', '/news', '/reviews', '/about', '/contact', '/privacy', '/terms'];
+  const staticPaths = ['', '/properties', '/collections', '/services', '/news', '/reviews', '/about', '/contact', '/privacy', '/terms'];
   const entries: MetadataRoute.Sitemap = locales.flatMap((locale) => staticPaths.map((path) => ({
     url: absolute(`/${locale}${path}`),
     changeFrequency: path === '/news' || path === '/properties' ? 'daily' as const : 'weekly' as const,
@@ -72,5 +73,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Static and property entries remain available while the news API is unavailable.
   }
 
+  const landingPages = await fetchLandingPages();
+  for (const page of landingPages.filter(page=>page.is_published)) {
+    const available=landingLocales(page,locales);
+    const path=`/collections/${page.slug}`;
+    entries.push(...available.map(locale=>({url:absolute(`/${locale}${path}`),lastModified:page.updated_at,alternates:{languages:languageAlternates(path,available)}})));
+  }
   return entries;
 }

@@ -5,7 +5,7 @@ from urllib.parse import urlparse
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 Locale = Literal['ru', 'en', 'tr', 'ar']
-Page = Literal['home', 'properties', 'services', 'about', 'contact', 'news', 'reviews', 'privacy', 'terms']
+Page = Literal['home', 'collections', 'properties', 'services', 'about', 'contact', 'news', 'reviews', 'privacy', 'terms']
 
 
 class PageSeo(BaseModel):

@@ -14,7 +14,8 @@ export function isMediaUrl(value: string): boolean {
 
 /** The same cleaned payload drives saving and the unsaved preview. */
 export function preparePropertyForm(data: PropertyFormData): PropertyFormData {
-  const russian = data.translations?.find(item => item.locale === 'ru');
+  const primaryLocale = data.content_locale || 'ru';
+  const primary = data.translations?.find(item => item.locale === primaryLocale);
   const development = data.listing_kind === 'development' ? {
     ...emptyDevelopment, ...data.development,
     interior_images: clean(data.development?.interior_images || []),
@@ -27,9 +28,9 @@ export function preparePropertyForm(data: PropertyFormData): PropertyFormData {
       const plans = clean(unit.plans);
       return { ...unit, code: unit.code.trim(), position, plans, plan_details: unit.plan_details?.filter(detail => plans.includes(detail.image)) || [] };
     }) : [],
-    title: russian?.title.trim() || data.title.trim(),
-    description: russian?.description?.trim() || data.description?.trim() || '',
-    translations: data.translations?.filter(item => item.locale === 'ru' || Object.entries(item).some(([key, value]) => key !== 'locale' && typeof value === 'string' && value.trim())).map(item => ({
+    title: primary?.title.trim() || data.title.trim(),
+    description: primary?.description?.trim() || data.description?.trim() || '',
+    translations: data.translations?.filter(item => item.locale === primaryLocale || Object.entries(item).some(([key, value]) => key !== 'locale' && typeof value === 'string' && value.trim())).map(item => ({
       ...item, title: item.title.trim() || data.title.trim(), description: item.description?.trim() || '',
       city: item.city?.trim() || undefined, district: item.district?.trim() || undefined, address: item.address?.trim() || undefined,
       meta_title: item.meta_title?.trim() || undefined, meta_description: item.meta_description?.trim() || undefined, status_badge: item.status_badge?.trim() || undefined,

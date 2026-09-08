@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { collectionsLabel } from '@/lib/landing-pages';
 import { Brand } from '@/components/layout/Brand';
 import { brandName } from '@/lib/site-profile';
 import { usePathname } from 'next/navigation';
@@ -75,6 +76,7 @@ export function Footer() {
           <div>
             <h3 className="text-lg font-semibold text-white mb-6">{copy.navigation}</h3>
             <ul className="space-y-3 text-sm">
+              <li><Link href={href('/collections')} className="hover:text-white transition-colors">{collectionsLabel[locale]}</Link></li>
               <li>
                 <Link href={href('/properties')} className="hover:text-white transition-colors">{copy.catalog}</Link>
               </li>

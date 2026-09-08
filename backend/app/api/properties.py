@@ -62,6 +62,7 @@ async def list_properties(
     search: Optional[str] = Query(None),
     category_id: Optional[int] = Query(None),
     city: Optional[str] = Query(None),
+    transaction_type: Literal["sale", "rent"] | None = Query(None),
     min_price: Optional[float] = Query(None),
     max_price: Optional[float] = Query(None),
     rooms: Optional[int] = Query(None),
@@ -89,6 +90,10 @@ async def list_properties(
     if not include_inactive:
         query = query.where(Property.is_active == True)
         count_query = count_query.where(Property.is_active == True)
+
+    if transaction_type:
+        query = query.where(Property.transaction_type == transaction_type)
+        count_query = count_query.where(Property.transaction_type == transaction_type)
 
     if search:
         search_filter = or_(

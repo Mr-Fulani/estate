@@ -29,6 +29,7 @@ const adminNavItems = [
   { href: '/admin', label: 'Дашборд', icon: LayoutDashboard, roles: ['founder', 'admin', 'manager', 'editor'] },
   { href: '/admin/properties', label: 'Объекты', icon: Building2, roles: ['founder', 'admin', 'manager', 'editor'] },
   { href: '/admin/news', label: 'Новости', icon: Newspaper, roles: ['founder', 'admin', 'editor'] },
+  { href: '/admin/landing-pages', label: 'SEO-страницы', icon: Newspaper, roles: ['founder', 'admin', 'editor'] },
   { href: '/admin/leads', label: 'Лиды и сделки', icon: Users, roles: ['founder', 'admin', 'manager'] },
   { href: '/admin/reviews', label: 'Отзывы', icon: Star, roles: ['founder', 'admin', 'manager', 'editor'] },
   { href: '/admin/categories', label: 'Категории', icon: Tags, roles: ['founder', 'admin', 'manager'] },

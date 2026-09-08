@@ -761,3 +761,23 @@ export async function updateCategorySchema(id: number, schema_type: NonNullable<
   await ensureAdminResponse(res, 'Не удалось сохранить тип категории');
   return await res.json();
 }
+
+
+export async function fetchLandingPages(admin = false): Promise<import('@/lib/landing-pages').LandingPage[]> {
+  const res = await fetch(`${getApiBaseUrl()}/landing-pages${admin ? '/admin/all' : ''}`, admin ? {...adminReadOptions(),cache:'no-store'} : {next:{revalidate:300}});
+  if (!res.ok) throw new ApiError('Landing pages are unavailable',res.status);
+  return await res.json();
+}
+
+export async function fetchLandingPage(slug: string): Promise<import('@/lib/landing-pages').LandingPage | null> {
+  const res = await fetch(`${getApiBaseUrl()}/landing-pages/${encodeURIComponent(slug)}`,{next:{revalidate:300}});
+  if (res.status===404) return null;
+  if (!res.ok) throw new ApiError('Landing page is unavailable',res.status);
+  return await res.json();
+}
+
+export async function saveLandingPage(page: import('@/lib/landing-pages').LandingPage): Promise<import('@/lib/landing-pages').LandingPage> {
+  const res = await fetch(`${getApiBaseUrl()}/landing-pages${page.id ? `/${page.id}` : ''}`,{method:page.id?'PUT':'POST',headers:adminHeaders(undefined,true),credentials:'include',body:JSON.stringify(page)});
+  await ensureAdminResponse(res,'Не удалось сохранить страницу');
+  return await res.json();
+}

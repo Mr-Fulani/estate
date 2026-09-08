@@ -1,3 +1,4 @@
+import { collectionsLabel } from '@/lib/landing-pages';
 import { getLocaleConfig } from '@/lib/runtime-locales';
 import type { Metadata } from 'next';
 import { openGraphLocales, type Locale } from '@/i18n/config';
@@ -34,11 +35,13 @@ export async function staticPageMetadata(locale: Locale, page: SeoPage): Promise
   const settings = await fetchSiteSettings();
   const copy = getSiteCopy(locale, settings);
   const labels = {
+    collections: collectionsLabel[locale],
     home: copy.home.title, properties: copy.catalog.title, services: copy.services.title,
     about: copy.about.title, contact: copy.contact.title, news: copy.news.title, reviews: copy.reviews.title,
     privacy: copy.footer.privacy, terms: copy.footer.terms,
   };
   const descriptions = {
+    collections: copy.catalog.description,
     home: copy.home.description, properties: copy.catalog.description, services: copy.services.description,
     about: copy.about.intro, contact: copy.contact.description, news: copy.news.description,
     reviews: copy.reviews.description, privacy: '', terms: '',

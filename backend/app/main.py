@@ -1,3 +1,4 @@
+from app.api.landing_pages import router as landing_pages_router
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -48,6 +49,7 @@ async def security_headers(request, call_next):
     return response
 
 # Routers
+app.include_router(landing_pages_router)
 app.include_router(properties.router)
 app.include_router(categories.router)
 app.include_router(contacts.router)

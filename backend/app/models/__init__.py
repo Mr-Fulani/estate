@@ -32,3 +32,5 @@ __all__ = [
 ]
 
 from app.models.slug_alias import PropertySlugAlias, NewsSlugAlias
+
+from app.models.landing_page import LandingPage

@@ -11,7 +11,7 @@ const identityFields = {
   icon_url: 'Иконка сайта', og_image_url: 'Изображение для социальных сетей', hero_image_url: 'Фото на главной', about_image_url: 'Фото компании',
   address_locality: 'Город', address_region: 'Регион', address_country: 'Код страны (например, TR)', postal_code: 'Почтовый индекс',
 } as const;
-const pages: Record<SeoPage, string> = {home:'Главная',properties:'Каталог',services:'Услуги',about:'О компании',contact:'Контакты',news:'Новости',reviews:'Отзывы',privacy:'Конфиденциальность',terms:'Условия использования'};
+const pages: Record<SeoPage, string> = {home:'Главная',collections:'Подборки',properties:'Каталог',services:'Услуги',about:'О компании',contact:'Контакты',news:'Новости',reviews:'Отзывы',privacy:'Конфиденциальность',terms:'Условия использования'};
 const groups = {home:'Главная',catalog:'Каталог',property:'Карточка объекта',form:'Формы',contact:'Контакты',about:'О компании',services:'Услуги',news:'Новости',reviews:'Отзывы',footer:'Подвал',legal:'Юридические страницы'};
 const inputClass = 'mt-2 w-full rounded-xl border border-slate-200 bg-white p-3 text-sm font-normal';
 

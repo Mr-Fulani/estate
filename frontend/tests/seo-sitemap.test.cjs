@@ -13,6 +13,7 @@ test('sitemap keeps the same ordering beyond 100 properties and includes each UR
         const ordered=params.sort_by==='updated_at'? all:[...all].reverse();
         return {items:ordered.slice((params.page-1)*100,params.page*100),total:101,per_page:100};
       },
+      fetchLandingPages:async()=>[],
       fetchNews:async()=>({items:[],total:0,per_page:50}),
     },
   });

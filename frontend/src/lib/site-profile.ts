@@ -2,7 +2,7 @@ import type { SiteSettings } from '@/types';
 import type { Locale } from '@/i18n/config';
 import { siteCopy } from '@/i18n/siteCopy';
 
-export type SeoPage = 'home' | 'properties' | 'services' | 'about' | 'contact' | 'news' | 'reviews' | 'privacy' | 'terms';
+export type SeoPage = 'home' | 'collections' | 'properties' | 'services' | 'about' | 'contact' | 'news' | 'reviews' | 'privacy' | 'terms';
 export interface SiteProfile {
   price_presets?: number[];
   brand_name?: string;
