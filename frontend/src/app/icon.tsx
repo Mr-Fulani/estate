@@ -1,5 +1,6 @@
 import { fetchSiteSettings } from '@/lib/api';
 import { brandInitials } from '@/lib/site-profile';
+import { getSiteOrigin } from '@/lib/site-config';
 import { ImageResponse } from 'next/og';
 
 export const dynamic = 'force-dynamic';
@@ -8,6 +9,7 @@ export const contentType = 'image/png';
 
 export default async function Icon() {
   const settings = await fetchSiteSettings();
+  if (settings.profile?.icon_url) return Response.redirect(new URL(settings.profile.icon_url, getSiteOrigin()), 307);
   return new ImageResponse(
     (
       <div

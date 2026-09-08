@@ -40,6 +40,7 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith('/admin') ||
     pathname.startsWith('/api') ||
     pathname.startsWith('/_next') ||
+    pathname === '/icon' || pathname === '/apple-icon' ||
     PUBLIC_FILE.test(pathname)
   ) {
     return NextResponse.next();
