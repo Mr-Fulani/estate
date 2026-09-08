@@ -185,7 +185,7 @@ npm run build
 npm audit --omit=dev
 ```
 
-Перед публичным развёртыванием настройте резервное копирование базы, HTTPS, длинные отдельные `SECRET_KEY` и `CRM_WEBHOOK_SECRET`, `AUTH_COOKIE_SECURE=true`, точные `ALLOWED_HOSTS`, `CORS_ORIGINS`, `NEXT_PUBLIC_SITE_URL` и доверенные сети reverse proxy. В production документация API отключается приложением автоматически.
+Перед публичным развёртыванием настройте резервное копирование базы, HTTPS, длинные отдельные `SECRET_KEY` и `CRM_WEBHOOK_SECRET`, `AUTH_COOKIE_SECURE=true`, точные `ALLOWED_HOSTS`, `CORS_ORIGINS`, `SITE_URL` и доверенные сети reverse proxy. В production документация API отключается приложением автоматически.
 
 ### Профиль компании и тексты
 
