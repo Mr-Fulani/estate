@@ -30,3 +30,5 @@ __all__ = [
     "ExchangeRateSnapshot",
     "PublicRateLimit",
 ]
+
+from app.models.slug_alias import PropertySlugAlias, NewsSlugAlias

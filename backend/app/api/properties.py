@@ -1,3 +1,5 @@
+from app.models.slug_alias import PropertySlugAlias
+from app.services.slug_history import ensure_slug_available, remember_slug
 from app.site_runtime import site_runtime
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -190,7 +192,7 @@ async def get_property(
     identifier_filter = (
         Property.id == int(property_identifier)
         if property_identifier.isdigit()
-        else Property.slug == property_identifier
+        else or_(Property.slug == property_identifier, Property.id.in_(select(PropertySlugAlias.resource_id).where(PropertySlugAlias.slug == property_identifier)))
     )
     query = (
         select(Property)
@@ -227,6 +229,7 @@ async def create_property(
         raise HTTPException(status_code=422, detail="Each property locale can be provided only once")
     if not data.get("slug"):
         data["slug"] = generate_slug(data["title"], fallback="property")
+    await ensure_slug_available(db, Property, PropertySlugAlias, data["slug"])
     status_labels = {"available": "Актуально", "reserved": "В брони", "sold": "Продано", "rented": "Сдано", "archived": "В архиве"}
     if data.get("status_badge") is None:
         data["status_badge"] = status_labels.get(data.get("market_status"), "Актуально")
@@ -261,7 +264,7 @@ async def update_property(
     query = (
         select(Property)
         .options(selectinload(Property.category), selectinload(Property.translations))
-        .where(Property.id == property_id)
+        .where(Property.id == property_id).with_for_update()
     )
     result = await db.execute(query)
     property_obj = result.scalars().first()
@@ -270,6 +273,9 @@ async def update_property(
         raise HTTPException(status_code=404, detail="Property not found")
         
     update_data = prop_data.model_dump(exclude_unset=True)
+    if 'slug' in update_data and update_data['slug'] != property_obj.slug:
+        await ensure_slug_available(db, Property, PropertySlugAlias, update_data['slug'], property_obj.id)
+        await remember_slug(db, PropertySlugAlias, property_obj.slug, property_obj.id)
     translations = update_data.pop("translations", None)
     unit_types = update_data.pop("unit_types", None)
     if "listing_kind" in update_data and update_data["listing_kind"] is None:

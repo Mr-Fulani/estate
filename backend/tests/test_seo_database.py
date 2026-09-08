@@ -25,6 +25,20 @@ class SeoDatabaseTests(unittest.IsolatedAsyncioTestCase):
                     await db.flush()
                     await db.refresh(prop)
                     self.assertEqual(prop.content_locale, os.getenv('SITE_DEFAULT_LOCALE', 'ru'))
+                    from app.api.properties import get_property
+                    from app.models.slug_alias import PropertySlugAlias
+                    from app.services.slug_history import ensure_slug_available, remember_slug
+                    from fastapi import HTTPException
+                    for target in ['seo-test-next', 'seo-test-final']:
+                        await ensure_slug_available(db, Property, PropertySlugAlias, target, prop.id)
+                        await remember_slug(db, PropertySlugAlias, prop.slug, prop.id)
+                        prop.slug = target
+                        await db.flush()
+                    resolved = await get_property('seo-test-property', db, None)
+                    self.assertEqual(resolved.slug, 'seo-test-final')
+                    with self.assertRaises(HTTPException) as conflict:
+                        await ensure_slug_available(db, Property, PropertySlugAlias, 'seo-test-property')
+                    self.assertEqual(conflict.exception.status_code, 409)
                     result = SiteSettingsResponse.model_validate(setting).model_dump(by_alias=True)
                     self.assertEqual(result['profile']['copy']['en']['about.intro'], 'Local team')
                     self.assertEqual(result['runtime']['default_locale'], os.getenv('SITE_DEFAULT_LOCALE', 'ru'))

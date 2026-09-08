@@ -216,6 +216,7 @@ export function PropertyForm({
       if (uploadsPending) throw new Error('Дождитесь завершения загрузки изображений');
       if (formData.listing_kind === 'development' && !formData.unit_types?.length) throw new Error('Добавьте хотя бы один вариант квартиры');
       const payload = preparePropertyForm(formData);
+      if (!isEditing && !payload.slug?.trim()) delete payload.slug;
       if (isEditing && initialData) {
         await updateProperty(initialData.id, payload);
       } else {

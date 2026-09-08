@@ -1,7 +1,7 @@
 import { getLocaleConfig, defaultAvailableLocale } from '@/lib/runtime-locales';
 import { getSiteOrigin } from '@/lib/site-config';
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 
 import { PropertyDetailContent } from '@/components/pages/PropertyDetailContent';
 import { isLocale, openGraphLocales } from '@/i18n/config';
@@ -25,6 +25,7 @@ export async function generateMetadata({ params }: PropertyPageProps): Promise<M
   if (!isLocale(locale)) return {};
   const sourceProperty = await fetchProperty(id);
   if (!sourceProperty) notFound();
+  if (id !== sourceProperty.slug) permanentRedirect(`/${locale}/properties/${sourceProperty.slug}`);
   const settings = await fetchSiteSettings();
 
   const availableLocales = propertyAvailableLocales(sourceProperty).filter(value => getLocaleConfig().locales.includes(value));
@@ -86,5 +87,6 @@ export default async function LocalizedPropertyDetailPage({
   if (!isLocale(locale)) notFound();
   const property = await fetchProperty(id);
   if (!property) notFound();
+  if (id !== property.slug) permanentRedirect(`/${locale}/properties/${property.slug}`);
   return <PropertyDetailContent id={id} locale={locale} initialProperty={property} />;
 }

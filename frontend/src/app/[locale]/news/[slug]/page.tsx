@@ -6,7 +6,7 @@ import { getSiteOrigin } from '@/lib/site-config';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { ArrowLeft, CalendarDays, UserRound } from 'lucide-react';
 
 import { NewsMediaGallery } from '@/components/news/NewsMediaGallery';
@@ -30,7 +30,8 @@ export async function generateMetadata({ params }: NewsArticlePageProps): Promis
   const { locale, slug } = await params;
   if (!isLocale(locale)) return {};
   const article = await fetchNewsArticle(slug, locale);
-  if (!article) return { title: getSiteCopy(locale, await fetchSiteSettings()).news.metaTitle };
+  if (!article) notFound();
+  if (slug !== article.slug) permanentRedirect(`/${locale}/news/${article.slug}`);
 
   const title = article.meta_title || article.title;
   const description = article.meta_description || article.excerpt;
@@ -72,6 +73,7 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
   if (!isLocale(locale)) notFound();
   const article = await fetchNewsArticle(slug, locale);
   if (!article) notFound();
+  if (slug !== article.slug) permanentRedirect(`/${locale}/news/${article.slug}`);
 
   const settings = await fetchSiteSettings();
   const copy = getSiteCopy(locale, settings).news;

@@ -19,6 +19,6 @@ def clean_slug(value: str) -> str:
 
 
 def generate_slug(value: str, fallback: str = "item", add_suffix: bool = True) -> str:
-    base = clean_slug(value) or fallback
+    base = (clean_slug(value) or fallback)[:213 if add_suffix else 220].rstrip('-')
     return f"{base}-{uuid.uuid4().hex[:6]}" if add_suffix else base
 

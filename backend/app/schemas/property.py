@@ -1,3 +1,4 @@
+from app.services.slug_history import validate_public_slug
 from app.config import get_settings
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from typing import Literal, Optional
@@ -157,12 +158,25 @@ class PropertyBase(BaseModel):
 
 class PropertyCreate(PropertyBase):
     slug: Optional[str] = None
+
+    @field_validator('slug')
+    @classmethod
+    def valid_slug(cls, value):
+        return validate_public_slug(value) if value is not None else value
+
     is_featured: bool = False
     is_active: bool = True
     translations: list[PropertyTranslationInput] = Field(default_factory=list)
     unit_types: list[PropertyUnitTypeInput] = Field(default_factory=list, max_length=50)
 
 class PropertyUpdate(BaseModel):
+    slug: str | None = None
+
+    @field_validator('slug')
+    @classmethod
+    def valid_slug(cls, value):
+        return validate_public_slug(value)
+
     content_locale: Literal["ru", "en", "tr", "ar"] | None = None
     title: Optional[str] = None
     description: Optional[str] = None

@@ -1,3 +1,4 @@
+from app.services.slug_history import validate_public_slug
 from datetime import datetime
 import re
 from typing import Literal
@@ -83,6 +84,11 @@ class AuthorFields(BaseModel):
 
 
 class NewsArticleCreate(AuthorFields):
+    @field_validator('slug')
+    @classmethod
+    def valid_slug(cls, value):
+        return validate_public_slug(value) if value is not None else None
+
     slug: str | None = Field(default=None, max_length=220)
     cover_image: str | None = Field(default=None, max_length=1000)
     author: str = Field(default="", max_length=120)
@@ -93,6 +99,11 @@ class NewsArticleCreate(AuthorFields):
 
 
 class NewsArticleUpdate(AuthorFields):
+    @field_validator('slug')
+    @classmethod
+    def valid_slug(cls, value):
+        return validate_public_slug(value)
+
     slug: str | None = Field(default=None, max_length=220)
     cover_image: str | None = Field(default=None, max_length=1000)
     author: str | None = Field(default=None, max_length=120)

@@ -1,3 +1,5 @@
+from app.models.slug_alias import NewsSlugAlias
+from app.services.slug_history import ensure_slug_available, remember_slug
 from app.site_runtime import site_runtime
 from datetime import datetime, timezone
 from typing import Annotated, cast
@@ -175,7 +177,7 @@ async def get_news(slug: str, locale: LocaleCode = Query(site_runtime()["default
         select(NewsArticle)
         .options(selectinload(NewsArticle.translations), selectinload(NewsArticle.media))
         .where(
-            NewsArticle.slug == slug,
+            or_(NewsArticle.slug == slug, NewsArticle.id.in_(select(NewsSlugAlias.resource_id).where(NewsSlugAlias.slug == slug))),
             NewsArticle.is_published.is_(True),
             or_(NewsArticle.published_at.is_(None), NewsArticle.published_at <= now),
         )
@@ -197,8 +199,7 @@ async def create_news(
     _validate_translations(data.translations)
     primary = next(item for item in data.translations if item.locale == site_runtime()["default_locale"])
     slug = clean_slug(data.slug or "") or generate_slug(primary.title, fallback="news")
-    if (await db.execute(select(NewsArticle.id).where(NewsArticle.slug == slug))).scalar_one_or_none():
-        raise HTTPException(status_code=409, detail="News slug already exists")
+    await ensure_slug_available(db, NewsArticle, NewsSlugAlias, slug)
 
     published_at = data.published_at
     if data.is_published and published_at is None:
@@ -235,6 +236,7 @@ async def update_news(
     current: AdminUser = Depends(require_permission("news:write", csrf=True)),
     db: AsyncSession = Depends(get_db),
 ):
+    await db.execute(select(NewsArticle.id).where(NewsArticle.id == article_id).with_for_update())
     article = await _load_article(db, article_id)
     if article is None:
         raise HTTPException(status_code=404, detail="News article not found")
@@ -242,18 +244,9 @@ async def update_news(
     previous_media_urls = {article.cover_image, *(item.url for item in article.media)}
 
     update_data = data.model_dump(exclude_unset=True, exclude={"translations", "media"})
-    if "slug" in update_data:
-        candidate = clean_slug(update_data["slug"] or "")
-        if not candidate:
-            raise HTTPException(status_code=422, detail="News slug cannot be empty")
-        duplicate = (
-            await db.execute(
-                select(NewsArticle.id).where(NewsArticle.slug == candidate, NewsArticle.id != article_id)
-            )
-        ).scalar_one_or_none()
-        if duplicate:
-            raise HTTPException(status_code=409, detail="News slug already exists")
-        update_data["slug"] = candidate
+    if "slug" in update_data and update_data['slug'] != article.slug:
+        await ensure_slug_available(db, NewsArticle, NewsSlugAlias, update_data['slug'], article.id)
+        await remember_slug(db, NewsSlugAlias, article.slug, article.id)
 
     if update_data.get("is_published") is True and "published_at" not in update_data and article.published_at is None:
         update_data["published_at"] = datetime.now(timezone.utc)
