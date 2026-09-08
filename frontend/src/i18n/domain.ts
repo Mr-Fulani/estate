@@ -1,13 +1,6 @@
 import type { CategoryTranslation, Property, PropertyTranslation, SiteSettings, SiteSettingsTranslation } from '@/types';
-import type { Locale } from './config';
+import { defaultLocale, type Locale } from './config';
 
-
-const categoryNames: Record<Locale, Record<string, string>> = {
-  ru: { kvartira: 'Квартира', dom: 'Дом', uchastok: 'Участок', kommerciya: 'Коммерция', villa: 'Вилла', villy: 'Виллы' },
-  en: { kvartira: 'Apartment', dom: 'House', uchastok: 'Land', kommerciya: 'Commercial', villa: 'Villa', villy: 'Villas' },
-  tr: { kvartira: 'Daire', dom: 'Ev', uchastok: 'Arsa', kommerciya: 'Ticari', villa: 'Villa', villy: 'Villalar' },
-  ar: { kvartira: 'شقة', dom: 'منزل', uchastok: 'أرض', kommerciya: 'عقار تجاري', villa: 'فيلا', villy: 'فلل' },
-};
 
 export function localizedOfficeAddress(_locale: Locale, address: string): string { return address; }
 
@@ -16,19 +9,17 @@ function localizedTranslation<T extends { locale: Locale }>(
   locale: Locale,
 ): T | undefined {
   return translations?.find((item) => item.locale === locale)
-    || (locale === 'ar' ? translations?.find((item) => item.locale === 'en') : undefined)
-    || translations?.find((item) => item.locale === 'ru');
+    || translations?.[0];
 }
 
 
 export function localizedCategoryName(
   locale: Locale,
-  slug?: string,
+  _slug?: string,
   fallback = '',
   translations?: CategoryTranslation[],
 ): string {
   return translations?.find((item) => item.locale === locale)?.name
-    || (slug && categoryNames[locale][slug])
     || localizedTranslation(translations, locale)?.name
     || fallback;
 }
@@ -43,9 +34,6 @@ export function localizedSiteSettings(settings: SiteSettings, locale: Locale): S
 export function localizedCategoryNavigationName(
   locale: Locale, slug?: string, fallback = '', translations?: CategoryTranslation[],
 ): string {
-  if (slug === 'residential-development') {
-    return { ru: 'Жилые комплексы', en: 'Developments', tr: 'Konut projeleri', ar: 'مجمعات سكنية' }[locale];
-  }
   return localizedCategoryName(locale, slug, fallback, translations);
 }
 
@@ -67,15 +55,15 @@ export function localizedProperty(property: Property, locale: Locale): Property 
 
 function completePropertyTranslations(property: Property): PropertyTranslation[] {
   const translations = (property.translations || []).filter((item) => item.title.trim() && item.description?.trim());
-  if (!translations.some((item) => item.locale === 'ru') && property.title?.trim() && property.description?.trim()) {
-    translations.push({ locale: 'ru', title: property.title, description: property.description, city: property.city, district: property.district, address: property.address });
+  if (!translations.some((item) => item.locale === (property.content_locale || defaultLocale)) && property.title?.trim() && property.description?.trim()) {
+    translations.push({ locale: property.content_locale || defaultLocale, title: property.title, description: property.description, city: property.city, district: property.district, address: property.address });
   }
   return translations;
 }
 
 export function localizedPropertyTranslation(property: Property, locale: Locale) {
   const complete = completePropertyTranslations(property);
-  return localizedTranslation(complete, locale) || complete[0];
+  return complete.find(item => item.locale === locale) || complete.find(item => item.locale === (property.content_locale || defaultLocale)) || complete[0];
 }
 
 export function hasPropertyLocale(property: Property, locale: Locale): boolean {

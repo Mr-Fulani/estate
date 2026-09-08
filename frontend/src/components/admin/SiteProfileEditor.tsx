@@ -1,6 +1,7 @@
 'use client';
+import { useLocale } from '@/context/LocaleContext';
 import { useState } from 'react';
-import { locales, localeLabels, type Locale } from '@/i18n/config';
+import { localeLabels, type Locale } from '@/i18n/config';
 import { siteCopy } from '@/i18n/siteCopy';
 import { legalCopy } from '@/i18n/legalCopy';
 import { copyFields, type SiteProfile, type SeoPage } from '@/lib/site-profile';
@@ -15,7 +16,8 @@ const groups = {home:'Главная',catalog:'Каталог',property:'Кар�
 const inputClass = 'mt-2 w-full rounded-xl border border-slate-200 bg-white p-3 text-sm font-normal';
 
 export function SiteProfileEditor({ profile, onChange }: {profile: SiteProfile; onChange: (profile: SiteProfile) => void}) {
-  const [locale, setLocale] = useState<Locale>('ru');
+  const { activeLocales: locales, defaultLocale } = useLocale();
+  const [locale, setLocale] = useState<Locale>(defaultLocale);
   const [section, setSection] = useState('home');
   const [search, setSearch] = useState('');
   const fields = copyFields({...siteCopy[locale], legal: legalCopy[locale]}).filter(([key, text]) => key.startsWith(`${section}.`) && (!search || text.toLowerCase().includes(search.toLowerCase())));
@@ -24,6 +26,7 @@ export function SiteProfileEditor({ profile, onChange }: {profile: SiteProfile; 
     <p className="text-sm text-slate-500">Домен задаётся при развёртывании. Здесь хранится информация именно этой компании. Для изображений используйте адрес HTTPS или путь к загруженному файлу.</p>
     <div className="grid gap-4 sm:grid-cols-2">{Object.entries(identityFields).map(([key,label]) => <label key={key} className="text-sm font-semibold">{label}<input className={inputClass} value={profile[key as keyof typeof identityFields] || ''} onChange={event=>onChange({...profile,[key]:event.target.value})} /></label>)}</div>
     <label className="block text-sm font-semibold">Язык текстов<select className={inputClass} value={locale} onChange={event=>setLocale(event.target.value as Locale)}>{locales.map(value=><option key={value} value={value}>{localeLabels[value]}</option>)}</select></label>
+    <label className="block text-sm font-semibold">Быстрые бюджеты поиска (в валюте фильтра, через запятую)<input className={inputClass} defaultValue={(profile.price_presets || []).join(', ')} onBlur={event=>onChange({...profile,price_presets:event.target.value.split(',').map(value=>Number(value.trim())).filter(value=>Number.isFinite(value) && value>0)})}/></label>
     <details><summary className="cursor-pointer font-bold">Заголовки и описания для поиска</summary><div className="mt-4 space-y-5">{Object.entries(pages).map(([key,label])=>{
       const page=key as SeoPage; const value=profile.seo?.[locale]?.[page] || {title:'',description:''};
       const change=(field: 'title'|'description', text:string)=>onChange({...profile,seo:{...profile.seo,[locale]:{...profile.seo?.[locale],[page]:{...value,[field]:text}}}});

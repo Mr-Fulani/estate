@@ -1,3 +1,4 @@
+from app.config import get_settings
 import asyncio
 from datetime import date, datetime, timedelta, timezone
 from decimal import Decimal, ROUND_HALF_UP
@@ -10,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.exchange_rate import ExchangeRateSnapshot
 
 
-CBR_DAILY_RATES_URL = "https://www.cbr.ru/scripts/XML_daily.asp"
+CBR_DAILY_RATES_URL = get_settings().EXCHANGE_RATE_SOURCE_URL
 SUPPORTED_CURRENCIES = ("USD", "EUR", "TRY")
 SUPPORTED_DEAL_CURRENCIES = ("RUB", *SUPPORTED_CURRENCIES)
 CACHE_TTL = timedelta(hours=6)

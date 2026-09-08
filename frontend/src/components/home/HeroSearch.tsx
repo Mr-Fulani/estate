@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Search, Building, Building2, Home, Briefcase, Palmtree, type LucideIcon } from 'lucide-react';
+import { Search, Building2 } from 'lucide-react';
 import { Category } from '@/types';
 import { useLocale } from '@/context/LocaleContext';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
@@ -13,34 +13,25 @@ import { useCurrency } from '@/context/CurrencyContext';
 import { formatPrice } from '@/lib/utils';
 import { startNavigationFeedback } from '@/components/layout/NavigationFeedback';
 
-const categoryIcons: Record<string, LucideIcon> = {
-  kvartira: Building,
-  dom: Home,
-  'residential-development': Building2,
-  kommerciya: Briefcase,
-  villy: Palmtree,
-  villa: Palmtree,
-};
-
 export function HeroSearch({ categories = [] }: { categories: Category[] }) {
   const { settings: siteSettings } = useSiteSettings();
   const router = useRouter();
   const { locale, href } = useLocale();
   const copy = getSiteCopy(locale, siteSettings).home.search;
-  const { currency, convert } = useCurrency();
+  const { currency: selectedCurrency, catalogCurrency, convert, isReady } = useCurrency();
+  const currency = isReady ? selectedCurrency : catalogCurrency;
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [maxPrice, setMaxPrice] = useState<string>('');
 
   const budgetLabel = (amount: number) => {
-    const formatted = formatPrice(convert(amount, 'RUB', currency), currency, locale);
+    const formatted = formatPrice(convert(amount, catalogCurrency, currency), currency, locale);
     if (locale === 'en') return `up to ${formatted}`;
     if (locale === 'tr') return `En fazla ${formatted}`;
     if (locale === 'ar') return `حتى ${formatted}`;
     return `до ${formatted}`;
   };
 
-  const quickCategories = [['kvartira'], ['dom'], ['residential-development'], ['kommerciya'], ['villa', 'villy']]
-    .flatMap(slugs => categories.filter(category => slugs.includes(category.slug)).slice(0, 1));
+  const quickCategories = categories;
 
   const searchHref = (categoryId?: number) => {
     const params = new URLSearchParams();
@@ -77,7 +68,7 @@ export function HeroSearch({ categories = [] }: { categories: Category[] }) {
         </Link>
 
         {quickCategories.map((cat) => {
-          const Icon = categoryIcons[cat.slug] || Building;
+          const Icon = Building2;
           return (
             <Link
               key={cat.id}
@@ -118,10 +109,7 @@ export function HeroSearch({ categories = [] }: { categories: Category[] }) {
             className="w-full py-2.5 bg-transparent text-slate-800 text-sm font-medium outline-none cursor-pointer"
           >
             <option value="">{copy.budget}</option>
-            <option value="10000000">{budgetLabel(10_000_000)}</option>
-            <option value="20000000">{budgetLabel(20_000_000)}</option>
-            <option value="50000000">{budgetLabel(50_000_000)}</option>
-            <option value="100000000">{budgetLabel(100_000_000)}</option>
+            {(siteSettings.profile?.price_presets || []).map(amount => <option key={amount} value={amount}>{budgetLabel(amount)}</option>)}
           </select>
         </div>
 

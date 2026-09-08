@@ -180,7 +180,7 @@ export default function AdminLayout({
             </div>
           )}
           <Link
-            href="/ru"
+            href="/"
             className="flex items-center gap-2 text-xs font-medium text-slate-400 hover:text-white transition-colors py-2 px-3 rounded-lg hover:bg-slate-800"
           >
             <Globe className="w-4 h-4 text-secondary" />

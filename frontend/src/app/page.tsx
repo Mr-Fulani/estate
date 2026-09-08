@@ -1,5 +1,6 @@
+import { getLocaleConfig } from '@/lib/runtime-locales';
 import { permanentRedirect } from 'next/navigation';
 
 export default function HomePage() {
-  permanentRedirect('/ru');
+  permanentRedirect(`/${getLocaleConfig().defaultLocale}`);
 }

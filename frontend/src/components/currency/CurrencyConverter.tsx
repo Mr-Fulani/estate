@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { ArrowLeftRight, BadgeCheck, RefreshCw, Sparkles } from 'lucide-react';
 
-import { currencyCodes, useCurrency } from '@/context/CurrencyContext';
+import { useCurrency } from '@/context/CurrencyContext';
 import { localeTags, type Locale } from '@/i18n/config';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import { getSiteCopy } from '@/lib/site-profile';
@@ -37,10 +37,10 @@ function formatMoney(value: number, currency: CurrencyCode, locale: Locale): str
 export function CurrencyConverter({ locale }: { locale: Locale }) {
   const { settings: siteSettings } = useSiteSettings();
   const copy = getSiteCopy(locale, siteSettings).home.converter;
-  const { convert, effectiveDate, isReady, isStale, error } = useCurrency();
+  const { currencyCodes, convert, effectiveDate, isReady, isStale, error } = useCurrency();
   const [amount, setAmount] = useState('1000000');
-  const [fromCurrency, setFromCurrency] = useState<CurrencyCode>('RUB');
-  const [toCurrency, setToCurrency] = useState<CurrencyCode>('USD');
+  const [fromCurrency, setFromCurrency] = useState<CurrencyCode>(currencyCodes[0]);
+  const [toCurrency, setToCurrency] = useState<CurrencyCode>(currencyCodes[1] || currencyCodes[0]);
 
   const numericAmount = parseAmount(amount);
   const convertedAmount = isReady ? convert(numericAmount, fromCurrency, toCurrency) : null;

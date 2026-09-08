@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useLocale } from '@/context/LocaleContext';
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Check, ChevronDown, ChevronUp, Image as ImageIcon, Languages, Play, Plus, Save, Star, Trash2, Upload, Youtube } from 'lucide-react';
@@ -11,9 +12,9 @@ import { startNavigationFeedback } from '@/components/layout/NavigationFeedback'
 import { cn } from '@/lib/utils';
 import { getYouTubeThumbnail, getYouTubeVideoId } from '@/lib/youtube';
 import type { NewsAdminArticle, NewsFormData, NewsMediaType, NewsTranslation } from '@/types';
-import { localeLabels, locales, type Locale } from '@/i18n/config';
+import { localeLabels, type Locale } from '@/i18n/config';
 
-const newsLocales = locales;
+
 type NewsLocale = Locale;
 
 function emptyTranslation(locale: NewsLocale): NewsTranslation {
@@ -21,8 +22,9 @@ function emptyTranslation(locale: NewsLocale): NewsTranslation {
 }
 
 export function NewsForm({ initialData }: { initialData?: NewsAdminArticle }) {
+  const { activeLocales: newsLocales, defaultLocale } = useLocale();
   const router = useRouter();
-  const [activeLocale, setActiveLocale] = useState<NewsLocale>('ru');
+  const [activeLocale, setActiveLocale] = useState<NewsLocale>(defaultLocale);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [mediaError, setMediaError] = useState<string | null>(null);
@@ -149,23 +151,23 @@ export function NewsForm({ initialData }: { initialData?: NewsAdminArticle }) {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
-    const russian = formData.translations.find((item) => item.locale === 'ru');
+    const russian = formData.translations.find((item) => item.locale === defaultLocale);
     if (!russian?.title.trim() || !russian.excerpt.trim() || !russian.content.trim()) {
-      setActiveLocale('ru');
-      setError('Заполните заголовок, анонс и текст на русском языке.');
+      setActiveLocale(defaultLocale);
+      setError('Заполните заголовок, анонс и текст на основном языке проекта.');
       return;
     }
 
     const partialTranslation = formData.translations.find((item) => {
       const hasAnyContent = Boolean(item.title.trim() || item.excerpt.trim() || item.content.trim() || item.meta_title?.trim() || item.meta_description?.trim());
-      return item.locale !== 'ru' && hasAnyContent && !isComplete(item.locale);
+      return item.locale !== defaultLocale && hasAnyContent && !isComplete(item.locale);
     });
     if (partialTranslation) {
       setActiveLocale(partialTranslation.locale);
       setError(`Перевод ${localeLabels[partialTranslation.locale]} заполнен частично. Добавьте заголовок, анонс и текст или очистите вкладку.`);
       return;
     }
-    const translations = formData.translations.filter((item) => item.locale === 'ru' || Boolean(item.title.trim() || item.excerpt.trim() || item.content.trim()));
+    const translations = formData.translations.filter((item) => item.locale === defaultLocale || Boolean(item.title.trim() || item.excerpt.trim() || item.content.trim()));
 
     const payload: NewsFormData = {
       slug: formData.slug?.trim() || undefined,
@@ -221,9 +223,9 @@ export function NewsForm({ initialData }: { initialData?: NewsAdminArticle }) {
           </div>
 
           <div role="tabpanel" dir={activeLocale === 'ar' ? 'rtl' : 'ltr'} className="space-y-5">
-            <div><label htmlFor={`news-title-${activeLocale}`} className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">Заголовок {activeLocale === 'ru' && '*'}</label><input id={`news-title-${activeLocale}`} required={activeLocale === 'ru'} value={translation.title} onChange={(event) => setTranslation(activeLocale, 'title', event.target.value)} maxLength={240} className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 font-semibold outline-none transition focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10" /></div>
-            <div><label htmlFor={`news-excerpt-${activeLocale}`} className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">Краткий анонс {activeLocale === 'ru' && '*'}</label><textarea id={`news-excerpt-${activeLocale}`} required={activeLocale === 'ru'} rows={3} value={translation.excerpt} onChange={(event) => setTranslation(activeLocale, 'excerpt', event.target.value)} maxLength={500} className="w-full rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm leading-relaxed outline-none transition focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10" /><p className="mt-1 text-right text-xs text-slate-400">{translation.excerpt.length}/500</p></div>
-            <div><label htmlFor={`news-content-${activeLocale}`} className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">Текст статьи {activeLocale === 'ru' && '*'}</label><textarea id={`news-content-${activeLocale}`} required={activeLocale === 'ru'} rows={16} value={translation.content} onChange={(event) => setTranslation(activeLocale, 'content', event.target.value)} className="w-full rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm leading-7 outline-none transition focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10" /><p className="mt-1 text-xs text-slate-400">Разделяйте абзацы пустой строкой.</p></div>
+            <div><label htmlFor={`news-title-${activeLocale}`} className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">Заголовок {activeLocale === defaultLocale && '*'}</label><input id={`news-title-${activeLocale}`} required={activeLocale === defaultLocale} value={translation.title} onChange={(event) => setTranslation(activeLocale, 'title', event.target.value)} maxLength={240} className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 font-semibold outline-none transition focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10" /></div>
+            <div><label htmlFor={`news-excerpt-${activeLocale}`} className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">Краткий анонс {activeLocale === defaultLocale && '*'}</label><textarea id={`news-excerpt-${activeLocale}`} required={activeLocale === defaultLocale} rows={3} value={translation.excerpt} onChange={(event) => setTranslation(activeLocale, 'excerpt', event.target.value)} maxLength={500} className="w-full rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm leading-relaxed outline-none transition focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10" /><p className="mt-1 text-right text-xs text-slate-400">{translation.excerpt.length}/500</p></div>
+            <div><label htmlFor={`news-content-${activeLocale}`} className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">Текст статьи {activeLocale === defaultLocale && '*'}</label><textarea id={`news-content-${activeLocale}`} required={activeLocale === defaultLocale} rows={16} value={translation.content} onChange={(event) => setTranslation(activeLocale, 'content', event.target.value)} className="w-full rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm leading-7 outline-none transition focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10" /><p className="mt-1 text-xs text-slate-400">Разделяйте абзацы пустой строкой.</p></div>
             <div className="grid gap-5 lg:grid-cols-2">
               <div><label htmlFor={`news-meta-title-${activeLocale}`} className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">SEO-заголовок</label><input id={`news-meta-title-${activeLocale}`} value={translation.meta_title || ''} onChange={(event) => setTranslation(activeLocale, 'meta_title', event.target.value)} maxLength={240} className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm outline-none focus:border-primary focus:bg-white" /></div>
               <div><label htmlFor={`news-meta-description-${activeLocale}`} className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">SEO-описание</label><textarea id={`news-meta-description-${activeLocale}`} value={translation.meta_description || ''} onChange={(event) => setTranslation(activeLocale, 'meta_description', event.target.value)} maxLength={320} rows={3} className="w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm outline-none focus:border-primary focus:bg-white" /></div>

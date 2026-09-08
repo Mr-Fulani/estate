@@ -3,6 +3,12 @@ from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
+    SITE_LOCALES: str = "ru,en,tr,ar"
+    SITE_DEFAULT_LOCALE: str = "ru"
+    SITE_CURRENCIES: str = "RUB,USD,EUR,TRY"
+    SITE_DEFAULT_CURRENCY: str = "RUB"
+    CATALOG_CURRENCY: str = "RUB"
+    EXCHANGE_RATE_SOURCE_URL: str = "https://www.cbr.ru/scripts/XML_daily.asp"
     DATABASE_URL: str
     SECRET_KEY: str = "change-me"
     CORS_ORIGINS: str = "http://localhost:3000"
@@ -33,6 +39,16 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def validate_production_security(self):
+        active = [value.strip() for value in self.SITE_LOCALES.split(',')]
+        currencies = [value.strip() for value in self.SITE_CURRENCIES.split(',')]
+        if not active or len(active) != len(set(active)) or not set(active) <= {'ru','en','tr','ar'} or self.SITE_DEFAULT_LOCALE not in active:
+            raise ValueError('Invalid SITE_LOCALES or SITE_DEFAULT_LOCALE')
+        if not currencies or len(currencies) != len(set(currencies)) or not set(currencies) <= {'RUB','USD','EUR','TRY'} or self.SITE_DEFAULT_CURRENCY not in currencies or self.CATALOG_CURRENCY not in currencies:
+            raise ValueError('Invalid supported currency configuration')
+        from urllib.parse import urlparse
+        rates_url = urlparse(self.EXCHANGE_RATE_SOURCE_URL)
+        if rates_url.scheme != 'https' or not rates_url.hostname or rates_url.username or rates_url.password:
+            raise ValueError('EXCHANGE_RATE_SOURCE_URL must be an HTTPS URL serving CBR XML')
         telegram_values = (
             self.TELEGRAM_BOT_TOKEN,
             self.TELEGRAM_BOT_USERNAME,

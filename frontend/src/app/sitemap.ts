@@ -1,7 +1,8 @@
+import { getLocaleConfig, defaultAvailableLocale } from '@/lib/runtime-locales';
 import { getSiteOrigin } from '@/lib/site-config';
 import type { MetadataRoute } from 'next';
 
-import { locales, type Locale } from '@/i18n/config';
+import { type Locale } from '@/i18n/config';
 import { propertyAvailableLocales } from '@/i18n/domain';
 import { fetchNews, fetchProperties } from '@/lib/api';
 
@@ -10,11 +11,12 @@ export const dynamic = 'force-dynamic';
 
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const { locales, defaultLocale } = getLocaleConfig();
   const siteUrl = (getSiteOrigin()).replace(/\/$/, '');
   const absolute = (path: string) => `${siteUrl}${path}`;
   const languageAlternates = (path: string, availableLocales: readonly Locale[]) => Object.fromEntries([
     ...availableLocales.map((locale) => [locale, absolute(`/${locale}${path}`)]),
-    ['x-default', absolute(`/ru${path}`)],
+    ['x-default', absolute(`/${defaultAvailableLocale(availableLocales)}${path}`)],
   ]);
   const staticPaths = ['', '/properties', '/services', '/news', '/reviews', '/about', '/contact', '/privacy', '/terms'];
   const entries: MetadataRoute.Sitemap = locales.flatMap((locale) => staticPaths.map((path) => ({
@@ -34,7 +36,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     entries.push(...properties
       .filter((property) => property.market_status !== 'archived' && !property.development?.is_demo)
       .flatMap((property) => {
-        const availableLocales = propertyAvailableLocales(property);
+        const availableLocales = propertyAvailableLocales(property).filter(locale => locales.includes(locale));
         const path = `/properties/${property.slug}`;
         return availableLocales.map((locale) => ({
           url: absolute(`/${locale}${path}`),
@@ -49,14 +51,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   try {
-    const firstPage = await fetchNews('ru', 1, 50);
+    const firstPage = await fetchNews(defaultLocale, 1, 50);
     const pages = Math.ceil(firstPage.total / firstPage.per_page);
     const articles = [...firstPage.items];
     for (let page = 2; page <= pages; page += 1) {
-      articles.push(...(await fetchNews('ru', page, 50)).items);
+      articles.push(...(await fetchNews(defaultLocale, page, 50)).items);
     }
     entries.push(...articles.flatMap((article) => {
-      const availableLocales = article.available_locales;
+      const availableLocales = article.available_locales.filter(locale => locales.includes(locale));
       const path = `/news/${article.slug}`;
       return availableLocales.map((locale) => ({
         url: absolute(`/${locale}${path}`),

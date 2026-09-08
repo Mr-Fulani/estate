@@ -1,12 +1,13 @@
+import { getLocaleConfig } from '@/lib/runtime-locales';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { isLocale, locales } from '@/i18n/config';
+import { isLocale } from '@/i18n/config';
 import { staticPageMetadata } from '@/lib/seo';
 
 
 export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
+  return getLocaleConfig().locales.map((locale) => ({ locale }));
 }
 
 
@@ -29,6 +30,6 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  if (!isLocale(locale)) notFound();
+  if (!isLocale(locale) || !getLocaleConfig().locales.includes(locale)) notFound();
   return children;
 }

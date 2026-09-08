@@ -17,17 +17,18 @@ export function PropertyFilter({ categories }: { categories: Category[] }) {
   const router = useRouter();
   const { locale, href } = useLocale();
   const copy = getSiteCopy(locale, siteSettings).catalog;
-  const { currency, convert } = useCurrency();
+  const { currency: selectedCurrency, catalogCurrency, convert, isReady } = useCurrency();
+  const currency = isReady ? selectedCurrency : catalogCurrency;
   const searchParams = useSearchParams();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const displayPrice = useCallback((value: string) => value
-    ? String(Math.round(convert(Number(value), 'RUB', currency)))
-    : '', [convert, currency]);
+    ? String(Math.round(convert(Number(value), catalogCurrency, currency)))
+    : '', [convert, currency, catalogCurrency]);
 
-  const rublePrice = useCallback((value: string) => value
-    ? String(Math.round(convert(Number(value), currency, 'RUB')))
-    : '', [convert, currency]);
+  const catalogPrice = useCallback((value: string) => value
+    ? String(Math.round(convert(Number(value), currency, catalogCurrency)))
+    : '', [convert, currency, catalogCurrency]);
 
   const priceLabel = `${copy.price.replace(/\s*\([^)]*\)\s*$/, '')} (${currency})`;
 
@@ -74,7 +75,7 @@ export function PropertyFilter({ categories }: { categories: Category[] }) {
     const params = new URLSearchParams();
     Object.entries(filters).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== '') {
-        params.append(key, key === 'min_price' || key === 'max_price' ? rublePrice(value) : value);
+        params.append(key, key === 'min_price' || key === 'max_price' ? catalogPrice(value) : value);
       }
     });
     const queryString = params.toString();

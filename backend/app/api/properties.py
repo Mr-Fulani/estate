@@ -1,3 +1,4 @@
+from app.site_runtime import site_runtime
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, desc, asc, or_, and_, case
@@ -18,11 +19,13 @@ router = APIRouter(prefix="/api/v1/properties", tags=["Properties"])
 
 
 async def price_multiplier_rub():
-    """The catalog's existing price-filter contract is RUB, irrespective of storage currency."""
+    """Convert stored prices to the configured catalog filter currency."""
     try:
         async with AsyncSessionLocal() as rate_db:
             snapshot, _ = await get_exchange_rates(rate_db)
             rates = dict(snapshot.rates)
+            target_rate = rates[site_runtime()['catalog_currency']]
+            rates = {code: rate / target_rate for code, rate in rates.items()}
         return case(*[(Property.currency == code, rate) for code, rate in rates.items()], else_=None)
     except Exception as exc:
         raise HTTPException(503, "Currency rates are unavailable; try filtering by price later") from exc

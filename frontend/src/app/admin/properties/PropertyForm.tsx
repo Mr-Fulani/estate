@@ -23,9 +23,11 @@ import {
 } from 'lucide-react';
 import { AdminActionSpinner } from '@/components/admin/AdminActionSpinner';
 import Link from 'next/link';
+import { useCurrency } from '@/context/CurrencyContext';
+import { useLocale } from '@/context/LocaleContext';
 import { cn } from '@/lib/utils';
 import { startNavigationFeedback } from '@/components/layout/NavigationFeedback';
-import { localeLabels, locales, type Locale } from '@/i18n/config';
+import { localeLabels, type Locale } from '@/i18n/config';
 import { DevelopmentEditor, PropertyImageUpload } from '@/components/admin/DevelopmentEditor';
 import { emptyDevelopment, preparePropertyForm, buildDevelopmentPreview } from '@/lib/development-view';
 import { DevelopmentPreview } from '@/components/admin/DevelopmentPreview';
@@ -38,7 +40,7 @@ const sampleImages = [
   { name: 'Офис / Коммерция', url: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80' },
 ];
 
-const propertyLocales = locales;
+
 
 export function PropertyForm({
   initialData,
@@ -47,6 +49,9 @@ export function PropertyForm({
   initialData?: Property;
   categories: Category[];
 }) {
+  const { defaultLocale, activeLocales } = useLocale();
+  const propertyLocales = Array.from(new Set([...activeLocales, ...(initialData?.translations || []).map(item => item.locale)]));
+  const { currency: defaultCurrency } = useCurrency();
   const router = useRouter();
   const isEditing = !!initialData;
 
@@ -54,11 +59,12 @@ export function PropertyForm({
     listing_kind: initialData?.listing_kind || 'property',
     development: initialData?.development || null,
     unit_types: initialData?.unit_types || [],
+    content_locale: initialData?.content_locale || defaultLocale,
     title: initialData?.title || '',
     slug: initialData?.slug || '',
     description: initialData?.description || '',
     price: initialData?.price || 0,
-    currency: initialData?.currency || 'RUB',
+    currency: initialData?.currency || defaultCurrency,
     address: initialData?.address || '',
     city: initialData?.city || '',
     district: initialData?.district || '',
@@ -78,14 +84,14 @@ export function PropertyForm({
       const existing = initialData?.translations?.find((item) => item.locale === locale);
       return {
         locale,
-        title: existing?.title || (locale === 'ru' ? initialData?.title || '' : ''),
-        description: existing?.description || (locale === 'ru' ? initialData?.description || '' : ''),
-        city: existing?.city || (locale === 'ru' ? initialData?.city || '' : ''),
-        district: existing?.district || (locale === 'ru' ? initialData?.district || '' : ''),
-        address: existing?.address || (locale === 'ru' ? initialData?.address || '' : ''),
+        title: existing?.title || (locale === (initialData?.content_locale || defaultLocale) ? initialData?.title || '' : ''),
+        description: existing?.description || (locale === (initialData?.content_locale || defaultLocale) ? initialData?.description || '' : ''),
+        city: existing?.city || (locale === (initialData?.content_locale || defaultLocale) ? initialData?.city || '' : ''),
+        district: existing?.district || (locale === (initialData?.content_locale || defaultLocale) ? initialData?.district || '' : ''),
+        address: existing?.address || (locale === (initialData?.content_locale || defaultLocale) ? initialData?.address || '' : ''),
         meta_title: existing?.meta_title || '',
         meta_description: existing?.meta_description || '',
-        status_badge: existing?.status_badge || (locale === 'ru' ? initialData?.status_badge || '' : ''),
+        status_badge: existing?.status_badge || (locale === (initialData?.content_locale || defaultLocale) ? initialData?.status_badge || '' : ''),
       };
     }),
   });
@@ -117,7 +123,7 @@ export function PropertyForm({
         ...prev,
         [name]: value,
         translations: ['title', 'description', 'city', 'district', 'address'].includes(name)
-          ? prev.translations?.map((item) => item.locale === 'ru' ? { ...item, [name]: value } : item)
+          ? prev.translations?.map((item) => item.locale === (initialData?.content_locale || defaultLocale) ? { ...item, [name]: value } : item)
           : prev.translations,
       }));
     }
@@ -260,7 +266,7 @@ export function PropertyForm({
           </label>
           <div className="md:col-span-2 flex flex-col gap-1.5">
             <label className="text-xs font-semibold uppercase tracking-wider text-slate-600">
-              Название объявления на русском *
+              Название объявления на основном языке *
             </label>
             <input
               type="text"
@@ -479,7 +485,7 @@ export function PropertyForm({
         {/* Description */}
         <div className="flex flex-col gap-1.5 pt-2">
           <label className="text-xs font-semibold uppercase tracking-wider text-slate-600">
-            Подробное описание объекта на русском
+            Подробное описание объекта на основном языке
           </label>
           <textarea
             name="description"

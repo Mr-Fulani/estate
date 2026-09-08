@@ -38,15 +38,15 @@ export function AppShell({
         {skipLabel}
       </a>
       <Suspense fallback={null}><NavigationFeedback /></Suspense>
-      <CurrencyProvider>
-        <SiteSettingsProvider initialSettings={siteSettings}>
+      <SiteSettingsProvider initialSettings={siteSettings}>
+        <CurrencyProvider>
           <Header />
           <main id="main-content" tabIndex={-1} className={cn('flex-grow outline-none', !isAdmin && 'pt-16 md:pt-20')}>
             {children}
           </main>
           <Footer />
-        </SiteSettingsProvider>
-      </CurrencyProvider>
+        </CurrencyProvider>
+      </SiteSettingsProvider>
     </>
   );
 }

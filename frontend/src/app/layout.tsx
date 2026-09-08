@@ -1,3 +1,4 @@
+import { getLocaleConfig } from '@/lib/runtime-locales';
 import { getSiteOrigin } from '@/lib/site-config';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
@@ -25,7 +26,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const requestHeaders = await headers();
-  const locale = assertLocale(requestHeaders.get('x-estate-locale') || 'ru');
+  const localeConfig = getLocaleConfig();
+  const locale = assertLocale(requestHeaders.get('x-estate-locale') || localeConfig.defaultLocale);
   const messages = getMessages(locale);
   const siteSettings = await fetchSiteSettings();
   const siteUrl = getSiteOrigin();
@@ -72,7 +74,7 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organization).replace(/</g, '\\u003c') }}
         />}
-        <LocaleProvider locale={locale} messages={messages}>
+        <LocaleProvider locale={locale} messages={messages} activeLocales={localeConfig.locales} defaultLocale={localeConfig.defaultLocale}>
           <AppShell siteSettings={siteSettings}>
             {children}
           </AppShell>

@@ -9,11 +9,11 @@ import { Coins, Globe2, Menu, X, Phone } from 'lucide-react';
 import { useEffect, useRef, useState, type CSSProperties, type MouseEvent as ReactMouseEvent } from 'react';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import { useLocale } from '@/context/LocaleContext';
-import { localeLabels, locales, localeTags, localizeHref, type Locale } from '@/i18n/config';
+import { localeLabels, localeTags, localizeHref, type Locale } from '@/i18n/config';
 import { TelegramIcon, WhatsappIcon, VkIcon, YoutubeIcon, InstagramIcon, FacebookIcon, MaxIcon } from '../ui/SocialIcons';
 import { TrackedContactLink } from '@/components/contact/TrackedContactLink';
 import type { ContactTrackData } from '@/types';
-import { currencyCodes, useCurrency } from '@/context/CurrencyContext';
+import { useCurrency } from '@/context/CurrencyContext';
 import type { CurrencyCode } from '@/types';
 import { startNavigationFeedback } from '@/components/layout/NavigationFeedback';
 
@@ -78,8 +78,8 @@ export function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const { settings } = useSiteSettings();
-  const { locale, messages, href } = useLocale();
-  const { currency, setCurrency, effectiveDate, isReady, error } = useCurrency();
+  const { activeLocales: locales, locale, messages, href } = useLocale();
+  const { currencyCodes, currency, setCurrency, effectiveDate, isReady, error } = useCurrency();
   const formattedRateDate = effectiveDate
     ? new Intl.DateTimeFormat(localeTags[locale], {
         day: '2-digit',

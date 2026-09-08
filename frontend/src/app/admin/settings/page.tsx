@@ -16,11 +16,13 @@ import {
 } from 'lucide-react';
 import { TelegramIcon, WhatsappIcon, VkIcon, YoutubeIcon, InstagramIcon, FacebookIcon, MaxIcon } from '@/components/ui/SocialIcons';
 import { AdminActionSpinner } from '@/components/admin/AdminActionSpinner';
+import { useLocale } from '@/context/LocaleContext';
 import { localeLabels } from '@/i18n/config';
 
-const translatedLocales = ['en', 'tr', 'ar'] as const;
+
 
 export default function AdminSettingsPage() {
+  const { activeLocales: translatedLocales } = useLocale();
   const [settings, setSettings] = useState<SiteSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);

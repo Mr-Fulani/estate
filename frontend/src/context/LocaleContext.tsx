@@ -11,6 +11,8 @@ import type { LocalizedMessages } from '@/i18n/types';
 
 type LocaleContextValue = {
   locale: Locale;
+  activeLocales: Locale[];
+  defaultLocale: Locale;
   messages: LocalizedMessages;
   href: (path: string) => string;
 };
@@ -22,9 +24,13 @@ const LocaleContext = createContext<LocaleContextValue | null>(null);
 export function LocaleProvider({
   locale,
   messages,
+  activeLocales,
+  defaultLocale,
   children,
 }: {
   locale: Locale;
+  activeLocales: Locale[];
+  defaultLocale: Locale;
   messages: LocalizedMessages;
   children: React.ReactNode;
 }) {
@@ -42,10 +48,12 @@ export function LocaleProvider({
   const value = useMemo<LocaleContextValue>(
     () => ({
       locale: activeLocale,
+      activeLocales,
+      defaultLocale,
       messages: activeMessages,
       href: (path) => localizeHref(activeLocale, path),
     }),
-    [activeLocale, activeMessages]
+    [activeLocale, activeMessages, activeLocales, defaultLocale]
   );
 
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;

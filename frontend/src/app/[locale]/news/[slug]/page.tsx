@@ -1,3 +1,4 @@
+import { getLocaleConfig, defaultAvailableLocale } from '@/lib/runtime-locales';
 import { getSiteOrigin } from '@/lib/site-config';
 import type { Metadata } from 'next';
 import Image from 'next/image';
@@ -33,8 +34,8 @@ export async function generateMetadata({ params }: NewsArticlePageProps): Promis
   const hasRequestedLocale = article.locale === locale;
   const canonicalLocale = hasRequestedLocale ? locale : article.locale;
   const languages = Object.fromEntries([
-    ...article.available_locales.map((availableLocale) => [availableLocale, `/${availableLocale}/news/${slug}`]),
-    ['x-default', `/ru/news/${slug}`],
+    ...article.available_locales.filter(value => getLocaleConfig().locales.includes(value)).map((availableLocale) => [availableLocale, `/${availableLocale}/news/${slug}`]),
+    ['x-default', `/${defaultAvailableLocale(article.available_locales)}/news/${slug}`],
   ]);
   const images = article.cover_image ? [{ url: absoluteUrl(article.cover_image), alt: article.title }] : [];
 

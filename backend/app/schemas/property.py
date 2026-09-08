@@ -1,3 +1,4 @@
+from app.config import get_settings
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from typing import Literal, Optional
 from datetime import date, datetime
@@ -133,10 +134,11 @@ class PropertyTranslationResponse(PropertyTranslationInput):
     model_config = ConfigDict(from_attributes=True)
 
 class PropertyBase(BaseModel):
+    content_locale: Literal["ru", "en", "tr", "ar"] = Field(default_factory=lambda: get_settings().SITE_DEFAULT_LOCALE)
     title: str
     description: Optional[str] = None
     price: float
-    currency: str = "RUB"
+    currency: Literal["RUB", "USD", "EUR", "TRY"] = Field(default_factory=lambda: get_settings().SITE_DEFAULT_CURRENCY)
     address: Optional[str] = None
     city: Optional[str] = None
     district: Optional[str] = None
@@ -161,10 +163,11 @@ class PropertyCreate(PropertyBase):
     unit_types: list[PropertyUnitTypeInput] = Field(default_factory=list, max_length=50)
 
 class PropertyUpdate(BaseModel):
+    content_locale: Literal["ru", "en", "tr", "ar"] | None = None
     title: Optional[str] = None
     description: Optional[str] = None
     price: Optional[float] = None
-    currency: Optional[str] = None
+    currency: Literal["RUB", "USD", "EUR", "TRY"] | None = None
     address: Optional[str] = None
     city: Optional[str] = None
     district: Optional[str] = None

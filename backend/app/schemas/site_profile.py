@@ -16,6 +16,7 @@ class PageSeo(BaseModel):
 
 class SiteProfile(BaseModel):
     model_config = ConfigDict(extra='forbid', str_strip_whitespace=True)
+    price_presets: list[float] = Field(default_factory=list, max_length=12)
     brand_name: str = Field(default='', max_length=120)
     legal_name: str = Field(default='', max_length=240)
     logo_url: str = Field(default='', max_length=1000)
@@ -50,3 +51,11 @@ class SiteProfile(BaseModel):
                 if len(key) > 160 or len(text) > 20000 or any(part in {'__proto__', 'prototype', 'constructor'} for part in key.split('.')):
                     raise ValueError('Invalid text field')
         return value
+
+    @field_validator('price_presets')
+    @classmethod
+    def positive_presets(cls, value):
+        import math
+        if any(not math.isfinite(item) or item <= 0 for item in value):
+            raise ValueError('Price presets must be positive finite amounts')
+        return sorted(set(value))

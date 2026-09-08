@@ -50,7 +50,7 @@ export function LoginForm({ returnTo, reason }: { returnTo?: string; reason?: st
 
       <div className="relative mx-auto grid min-h-screen max-w-7xl lg:grid-cols-[1.05fr_0.95fr]">
         <section className="hidden flex-col justify-between px-12 py-12 lg:flex xl:px-20 xl:py-16">
-          <Link href="/ru" className="flex w-fit items-center gap-3" aria-label="Компания — на сайт">
+          <Link href="/" className="flex w-fit items-center gap-3" aria-label="Компания — на сайт">
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary text-white shadow-lg shadow-primary/30">
               <Building2 className="h-5 w-5" />
             </div>
@@ -88,7 +88,7 @@ export function LoginForm({ returnTo, reason }: { returnTo?: string; reason?: st
 
         <section className="flex min-h-screen items-center justify-center px-5 py-10 sm:px-10 lg:bg-white/[0.025] lg:backdrop-blur-sm">
           <div className="w-full max-w-md">
-            <Link href="/ru" className="mb-10 flex w-fit items-center gap-2.5 lg:hidden">
+            <Link href="/" className="mb-10 flex w-fit items-center gap-2.5 lg:hidden">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary"><Building2 className="h-5 w-5" /></div>
               <span className="text-xl font-bold">RE<span className="text-secondary">.</span></span>
             </Link>

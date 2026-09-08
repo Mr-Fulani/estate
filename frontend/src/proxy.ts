@@ -1,6 +1,7 @@
+import { getLocaleConfig } from '@/lib/runtime-locales';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { defaultLocale, documentLanguageTags, isLocale } from '@/i18n/config';
+import { documentLanguageTags, isLocale } from '@/i18n/config';
 
 
 const PUBLIC_FILE = /\.[^/]+$/;
@@ -46,7 +47,9 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  const { locales: activeLocales, defaultLocale } = getLocaleConfig();
   const firstSegment = pathname.split('/')[1];
+  if (isLocale(firstSegment) && !activeLocales.includes(firstSegment)) return new NextResponse('Not found', { status: 404, headers: {'X-Robots-Tag': 'noindex'} });
   if (isLocale(firstSegment)) {
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set('x-estate-locale', firstSegment);

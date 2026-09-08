@@ -1,3 +1,4 @@
+from app.config import get_settings
 from sqlalchemy import Integer, String, Text, Numeric, Float, Boolean, ForeignKey, DateTime, JSON, UniqueConstraint, CheckConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.sql import func
@@ -7,6 +8,7 @@ from typing import Any
 
 class Property(Base):
     __tablename__ = "properties"
+    content_locale: Mapped[str] = mapped_column(String(2), default=lambda: get_settings().SITE_DEFAULT_LOCALE, nullable=False)
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     title: Mapped[str] = mapped_column(String(200), nullable=False)

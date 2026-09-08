@@ -1,10 +1,12 @@
+import { getLocaleConfig } from '@/lib/runtime-locales';
 import type { Metadata } from 'next';
-import { locales, openGraphLocales, type Locale } from '@/i18n/config';
+import { openGraphLocales, type Locale } from '@/i18n/config';
 import { fetchSiteSettings } from '@/lib/api';
 import { brandName, getSiteCopy, type SeoPage } from '@/lib/site-profile';
 
 export function localizedAlternates(path: string) {
-  return Object.fromEntries([...locales.map(locale => [locale, `/${locale}${path}`]), ['x-default', `/ru${path}`]]);
+  const { locales, defaultLocale } = getLocaleConfig();
+  return Object.fromEntries([...locales.map(locale => [locale, `/${locale}${path}`]), ['x-default', `/${defaultLocale}${path}`]]);
 }
 
 export async function localizedPageMetadata(

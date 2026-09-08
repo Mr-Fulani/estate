@@ -1,3 +1,4 @@
+from app.site_runtime import site_runtime
 from app.schemas.site_profile import SiteProfile
 from pydantic import BaseModel, ConfigDict, Field
 from typing import Literal, Optional
@@ -18,6 +19,7 @@ class SiteSettingsTranslationResponse(SiteSettingsTranslationInput):
     model_config = ConfigDict(from_attributes=True)
 
 class SiteSettingsBase(BaseModel):
+    runtime: dict = Field(default_factory=site_runtime)
     profile: SiteProfile = Field(default_factory=SiteProfile)
     phone: str = ""
     email: str = ""

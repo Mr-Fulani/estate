@@ -1,0 +1,33 @@
+"""Opt-in integration tests against a dedicated, migrated test database."""
+import os
+import unittest
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from app.models import Category, Property, SiteSetting
+from app.schemas.settings import SiteSettingsResponse
+
+
+@unittest.skipUnless(os.getenv('SEO_TEST_DATABASE_URL'), 'Dedicated SEO database is not configured')
+class SeoDatabaseTests(unittest.IsolatedAsyncioTestCase):
+    async def test_profile_roundtrip_and_property_language_default(self):
+        engine = create_async_engine(os.environ['SEO_TEST_DATABASE_URL'])
+        try:
+            async with engine.connect() as connection:
+                self.assertEqual(await connection.scalar(text('select current_database()')), 'estate_seo_test')
+                transaction = await connection.begin_nested()
+                async with AsyncSession(bind=connection, expire_on_commit=False) as db:
+                    setting = SiteSetting(id=90001, profile={'brand_name':'Agency Beta', 'copy':{'en':{'about.intro':'Local team'}}}, translations=[])
+                    category = Category(name='Office', slug='seo-test-office')
+                    db.add_all([setting, category])
+                    await db.flush()
+                    prop = Property(title='Office', description='Complete description', price=100, currency='EUR', category_id=category.id, slug='seo-test-property')
+                    db.add(prop)
+                    await db.flush()
+                    await db.refresh(prop)
+                    self.assertEqual(prop.content_locale, os.getenv('SITE_DEFAULT_LOCALE', 'ru'))
+                    result = SiteSettingsResponse.model_validate(setting).model_dump(by_alias=True)
+                    self.assertEqual(result['profile']['copy']['en']['about.intro'], 'Local team')
+                    self.assertEqual(result['runtime']['default_locale'], os.getenv('SITE_DEFAULT_LOCALE', 'ru'))
+                await transaction.rollback()
+        finally:
+            await engine.dispose()

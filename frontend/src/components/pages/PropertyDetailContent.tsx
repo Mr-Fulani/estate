@@ -1,3 +1,4 @@
+import { getLocaleConfig, defaultAvailableLocale } from '@/lib/runtime-locales';
 import { getSiteOrigin } from '@/lib/site-config';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -8,7 +9,7 @@ import { PropertyContactActions } from '@/components/contact/PropertyContactActi
 import { PropertyDetails } from '@/components/properties/PropertyDetails';
 import type { Locale } from '@/i18n/config';
 import { localizeHref } from '@/i18n/config';
-import { hasPropertyLocale, localizedProperty, localizedPropertyTranslation } from '@/i18n/domain';
+import { hasPropertyLocale, localizedProperty, propertyAvailableLocales } from '@/i18n/domain';
 import { fetchSiteSettings } from '@/lib/api';
 import { getSiteCopy } from '@/lib/site-profile';
 import { fetchProperty } from '@/lib/api';
@@ -19,20 +20,22 @@ export async function PropertyDetailContent({ id, locale, initialProperty }: { i
   const property = initialProperty || await fetchProperty(id);
   const copy = getSiteCopy(locale, await fetchSiteSettings()).property;
   if (!property) notFound();
-  const localized = localizedProperty(property, locale);
-  const contentLocale = localizedPropertyTranslation(property, locale)?.locale || locale;
+  const available = propertyAvailableLocales(property).filter(value=>getLocaleConfig().locales.includes(value));
+  if (!available.length) notFound();
+  const contentLocale = available.includes(locale) ? locale : defaultAvailableLocale(available);
+  const localized = localizedProperty(property, contentLocale);
   const siteUrl = getSiteOrigin();
   const canonicalUrl = new URL(`/${contentLocale}/properties/${property.slug}`, siteUrl).toString();
   const absoluteImages = (property.images || []).map((image) => /^https?:\/\//i.test(image) ? image : new URL(image, siteUrl).toString());
   if (property.listing_kind === 'development' && property.development) {
-    if (property.development.is_demo) return <DevelopmentPage property={property} locale={locale} />;
+    if (property.development.is_demo) return <DevelopmentPage property={property} locale={contentLocale} />;
     const developmentData = {
       '@context': 'https://schema.org', '@type': 'ApartmentComplex',
       name: localized.title, description: localized.description, url: canonicalUrl,
       image: absoluteImages,
       address: { '@type': 'PostalAddress', streetAddress: localized.address, addressLocality: localized.city, addressRegion: localized.district },
     };
-    return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(developmentData).replace(/</g, '\\u003c') }} /><DevelopmentPage property={property} locale={locale} /></>;
+    return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(developmentData).replace(/</g, '\\u003c') }} /><DevelopmentPage property={property} locale={contentLocale} /></>;
   }
   const availability = {
     available: 'https://schema.org/InStock',
@@ -81,7 +84,7 @@ export async function PropertyDetailContent({ id, locale, initialProperty }: { i
       <Link href={localizeHref(locale, '/properties')} className="mb-6 inline-flex items-center text-primary transition-colors hover:text-primary-600"><ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" />{copy.back}</Link>
       {!hasPropertyLocale(property, locale) && <p className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-900">{copy.fallbackNotice}</p>}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        <div className="lg:col-span-2"><div lang={contentLocale} dir={contentLocale === 'ar' ? 'rtl' : 'ltr'}><PropertyDetails property={property} locale={locale} /></div></div>
+        <div className="lg:col-span-2"><div lang={contentLocale} dir={contentLocale === 'ar' ? 'rtl' : 'ltr'}><PropertyDetails property={property} locale={contentLocale} /></div></div>
         <div className="lg:col-span-1"><div className="sticky top-24 rounded-xl border border-slate-200 bg-white p-6 shadow-sm md:p-8"><h3 className="mb-2 text-2xl font-bold text-slate-900">{copy.interested}</h3><p className="mb-6 text-slate-600">{copy.interestedDescription}</p><ContactForm propertyId={property.id} /><PropertyContactActions propertyId={property.id} /></div></div>
       </div>
     </div>

@@ -1,3 +1,4 @@
+import { getLocaleConfig, defaultAvailableLocale } from '@/lib/runtime-locales';
 import { getSiteOrigin } from '@/lib/site-config';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
@@ -26,11 +27,12 @@ export async function generateMetadata({ params }: PropertyPageProps): Promise<M
   if (!sourceProperty) notFound();
   const settings = await fetchSiteSettings();
 
-  const property = localizedProperty(sourceProperty, locale);
-  const translation = localizedPropertyTranslation(sourceProperty, locale);
+  const availableLocales = propertyAvailableLocales(sourceProperty).filter(value => getLocaleConfig().locales.includes(value));
+  if (!availableLocales.length) notFound();
   const hasRequestedLocale = hasPropertyLocale(sourceProperty, locale);
-  const availableLocales = propertyAvailableLocales(sourceProperty);
-  const canonicalLocale = hasRequestedLocale ? locale : (translation?.locale || 'ru');
+  const canonicalLocale = hasRequestedLocale ? locale : defaultAvailableLocale(availableLocales);
+  const property = localizedProperty(sourceProperty, canonicalLocale);
+  const translation = localizedPropertyTranslation(sourceProperty, canonicalLocale);
   const location = [property.district, property.city].filter(Boolean).join(', ');
   const generatedTitle = `${property.title}${location ? ` — ${location}` : ''} | ${brandName(settings)}`;
   const generatedDescription = property.description?.replace(/\s+/g, ' ').trim().slice(0, 160)
@@ -47,7 +49,7 @@ export async function generateMetadata({ params }: PropertyPageProps): Promise<M
       availableLocale,
       `/${availableLocale}/properties/${sourceProperty.slug}`,
     ]),
-    ['x-default', `/ru/properties/${sourceProperty.slug}`],
+    ['x-default', `/${defaultAvailableLocale(availableLocales)}/properties/${sourceProperty.slug}`],
   ]);
 
   return {

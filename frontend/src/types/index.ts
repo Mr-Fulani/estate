@@ -28,6 +28,7 @@ export interface ExchangeRatesResponse {
 }
 
 export interface Property {
+  content_locale?: Locale;
   id: number;
   title: string;
   slug: string;
@@ -301,6 +302,7 @@ export interface AdminStats {
 }
 
 export interface PropertyFormData {
+  content_locale?: Locale;
   title: string;
   slug?: string;
   description?: string;
@@ -328,6 +330,7 @@ export interface PropertyFormData {
 }
 
 export interface SiteSettings {
+  runtime?: {locales: Locale[]; default_locale: Locale; currencies: CurrencyCode[]; default_currency: CurrencyCode; catalog_currency: CurrencyCode};
   profile?: import('@/lib/site-profile').SiteProfile;
   id?: number;
   phone: string;

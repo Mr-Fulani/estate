@@ -1,3 +1,4 @@
+from app.site_runtime import site_runtime
 from datetime import datetime, timezone
 from typing import Annotated, cast
 
@@ -32,8 +33,8 @@ def _validate_translations(translations: list[NewsTranslationBase]) -> None:
     locales = [translation.locale for translation in translations]
     if len(locales) != len(set(locales)):
         raise HTTPException(status_code=422, detail="Each news locale can be provided only once")
-    if "ru" not in locales:
-        raise HTTPException(status_code=422, detail="Russian translation is required")
+    if site_runtime()['default_locale'] not in locales:
+        raise HTTPException(status_code=422, detail="Translation in the project's default language is required")
 
 
 def _sync_translations(article: NewsArticle, translations: list[NewsTranslationBase]) -> None:
@@ -71,9 +72,7 @@ def _public_article(article: NewsArticle, locale: LocaleCode) -> NewsPublicRespo
     by_locale = {translation.locale: translation for translation in article.translations
                  if translation.title.strip() and translation.excerpt.strip() and translation.content.strip()}
     translation = by_locale.get(locale)
-    if translation is None and locale == "ar":
-        translation = by_locale.get("en")
-    translation = translation or by_locale.get("ru") or next(iter(by_locale.values()), None)
+    translation = translation or by_locale.get(site_runtime()["default_locale"]) or next(iter(by_locale.values()), None)
     if translation is None:
         raise HTTPException(status_code=500, detail="News translation is missing")
 
@@ -93,7 +92,7 @@ def _public_article(article: NewsArticle, locale: LocaleCode) -> NewsPublicRespo
         media=article.media,
         available_locales=[
             candidate
-            for candidate in ("ru", "en", "tr", "ar")
+            for candidate in site_runtime()["locales"]
             if candidate in by_locale
         ],
     )
@@ -136,7 +135,7 @@ async def get_news_for_admin(
 @router.get("", include_in_schema=False)
 @router.get("/", response_model=NewsListResponse)
 async def list_news(
-    locale: LocaleCode = Query("ru"),
+    locale: LocaleCode = Query(site_runtime()["default_locale"]),
     page: Annotated[int, Query(ge=1)] = 1,
     per_page: Annotated[int, Query(ge=1, le=50)] = 9,
     db: AsyncSession = Depends(get_db),
@@ -167,7 +166,7 @@ async def list_news(
 
 
 @router.get("/{slug}", response_model=NewsPublicResponse)
-async def get_news(slug: str, locale: LocaleCode = Query("ru"), db: AsyncSession = Depends(get_db)):
+async def get_news(slug: str, locale: LocaleCode = Query(site_runtime()["default_locale"]), db: AsyncSession = Depends(get_db)):
     now = datetime.now(timezone.utc)
     result = await db.execute(
         select(NewsArticle)
@@ -193,8 +192,8 @@ async def create_news(
     db: AsyncSession = Depends(get_db),
 ):
     _validate_translations(data.translations)
-    russian = next(item for item in data.translations if item.locale == "ru")
-    slug = clean_slug(data.slug or "") or generate_slug(russian.title, fallback="news")
+    primary = next(item for item in data.translations if item.locale == site_runtime()["default_locale"])
+    slug = clean_slug(data.slug or "") or generate_slug(primary.title, fallback="news")
     if (await db.execute(select(NewsArticle.id).where(NewsArticle.slug == slug))).scalar_one_or_none():
         raise HTTPException(status_code=409, detail="News slug already exists")
 
