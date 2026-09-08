@@ -1,4 +1,4 @@
-import type { CategoryTranslation, Property, SiteSettings, SiteSettingsTranslation } from '@/types';
+import type { CategoryTranslation, Property, PropertyTranslation, SiteSettings, SiteSettingsTranslation } from '@/types';
 import type { Locale } from './config';
 
 
@@ -121,25 +121,25 @@ export function localizedProperty(property: Property, locale: Locale): Property 
 }
 
 
-export function localizedPropertyTranslation(property: Property, locale: Locale) {
-  return localizedTranslation(property.translations, locale);
+function completePropertyTranslations(property: Property): PropertyTranslation[] {
+  const translations = (property.translations || []).filter((item) => item.title.trim() && item.description?.trim());
+  if (!translations.some((item) => item.locale === 'ru') && property.title?.trim() && property.description?.trim()) {
+    translations.push({ locale: 'ru', title: property.title, description: property.description, city: property.city, district: property.district, address: property.address });
+  }
+  return translations;
 }
 
+export function localizedPropertyTranslation(property: Property, locale: Locale) {
+  const complete = completePropertyTranslations(property);
+  return localizedTranslation(complete, locale) || complete[0];
+}
 
 export function hasPropertyLocale(property: Property, locale: Locale): boolean {
-  if (locale === 'ru') return true;
-  return Boolean(property.translations?.some(
-    (item) => item.locale === locale && item.title.trim(),
-  ));
+  return completePropertyTranslations(property).some((item) => item.locale === locale);
 }
 
-
 export function propertyAvailableLocales(property: Property): Locale[] {
-  const available = new Set<Locale>(['ru']);
-  for (const translation of property.translations || []) {
-    if (translation.title.trim()) available.add(translation.locale);
-  }
-  return Array.from(available);
+  return completePropertyTranslations(property).map((item) => item.locale);
 }
 
 

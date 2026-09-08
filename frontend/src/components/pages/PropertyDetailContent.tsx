@@ -8,7 +8,7 @@ import { PropertyContactActions } from '@/components/contact/PropertyContactActi
 import { PropertyDetails } from '@/components/properties/PropertyDetails';
 import type { Locale } from '@/i18n/config';
 import { localizeHref } from '@/i18n/config';
-import { hasPropertyLocale, localizedProperty } from '@/i18n/domain';
+import { hasPropertyLocale, localizedProperty, localizedPropertyTranslation } from '@/i18n/domain';
 import { siteCopy } from '@/i18n/siteCopy';
 import { fetchProperty } from '@/lib/api';
 import type { Property } from '@/types';
@@ -19,8 +19,9 @@ export async function PropertyDetailContent({ id, locale, initialProperty }: { i
   const copy = siteCopy[locale].property;
   if (!property) notFound();
   const localized = localizedProperty(property, locale);
+  const contentLocale = localizedPropertyTranslation(property, locale)?.locale || locale;
   const siteUrl = getSiteOrigin();
-  const canonicalUrl = new URL(`/${locale}/properties/${property.slug}`, siteUrl).toString();
+  const canonicalUrl = new URL(`/${contentLocale}/properties/${property.slug}`, siteUrl).toString();
   const absoluteImages = (property.images || []).map((image) => /^https?:\/\//i.test(image) ? image : new URL(image, siteUrl).toString());
   if (property.listing_kind === 'development' && property.development) {
     if (property.development.is_demo) return <DevelopmentPage property={property} locale={locale} />;
@@ -47,7 +48,7 @@ export async function PropertyDetailContent({ id, locale, initialProperty }: { i
     url: canonicalUrl,
     datePosted: property.created_at,
     dateModified: property.updated_at || property.created_at,
-    inLanguage: locale,
+    inLanguage: contentLocale,
     image: absoluteImages.length ? absoluteImages : undefined,
     about: {
       '@type': property.category?.slug === 'kvartira' ? 'Apartment' : 'House',
@@ -79,7 +80,7 @@ export async function PropertyDetailContent({ id, locale, initialProperty }: { i
       <Link href={localizeHref(locale, '/properties')} className="mb-6 inline-flex items-center text-primary transition-colors hover:text-primary-600"><ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" />{copy.back}</Link>
       {!hasPropertyLocale(property, locale) && <p className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-900">{copy.fallbackNotice}</p>}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        <div className="lg:col-span-2"><PropertyDetails property={property} locale={locale} /></div>
+        <div className="lg:col-span-2"><div lang={contentLocale} dir={contentLocale === 'ar' ? 'rtl' : 'ltr'}><PropertyDetails property={property} locale={locale} /></div></div>
         <div className="lg:col-span-1"><div className="sticky top-24 rounded-xl border border-slate-200 bg-white p-6 shadow-sm md:p-8"><h3 className="mb-2 text-2xl font-bold text-slate-900">{copy.interested}</h3><p className="mb-6 text-slate-600">{copy.interestedDescription}</p><ContactForm propertyId={property.id} /><PropertyContactActions propertyId={property.id} /></div></div>
       </div>
     </div>

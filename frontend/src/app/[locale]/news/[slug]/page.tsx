@@ -84,7 +84,7 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
   return (
     <div className="min-h-screen bg-white">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, '\\u003c') }} />
-      <article>
+      <article lang={article.locale} dir={article.locale === 'ar' ? 'rtl' : 'ltr'}>
         <header className="border-b border-slate-200 bg-slate-50">
           <div className="container mx-auto max-w-5xl px-4 py-10 md:px-6 md:py-14">
             <Link href={localizeHref(locale, '/news')} className="mb-8 inline-flex items-center gap-2 font-semibold text-primary transition-colors hover:text-secondary">

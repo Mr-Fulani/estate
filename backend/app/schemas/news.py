@@ -55,6 +55,8 @@ class NewsMediaResponse(NewsMediaBase):
 
 
 class NewsTranslationBase(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
     locale: LocaleCode
     title: str = Field(min_length=1, max_length=240)
     excerpt: str = Field(min_length=1, max_length=500)
