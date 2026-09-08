@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
+  // Resolve metadata validation before sending headers, so missing pages return HTTP 404.
+  htmlLimitedBots: /.*/,
   poweredByHeader: false,
   distDir: process.env.NEXT_DIST_DIR || '.next',
   async headers() {
