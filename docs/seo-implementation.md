@@ -21,6 +21,8 @@
 
 | SEO-11 / P2 | Активные/default языки и валюты из конфигурации; проект EN/TR без RU; отдельный язык базового объекта, настраиваемая валюта фильтра, категории из БД | 14 frontend tests; 12 backend tests; PostgreSQL: миграции и EN/default roundtrip; TypeScript, ESLint |
 
+| SEO-10 / P2 | Явный тип недвижимости и автора, URL автора, WebSite/publisher/dateModified и видимые крошки с JSON-LD | 16 frontend tests; backend suite: 46 passed, 9 skipped; миграция PostgreSQL; TypeScript, ESLint |
+
 SEO-03: `77424b1`; SEO-02: `0f7d16f`.
 
 Последующие пункты выполняются в порядке технических зависимостей. Публикация на сервере, Search Console и полевые метрики требуют работающего публичного сайта и не считаются проверенными локально.

@@ -13,6 +13,8 @@ class NewsArticle(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     slug: Mapped[str] = mapped_column(String(220), unique=True, nullable=False, index=True)
     cover_image: Mapped[str | None] = mapped_column(String(1000), nullable=True)
+    author_type: Mapped[str] = mapped_column(String(20), default="Organization", server_default="Organization", nullable=False)
+    author_url: Mapped[str | None] = mapped_column(String(1000), nullable=True)
     author: Mapped[str] = mapped_column(String(120), default="")
     is_published: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
     published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)

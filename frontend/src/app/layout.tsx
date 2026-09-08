@@ -72,7 +72,7 @@ export default async function RootLayout({
       <body lang={documentLanguageTags[locale]} className="min-h-screen flex flex-col font-sans">
         {siteSettings.profile?.brand_name && <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organization).replace(/</g, '\\u003c') }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify({'@context':'https://schema.org','@graph':[organization,{'@type':'WebSite','@id':`${siteUrl}/#website`,url:siteUrl,name:brandName(siteSettings),publisher:{'@id':`${siteUrl}/#organization`},inLanguage:localeConfig.locales}]}).replace(/</g, '\\u003c') }}
         />}
         <LocaleProvider locale={locale} messages={messages} activeLocales={localeConfig.locales} defaultLocale={localeConfig.defaultLocale}>
           <AppShell siteSettings={siteSettings}>

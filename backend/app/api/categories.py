@@ -1,9 +1,10 @@
+from app.site_runtime import site_runtime
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.database import get_db
 from app.models.category import Category, CategoryTranslation
-from app.schemas.category import CategoryResponse, CategoryCreate
+from app.schemas.category import CategoryResponse, CategoryCreate, CategorySchemaUpdate
 from app.audit import add_audit_log
 from app.models.admin_user import AdminUser
 from app.security import require_permission
@@ -41,9 +42,9 @@ async def create_category(
     locales = [item["locale"] for item in translations]
     if len(locales) != len(set(locales)):
         raise HTTPException(status_code=422, detail="Each category locale can be provided only once")
-    if "ru" not in locales:
+    if site_runtime()["default_locale"] not in locales:
         translations.append({
-            "locale": "ru",
+            "locale": site_runtime()["default_locale"],
             "name": data["name"],
             "description": data.get("description"),
         })
@@ -79,3 +80,17 @@ async def delete_category(
     await db.delete(category)
     await db.commit()
     return {"success": True, "message": "Category deleted"}
+
+
+@router.patch('/{category_id}/schema', response_model=CategoryResponse)
+async def update_category_schema(category_id: int, data: CategorySchemaUpdate, request: Request,
+                                 current: AdminUser = Depends(require_permission('categories:write', csrf=True)),
+                                 db: AsyncSession = Depends(get_db)):
+    category = await db.get(Category, category_id)
+    if category is None:
+        raise HTTPException(404, 'Category not found')
+    category.schema_type = data.schema_type
+    add_audit_log(db, request, current, 'category.schema_updated', 'category', category.id, data.model_dump())
+    await db.commit()
+    await db.refresh(category)
+    return category

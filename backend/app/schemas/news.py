@@ -3,7 +3,7 @@ import re
 from typing import Literal
 from urllib.parse import parse_qs, urlparse
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
 LocaleCode = Literal["ru", "en", "tr", "ar"]
@@ -71,7 +71,18 @@ class NewsTranslationResponse(NewsTranslationBase):
     model_config = ConfigDict(from_attributes=True)
 
 
-class NewsArticleCreate(BaseModel):
+class AuthorFields(BaseModel):
+    author_type: Literal['Organization', 'Person'] = 'Organization'
+    author_url: str | None = Field(default=None, max_length=1000)
+
+    @field_validator('author_url')
+    @classmethod
+    def validate_author_url(cls, value):
+        from app.schemas.site_profile import SiteProfile
+        return SiteProfile.safe_asset_url(value) if value else None
+
+
+class NewsArticleCreate(AuthorFields):
     slug: str | None = Field(default=None, max_length=220)
     cover_image: str | None = Field(default=None, max_length=1000)
     author: str = Field(default="", max_length=120)
@@ -81,7 +92,7 @@ class NewsArticleCreate(BaseModel):
     media: list[NewsMediaBase] = Field(default_factory=list, max_length=50)
 
 
-class NewsArticleUpdate(BaseModel):
+class NewsArticleUpdate(AuthorFields):
     slug: str | None = Field(default=None, max_length=220)
     cover_image: str | None = Field(default=None, max_length=1000)
     author: str | None = Field(default=None, max_length=120)
@@ -91,7 +102,7 @@ class NewsArticleUpdate(BaseModel):
     media: list[NewsMediaBase] | None = Field(default=None, max_length=50)
 
 
-class NewsAdminResponse(BaseModel):
+class NewsAdminResponse(AuthorFields):
     id: int
     slug: str
     cover_image: str | None
@@ -106,7 +117,8 @@ class NewsAdminResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class NewsPublicResponse(BaseModel):
+class NewsPublicResponse(AuthorFields):
+    updated_at: datetime | None = None
     id: int
     slug: str
     locale: LocaleCode

@@ -1,9 +1,11 @@
 'use client';
 
+import { useLocale } from '@/context/LocaleContext';
+import { localeLabels, type Locale } from '@/i18n/config';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Category, CategoryTranslation } from '@/types';
-import { createCategory, deleteCategory } from '@/lib/api';
+import { createCategory, deleteCategory, updateCategorySchema } from '@/lib/api';
 import { Plus, Trash2, Building, Home, Trees, Briefcase, type LucideIcon } from 'lucide-react';
 import { AdminActionSpinner } from '@/components/admin/AdminActionSpinner';
 
@@ -19,12 +21,13 @@ export function CategoriesManager({
 }: {
   initialCategories: Category[];
 }) {
+  const { activeLocales, defaultLocale } = useLocale();
   const router = useRouter();
   const [categories, setCategories] = useState<Category[]>(initialCategories);
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
   const [description, setDescription] = useState('');
-  const [translatedNames, setTranslatedNames] = useState<Record<'en' | 'tr' | 'ar', string>>({ en: '', tr: '', ar: '' });
+  const [translatedNames, setTranslatedNames] = useState<Partial<Record<Locale, string>>>({});
   const [loading, setLoading] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
@@ -39,10 +42,10 @@ export function CategoriesManager({
         slug: generatedSlug,
         description: description.trim() || undefined,
         translations: [
-          { locale: 'ru', name: name.trim(), description: description.trim() || undefined },
-          ...(['en', 'tr', 'ar'] as const)
-            .filter((locale) => translatedNames[locale].trim())
-            .map((locale): CategoryTranslation => ({ locale, name: translatedNames[locale].trim() })),
+          { locale: defaultLocale, name: name.trim(), description: description.trim() || undefined },
+          ...activeLocales.filter(locale=>locale !== defaultLocale)
+            .filter((locale) => translatedNames[locale]?.trim())
+            .map((locale): CategoryTranslation => ({ locale, name: translatedNames[locale]?.trim() || '' })),
         ],
       });
       setCategories((prev) => [...prev, newCat]);
@@ -105,6 +108,9 @@ export function CategoriesManager({
                     </td>
                     <td className="py-3.5 px-4 text-xs text-slate-600">
                       {cat.description || '-'}
+                      <select aria-label={`Тип объекта: ${cat.name}`} className="mt-2 block w-full rounded-lg border p-2" value={cat.schema_type || 'Place'} onChange={async event=>{try { const updated=await updateCategorySchema(cat.id,event.target.value as NonNullable<Category['schema_type']>);setCategories(items=>items.map(item=>item.id===updated.id?updated:item)); } catch { alert('Не удалось сохранить тип'); }}}>
+                        {Object.entries({Place:'Другой / не указан',Apartment:'Квартира',House:'Дом',SingleFamilyResidence:'Односемейный дом',ApartmentComplex:'Жилой комплекс'}).map(([value,label])=><option key={value} value={value}>{label}</option>)}
+                      </select>
                     </td>
                     <td className="py-3.5 px-4 text-right">
                       <button
@@ -150,16 +156,12 @@ export function CategoriesManager({
 
           <div className="space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
             <p className="text-xs font-bold uppercase tracking-wider text-slate-600">Переводы названия</p>
-            {([
-              ['en', 'English'],
-              ['tr', 'Türkçe'],
-              ['ar', 'العربية'],
-            ] as const).map(([locale, label]) => (
+            {activeLocales.filter(locale=>locale !== defaultLocale).map(locale => [locale, localeLabels[locale]] as const).map(([locale, label]) => (
               <label key={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'} className="block text-xs font-semibold text-slate-600">
                 {label}
                 <input
                   type="text"
-                  value={translatedNames[locale]}
+                  value={translatedNames[locale] || ''}
                   onChange={(event) => setTranslatedNames((current) => ({ ...current, [locale]: event.target.value }))}
                   className="mt-1.5 h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-medium outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                 />

@@ -754,3 +754,10 @@ export async function fetchAuditLogs(page = 1): Promise<AdminAuditLogList> {
   await ensureAdminResponse(res, 'Не удалось загрузить журнал действий');
   return await res.json();
 }
+
+
+export async function updateCategorySchema(id: number, schema_type: NonNullable<Category['schema_type']>): Promise<Category> {
+  const res = await fetch(`${getApiBaseUrl()}/categories/${id}/schema`, {method:'PATCH',headers:adminHeaders(undefined,true),credentials:'include',body:JSON.stringify({schema_type})});
+  await ensureAdminResponse(res, 'Не удалось сохранить тип категории');
+  return await res.json();
+}

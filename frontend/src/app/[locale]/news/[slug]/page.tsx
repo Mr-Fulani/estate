@@ -1,3 +1,6 @@
+import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { articleAuthor } from '@/lib/structured-data';
+import { getMessages } from '@/i18n/messages';
 import { getLocaleConfig, defaultAvailableLocale } from '@/lib/runtime-locales';
 import { getSiteOrigin } from '@/lib/site-config';
 import type { Metadata } from 'next';
@@ -51,6 +54,7 @@ export async function generateMetadata({ params }: NewsArticlePageProps): Promis
       url: absoluteUrl(`/${canonicalLocale}/news/${slug}`),
       locale: openGraphLocales[canonicalLocale],
       publishedTime: article.published_at || undefined,
+      modifiedTime: article.updated_at || undefined,
       authors: [article.author],
       images,
     },
@@ -69,7 +73,8 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
   const article = await fetchNewsArticle(slug, locale);
   if (!article) notFound();
 
-  const copy = getSiteCopy(locale, await fetchSiteSettings()).news;
+  const settings = await fetchSiteSettings();
+  const copy = getSiteCopy(locale, settings).news;
   const paragraphs = article.content.split(/\n{2,}/).filter(Boolean);
   const structuredData = {
     '@context': 'https://schema.org',
@@ -79,7 +84,10 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
     image: [article.cover_image, ...(article.media ?? []).filter((item) => item.media_type === 'image').map((item) => item.url)].filter((item): item is string => Boolean(item)).map(absoluteUrl),
     datePublished: article.published_at || undefined,
     mainEntityOfPage: absoluteUrl(`/${article.locale}/news/${article.slug}`),
-    author: { '@type': 'Organization', name: article.author },
+    author: articleAuthor(article, settings, getSiteOrigin()),
+    publisher: settings.profile?.brand_name ? { '@id': `${getSiteOrigin()}/#organization` } : undefined,
+    isPartOf: { '@id': `${getSiteOrigin()}/#website` },
+    dateModified: article.updated_at || undefined,
     inLanguage: article.locale,
   };
 
@@ -89,6 +97,7 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
       <article lang={article.locale} dir={article.locale === 'ar' ? 'rtl' : 'ltr'}>
         <header className="border-b border-slate-200 bg-slate-50">
           <div className="container mx-auto max-w-5xl px-4 py-10 md:px-6 md:py-14">
+            <Breadcrumbs items={[{name:getMessages(locale).navigation.home,href:`/${locale}`},{name:copy.title,href:`/${locale}/news`},{name:article.title,href:`/${article.locale}/news/${article.slug}`}]} />
             <Link href={localizeHref(locale, '/news')} className="mb-8 inline-flex items-center gap-2 font-semibold text-primary transition-colors hover:text-secondary">
               <ArrowLeft className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />{copy.back}
             </Link>
@@ -99,7 +108,7 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
             <p dir="auto" className="mb-7 max-w-3xl text-lg leading-relaxed text-slate-600 md:text-xl">{article.excerpt}</p>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm font-medium text-slate-500">
               {article.published_at && <time dateTime={article.published_at} className="inline-flex items-center gap-2"><CalendarDays className="h-4 w-4 text-secondary" aria-hidden="true" />{formatDate(article.published_at, locale)}</time>}
-              <span className="inline-flex items-center gap-2"><UserRound className="h-4 w-4 text-secondary" aria-hidden="true" />{copy.by}: {article.author}</span>
+              <span className="inline-flex items-center gap-2"><UserRound className="h-4 w-4 text-secondary" aria-hidden="true" />{copy.by}: {article.author_url ? <a href={article.author_url}>{article.author}</a> : article.author}</span>
             </div>
           </div>
         </header>

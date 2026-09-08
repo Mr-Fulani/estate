@@ -17,7 +17,13 @@ class CategoryTranslationResponse(CategoryTranslationInput):
 
     model_config = ConfigDict(from_attributes=True)
 
+SchemaType = Literal["Place", "Apartment", "House", "SingleFamilyResidence", "ApartmentComplex"]
+
+class CategorySchemaUpdate(BaseModel):
+    schema_type: SchemaType
+
 class CategoryBase(BaseModel):
+    schema_type: SchemaType = "Place"
     name: str
     slug: str
     description: Optional[str] = None

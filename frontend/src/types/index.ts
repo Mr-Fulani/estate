@@ -8,6 +8,7 @@ export interface CategoryTranslation {
 }
 
 export interface Category {
+  schema_type?: "Place" | "Apartment" | "House" | "SingleFamilyResidence" | "ApartmentComplex";
   id: number;
   name: string;
   slug: string;
@@ -126,7 +127,10 @@ export interface NewsArticle {
   meta_description: string | null;
   cover_image: string | null;
   author: string;
+  author_type?: 'Organization' | 'Person';
+  author_url?: string | null;
   published_at: string | null;
+  updated_at?: string | null;
   media: NewsMedia[];
   available_locales: Locale[];
 }
@@ -162,6 +166,8 @@ export interface NewsAdminArticle {
   slug: string;
   cover_image: string | null;
   author: string;
+  author_type?: 'Organization' | 'Person';
+  author_url?: string | null;
   is_published: boolean;
   published_at: string | null;
   created_at: string;
@@ -174,6 +180,8 @@ export interface NewsFormData {
   slug?: string;
   cover_image?: string | null;
   author: string;
+  author_type?: 'Organization' | 'Person';
+  author_url?: string | null;
   is_published: boolean;
   published_at?: string | null;
   translations: NewsTranslation[];

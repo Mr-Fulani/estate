@@ -88,6 +88,9 @@ def _public_article(article: NewsArticle, locale: LocaleCode) -> NewsPublicRespo
         meta_description=translation.meta_description,
         cover_image=article.cover_image,
         author=article.author,
+        author_type=article.author_type,
+        author_url=article.author_url,
+        updated_at=article.updated_at,
         published_at=article.published_at,
         media=article.media,
         available_locales=[
@@ -205,6 +208,8 @@ async def create_news(
         slug=slug,
         cover_image=data.cover_image,
         author=data.author,
+        author_type=data.author_type,
+        author_url=data.author_url,
         is_published=data.is_published,
         published_at=published_at,
         translations=[NewsTranslation(**item.model_dump()) for item in data.translations],

@@ -1,3 +1,6 @@
+import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { propertySchemaType } from '@/lib/structured-data';
+import { getMessages } from '@/i18n/messages';
 import { getLocaleConfig, defaultAvailableLocale } from '@/lib/runtime-locales';
 import { getSiteOrigin } from '@/lib/site-config';
 import Link from 'next/link';
@@ -18,7 +21,9 @@ import { DevelopmentPage } from '@/components/properties/DevelopmentPage';
 
 export async function PropertyDetailContent({ id, locale, initialProperty }: { id: string; locale: Locale; initialProperty?: Property }) {
   const property = initialProperty || await fetchProperty(id);
-  const copy = getSiteCopy(locale, await fetchSiteSettings()).property;
+  const settings = await fetchSiteSettings();
+  const allCopy = getSiteCopy(locale, settings);
+  const copy = allCopy.property;
   if (!property) notFound();
   const available = propertyAvailableLocales(property).filter(value=>getLocaleConfig().locales.includes(value));
   if (!available.length) notFound();
@@ -47,6 +52,9 @@ export async function PropertyDetailContent({ id, locale, initialProperty }: { i
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'RealEstateListing',
+    '@id': `${canonicalUrl}#listing`,
+    isPartOf: { '@id': `${siteUrl}/#website` },
+    publisher: settings.profile?.brand_name ? { '@id': `${siteUrl}/#organization` } : undefined,
     name: localized.title,
     description: localized.description || undefined,
     url: canonicalUrl,
@@ -55,10 +63,10 @@ export async function PropertyDetailContent({ id, locale, initialProperty }: { i
     inLanguage: contentLocale,
     image: absoluteImages.length ? absoluteImages : undefined,
     about: {
-      '@type': property.category?.slug === 'kvartira' ? 'Apartment' : 'House',
+      '@type': propertySchemaType(property.category),
       name: localized.title,
-      floorSize: property.area ? { '@type': 'QuantitativeValue', value: property.area, unitCode: 'MTK' } : undefined,
-      numberOfRooms: property.rooms || undefined,
+      floorSize: propertySchemaType(property.category) !== 'Place' && property.area ? { '@type': 'QuantitativeValue', value: property.area, unitCode: 'MTK' } : undefined,
+      numberOfRooms: propertySchemaType(property.category) !== 'Place' ? property.rooms || undefined : undefined,
       address: {
         '@type': 'PostalAddress',
         streetAddress: localized.address || undefined,
@@ -81,6 +89,7 @@ export async function PropertyDetailContent({ id, locale, initialProperty }: { i
   return (
     <div className="container mx-auto min-h-screen bg-slate-50 px-4 py-8 md:px-6 md:py-12">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, '\\u003c') }} />
+      <Breadcrumbs items={[{name:getMessages(locale).navigation.home,href:`/${locale}`},{name:allCopy.catalog.title,href:`/${locale}/properties`},{name:localized.title,href:`/${contentLocale}/properties/${property.slug}`}]} />
       <Link href={localizeHref(locale, '/properties')} className="mb-6 inline-flex items-center text-primary transition-colors hover:text-primary-600"><ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" />{copy.back}</Link>
       {!hasPropertyLocale(property, locale) && <p className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-900">{copy.fallbackNotice}</p>}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">

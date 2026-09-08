@@ -35,6 +35,8 @@ export function NewsForm({ initialData }: { initialData?: NewsAdminArticle }) {
     slug: initialData?.slug || '',
     cover_image: initialData?.cover_image || '',
     author: initialData?.author || '',
+    author_type: initialData?.author_type || 'Organization',
+    author_url: initialData?.author_url || '',
     is_published: initialData?.is_published ?? false,
     published_at: initialData?.published_at ? initialData.published_at.slice(0, 16) : '',
     translations: newsLocales.map((locale) => initialData?.translations.find((item) => item.locale === locale) || emptyTranslation(locale)),
@@ -173,6 +175,8 @@ export function NewsForm({ initialData }: { initialData?: NewsAdminArticle }) {
       slug: formData.slug?.trim() || undefined,
       cover_image: formData.cover_image?.trim() || null,
       author: formData.author.trim() || '',
+      author_type: formData.author_type,
+      author_url: formData.author_url?.trim() || null,
       is_published: formData.is_published,
       published_at: formData.published_at ? new Date(formData.published_at).toISOString() : null,
       translations: translations.map((item) => ({
@@ -237,6 +241,8 @@ export function NewsForm({ initialData }: { initialData?: NewsAdminArticle }) {
           <div className="mb-5 flex items-center gap-2 border-b border-slate-100 pb-4"><ImageIcon className="h-5 w-5 text-primary" /><h2 className="text-lg font-bold text-slate-900">Публикация и обложка</h2></div>
           <div className="grid gap-5">
             <div><label htmlFor="news-slug" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">Slug</label><input id="news-slug" value={formData.slug || ''} onChange={(event) => setFormData((data) => ({ ...data, slug: event.target.value }))} placeholder="sozdaetsya-avtomaticheski" className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm outline-none focus:border-primary focus:bg-white" /></div>
+            <label className="block text-sm">Тип автора<select className="mt-2 w-full rounded-xl border p-3" value={formData.author_type} onChange={event=>setFormData(data=>({...data,author_type:event.target.value as 'Organization'|'Person'}))}><option value="Organization">Организация</option><option value="Person">Человек</option></select></label>
+            <label className="block text-sm">Страница автора<input className="mt-2 w-full rounded-xl border p-3" value={formData.author_url || ''} onChange={event=>setFormData(data=>({...data,author_url:event.target.value}))}/></label>
             <div><label htmlFor="news-author" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">Автор *</label><input id="news-author" required value={formData.author} onChange={(event) => setFormData((data) => ({ ...data, author: event.target.value }))} className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm outline-none focus:border-primary focus:bg-white" /></div>
             <div><label htmlFor="news-cover" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">URL обложки</label><input id="news-cover" type="text" value={formData.cover_image || ''} onChange={(event) => setFormData((data) => ({ ...data, cover_image: event.target.value }))} placeholder="https://… или /news/…" className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm outline-none focus:border-primary focus:bg-white" />{formData.cover_image && <div className="mt-4 aspect-[16/10] overflow-hidden rounded-2xl bg-slate-100"><img src={formData.cover_image} alt="Предпросмотр обложки" className="h-full w-full object-cover" /></div>}</div>
             <div><label htmlFor="news-published-at" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">Дата публикации</label><input id="news-published-at" type="datetime-local" value={formData.published_at || ''} onChange={(event) => setFormData((data) => ({ ...data, published_at: event.target.value }))} className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm outline-none focus:border-primary focus:bg-white" /></div>
