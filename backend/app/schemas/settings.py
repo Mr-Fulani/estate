@@ -17,14 +17,14 @@ class SiteSettingsTranslationResponse(SiteSettingsTranslationInput):
     model_config = ConfigDict(from_attributes=True)
 
 class SiteSettingsBase(BaseModel):
-    phone: str = "+90 (552) 123-00-00"
-    email: str = "support@rahathome.com"
-    address: str = "г. Стамбул, Бейликдюзю"
-    working_hours: str = "Ежедневно с 9:00 до 21:00"
-    telegram: Optional[str] = "https://t.me/rahat_home"
-    whatsapp: Optional[str] = "https://wa.me/905521230000"
+    phone: str = ""
+    email: str = ""
+    address: str = ""
+    working_hours: str = ""
+    telegram: Optional[str] = ""
+    whatsapp: Optional[str] = ""
     vk: Optional[str] = ""
-    youtube: Optional[str] = "https://youtube.com/@rahat_home"
+    youtube: Optional[str] = ""
     instagram: Optional[str] = ""
     facebook: Optional[str] = ""
     max_messenger: Optional[str] = ""

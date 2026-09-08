@@ -29,6 +29,8 @@ export function TrackedContactLink({
 }) {
   const { locale } = useLocale();
 
+  if (!href.trim() || /^(tel:|mailto:)\s*$/.test(href)) return null;
+
   const recordIntent = () => {
     void trackContactAction({
       kind: 'click',

@@ -15,6 +15,8 @@ export function PropertyContactActions({ propertyId }: { propertyId: number }) {
   const copy = siteCopy[locale].property;
   const phoneHref = `tel:${settings.phone.replace(/[^+\d]/g, '')}`;
 
+  if (!settings.phone && !settings.whatsapp && !settings.telegram) return null;
+
   return (
     <div className="mt-6 border-t border-slate-200 pt-5">
       <p className="mb-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-500">{copy.quickContact}</p>

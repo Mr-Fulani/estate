@@ -576,42 +576,18 @@ export async function deleteCategory(id: number): Promise<void> {
 }
 
 export const fallbackSiteSettings: SiteSettings = {
-  phone: '+90 (552) 123-00-00',
-  email: 'support@rahathome.com',
-  address: 'г. Стамбул, Бейликдюзю',
-  working_hours: 'Ежедневно с 9:00 до 21:00',
-  telegram: 'https://t.me/rahat_home',
-  whatsapp: 'https://wa.me/905521230000',
-  vk: '',
-  youtube: 'https://youtube.com/@rahat_home',
-  instagram: '',
-  facebook: '',
-  max_messenger: '',
-  translations: [
-    { locale: 'ru', address: 'г. Стамбул, Бейликдюзю', working_hours: 'Ежедневно с 9:00 до 21:00' },
-    { locale: 'en', address: 'Istanbul, Beylikduzu', working_hours: 'Daily, 9:00–21:00' },
-    { locale: 'tr', address: 'İstanbul, Beylikdüzü', working_hours: 'Her gün 09:00–21:00' },
-    { locale: 'ar', address: 'إسطنبول، بيليك دوزو', working_hours: 'يومياً من 9:00 إلى 21:00' },
-  ],
+  phone: '', email: '', address: '', working_hours: '', translations: [],
 };
 
 export async function fetchSiteSettings(): Promise<SiteSettings> {
-  try {
-    const baseUrl = getApiBaseUrl();
-    const res = await fetch(`${baseUrl}/settings`, {
-      next: { revalidate: 300 },
-    });
-
-    if (!res.ok) {
-      return fallbackSiteSettings;
-    }
-
-    return await res.json();
-  } catch (error) {
-    console.error('Failed to fetch site settings:', error);
-    return fallbackSiteSettings;
-  }
+  const res = await fetch(`${getApiBaseUrl()}/settings`, {
+    next: { revalidate: 300 }, signal: AbortSignal.timeout(10000),
+  });
+  // An outage must never turn into another company's contact details or an editable empty record.
+  if (!res.ok) throw new ApiError('Site settings are temporarily unavailable', res.status);
+  return await res.json();
 }
+
 
 export async function updateSiteSettings(data: Partial<SiteSettings>): Promise<SiteSettings> {
   const baseUrl = getApiBaseUrl();

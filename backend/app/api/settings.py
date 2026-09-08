@@ -19,22 +19,7 @@ async def get_or_create_settings(db: AsyncSession) -> SiteSetting:
     )
     setting = res.scalar_one_or_none()
     if not setting:
-        setting = SiteSetting(
-            id=1,
-            phone="+90 (552) 123-00-00",
-            email="support@rahathome.com",
-            address="г. Стамбул, Бейликдюзю",
-            working_hours="Ежедневно с 9:00 до 21:00",
-            telegram="https://t.me/rahat_home",
-            whatsapp="https://wa.me/905521230000",
-            vk="",
-            youtube="https://youtube.com/@rahat_home",
-        )
-        setting.translations.append(SiteSettingTranslation(
-            locale="ru",
-            address=setting.address,
-            working_hours=setting.working_hours,
-        ))
+        setting = SiteSetting(id=1)
         db.add(setting)
         await db.commit()
         await db.refresh(setting)
@@ -43,7 +28,11 @@ async def get_or_create_settings(db: AsyncSession) -> SiteSetting:
 
 @router.get("", response_model=SiteSettingsResponse)
 async def get_settings(db: AsyncSession = Depends(get_db)):
-    return await get_or_create_settings(db)
+    res = await db.execute(
+        select(SiteSetting).options(selectinload(SiteSetting.translations)).where(SiteSetting.id == 1)
+    )
+    setting = res.scalar_one_or_none()
+    return setting if setting is not None else SiteSettingsResponse(id=1)
 
 @router.put("", response_model=SiteSettingsResponse)
 async def update_settings(
