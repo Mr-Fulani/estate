@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { imageText, type ImageDetails } from '@/lib/image-text';
 import { useState, useEffect, useRef } from 'react';
 import { 
   ChevronLeft, 
@@ -19,6 +20,7 @@ import { getSiteCopy } from '@/lib/site-profile';
 export function PropertyGallery({
   images,
   title,
+  imageDetails,
   isFeatured,
   categoryName,
   isActive,
@@ -26,6 +28,7 @@ export function PropertyGallery({
 }: {
   images: string[];
   title: string;
+  imageDetails?: ImageDetails;
   isFeatured?: boolean;
   categoryName?: string;
   isActive?: boolean;
@@ -41,6 +44,8 @@ export function PropertyGallery({
 
   const hasImages = images && images.length > 0;
   const currentImage = hasImages ? images[selectedIndex] : null;
+
+  const currentText = imageText(imageDetails, currentImage || '', locale, `${title} — ${copy.photo} ${selectedIndex + 1}`);
 
   const rawStatus = statusBadge !== undefined && statusBadge !== null
     ? statusBadge
@@ -121,7 +126,7 @@ export function PropertyGallery({
       >
         <Image
           src={currentImage!}
-          alt={`${title} — ${copy.photo} ${selectedIndex + 1}`}
+          alt={currentText.alt}
           fill
           preload
           loading="eager"
@@ -186,6 +191,8 @@ export function PropertyGallery({
         )}
       </div>
 
+      {currentText.caption && <p className="text-sm text-slate-600">{currentText.caption}</p>}
+
       {/* Thumbnails Row */}
       {images.length > 1 && (
         <div className="flex gap-2.5 overflow-x-auto pb-2 pt-1">
@@ -207,7 +214,7 @@ export function PropertyGallery({
               >
                 <Image
                   src={imgUrl}
-                  alt={`${copy.photo} ${idx + 1}`}
+                  alt=""
                   fill
                   loading={idx === 0 ? 'eager' : 'lazy'}
                   sizes="96px"
@@ -255,7 +262,7 @@ export function PropertyGallery({
           <div className="relative flex-1 w-full max-h-[80vh] flex items-center justify-center my-auto" onClick={(e) => e.stopPropagation()}>
             <Image
               src={currentImage!}
-              alt={`${title} — ${copy.photo} ${selectedIndex + 1}`}
+              alt={currentText.alt}
               fill
               sizes="100vw"
               className="object-contain rounded-xl shadow-2xl transition-all"

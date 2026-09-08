@@ -41,6 +41,7 @@ class Property(Base):
         order_by="PropertyTranslation.locale",
     )
     
+    image_details: Mapped[dict] = mapped_column(JSON().with_variant(JSONB, "postgresql"), default=dict, server_default="{}")
     images: Mapped[list[Any] | None] = mapped_column(JSON().with_variant(JSONB, 'postgresql'), default=list)
 
     listing_kind: Mapped[str] = mapped_column(String(20), default="property", server_default="property")

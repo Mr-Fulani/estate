@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { AdminActionSpinner } from '@/components/admin/AdminActionSpinner';
 import Link from 'next/link';
+import { ImageTextEditor } from '@/components/admin/ImageTextEditor';
 import { useCurrency } from '@/context/CurrencyContext';
 import { useLocale } from '@/context/LocaleContext';
 import { cn } from '@/lib/utils';
@@ -74,6 +75,7 @@ export function PropertyForm({
     total_floors: initialData?.total_floors || undefined,
     year_built: initialData?.year_built || undefined,
     images: initialData?.images || [],
+    image_details: initialData?.image_details || {},
     category_id: initialData?.category_id || (categories[0]?.id || 1),
     is_featured: initialData?.is_featured ?? false,
     is_active: initialData?.is_active ?? true,
@@ -732,6 +734,7 @@ export function PropertyForm({
                     </div>
                   </div>
 
+                  {propertyLocales.map(locale => <ImageTextEditor key={locale} url={imgUrl} locale={locale} value={formData.image_details} onChange={image_details => setFormData(previous => ({ ...previous, image_details }))} />)}
                   {/* Actions Toolbar on Bottom of card */}
                   <div className="p-2.5 bg-white border-t border-slate-100 flex items-center justify-between gap-1">
                     <div className="flex items-center gap-1">

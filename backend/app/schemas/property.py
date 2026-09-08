@@ -1,3 +1,4 @@
+from app.schemas.image_text import ImageDetails
 from app.services.slug_history import validate_public_slug
 from app.config import get_settings
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -149,6 +150,7 @@ class PropertyBase(BaseModel):
     total_floors: Optional[int] = None
     year_built: Optional[int] = None
     images: list[str] = Field(default_factory=list)
+    image_details: ImageDetails = Field(default_factory=dict, max_length=100)
     category_id: int
     transaction_type: Literal["sale", "rent"] = "sale"
     market_status: Literal["available", "reserved", "sold", "rented", "archived"] = "available"
@@ -191,6 +193,7 @@ class PropertyUpdate(BaseModel):
     total_floors: Optional[int] = None
     year_built: Optional[int] = None
     images: Optional[list[str]] = None
+    image_details: ImageDetails | None = Field(default=None, max_length=100)
     category_id: Optional[int] = None
     is_featured: Optional[bool] = None
     is_active: Optional[bool] = None

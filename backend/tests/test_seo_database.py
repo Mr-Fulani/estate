@@ -20,7 +20,7 @@ class SeoDatabaseTests(unittest.IsolatedAsyncioTestCase):
                     category = Category(name='Office', slug='seo-test-office')
                     db.add_all([setting, category])
                     await db.flush()
-                    prop = Property(title='Office', description='Complete description', price=100, currency='EUR', category_id=category.id, slug='seo-test-property')
+                    prop = Property(title='Office', description='Complete description', price=100, currency='EUR', category_id=category.id, slug='seo-test-property', image_details={'/room.jpg': {'en': {'alt': 'Meeting room', 'caption': 'Second floor'}}})
                     db.add(prop)
                     await db.flush()
                     await db.refresh(prop)
@@ -36,6 +36,7 @@ class SeoDatabaseTests(unittest.IsolatedAsyncioTestCase):
                         await db.flush()
                     resolved = await get_property('seo-test-property', db, None)
                     self.assertEqual(resolved.slug, 'seo-test-final')
+                    self.assertEqual(resolved.image_details['/room.jpg']['en']['alt'], 'Meeting room')
                     with self.assertRaises(HTTPException) as conflict:
                         await ensure_slug_available(db, Property, PropertySlugAlias, 'seo-test-property')
                     self.assertEqual(conflict.exception.status_code, 409)

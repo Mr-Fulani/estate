@@ -1,6 +1,7 @@
 from datetime import datetime
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Index, Integer, String, Text, UniqueConstraint
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Index, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
@@ -15,6 +16,7 @@ class NewsArticle(Base):
     cover_image: Mapped[str | None] = mapped_column(String(1000), nullable=True)
     author_type: Mapped[str] = mapped_column(String(20), default="Organization", server_default="Organization", nullable=False)
     author_url: Mapped[str | None] = mapped_column(String(1000), nullable=True)
+    image_details: Mapped[dict] = mapped_column(JSON().with_variant(JSONB, "postgresql"), default=dict, server_default="{}")
     author: Mapped[str] = mapped_column(String(120), default="")
     is_published: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
     published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)

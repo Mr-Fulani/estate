@@ -1,3 +1,4 @@
+from app.schemas.image_text import ImageDetails
 from app.services.slug_history import validate_public_slug
 from datetime import datetime
 import re
@@ -73,6 +74,7 @@ class NewsTranslationResponse(NewsTranslationBase):
 
 
 class AuthorFields(BaseModel):
+    image_details: ImageDetails = Field(default_factory=dict, max_length=100)
     author_type: Literal['Organization', 'Person'] = 'Organization'
     author_url: str | None = Field(default=None, max_length=1000)
 

@@ -1,3 +1,5 @@
+import { RichText } from '@/components/content/RichText';
+import { imageText } from '@/lib/image-text';
 import { readyForIndexing } from '@/lib/indexing';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { articleAuthor } from '@/lib/structured-data';
@@ -78,7 +80,7 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
 
   const settings = await fetchSiteSettings();
   const copy = getSiteCopy(locale, settings).news;
-  const paragraphs = article.content.split(/\n{2,}/).filter(Boolean);
+  const coverText = imageText(article.image_details, article.cover_image || '', article.locale, article.title);
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -119,13 +121,14 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
         <div className="container mx-auto max-w-5xl px-4 py-10 md:px-6 md:py-14">
           {article.cover_image && (
             <div className="relative mb-10 aspect-[16/9] overflow-hidden rounded-3xl bg-slate-100 shadow-sm md:mb-14">
-              <Image src={article.cover_image} alt={article.title} fill preload loading="eager" sizes="(max-width: 1024px) 100vw, 1024px" className="object-cover" />
+              <Image src={article.cover_image} alt={coverText.alt} fill preload loading="eager" sizes="(max-width: 1024px) 100vw, 1024px" className="object-cover" />
             </div>
           )}
+          {coverText.caption && <p className="mb-8 text-sm text-slate-500">{coverText.caption}</p>}
           <div className="mx-auto max-w-3xl space-y-6 text-lg leading-8 text-slate-700">
-            {paragraphs.map((paragraph, index) => <p dir="auto" key={`${index}-${paragraph.slice(0, 24)}`}>{paragraph}</p>)}
+            <RichText content={article.content} />
           </div>
-          <NewsMediaGallery media={article.media ?? []} title={article.title} locale={locale} coverImage={article.cover_image} />
+          <NewsMediaGallery media={article.media ?? []} title={article.title} locale={article.locale} imageDetails={article.image_details} coverImage={article.cover_image} />
         </div>
       </article>
     </div>

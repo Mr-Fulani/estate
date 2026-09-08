@@ -1,3 +1,4 @@
+import type { ImageDetails } from '@/lib/image-text';
 import type { Locale } from '@/i18n/config';
 
 export interface CategoryTranslation {
@@ -50,6 +51,7 @@ export interface Property {
   market_status: 'available' | 'reserved' | 'sold' | 'rented' | 'archived';
   status_badge?: string | null;
   images: string[];
+  image_details?: ImageDetails;
   category_id: number;
   category: Category | null;
   translations?: PropertyTranslation[];
@@ -127,6 +129,7 @@ export interface NewsArticle {
   meta_description: string | null;
   cover_image: string | null;
   author: string;
+  image_details?: ImageDetails;
   author_type?: 'Organization' | 'Person';
   author_url?: string | null;
   published_at: string | null;
@@ -166,6 +169,7 @@ export interface NewsAdminArticle {
   slug: string;
   cover_image: string | null;
   author: string;
+  image_details?: ImageDetails;
   author_type?: 'Organization' | 'Person';
   author_url?: string | null;
   is_published: boolean;
@@ -180,6 +184,7 @@ export interface NewsFormData {
   slug?: string;
   cover_image?: string | null;
   author: string;
+  image_details?: ImageDetails;
   author_type?: 'Organization' | 'Person';
   author_url?: string | null;
   is_published: boolean;
@@ -275,6 +280,7 @@ export interface PropertyListResponse {
 }
 
 export interface PropertyFilter {
+  transaction_type?: 'sale' | 'rent';
   search?: string;
   category_id?: number;
   city?: string;
@@ -325,6 +331,7 @@ export interface PropertyFormData {
   total_floors?: number;
   year_built?: number;
   images?: string[];
+  image_details?: ImageDetails;
   category_id: number;
   is_featured?: boolean;
   is_active?: boolean;

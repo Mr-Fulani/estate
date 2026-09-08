@@ -1,6 +1,8 @@
 'use client';
 
 import Link from 'next/link';
+import { ContentEditor } from '@/components/admin/ContentEditor';
+import { ImageTextEditor } from '@/components/admin/ImageTextEditor';
 import { useLocale } from '@/context/LocaleContext';
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -34,6 +36,7 @@ export function NewsForm({ initialData }: { initialData?: NewsAdminArticle }) {
   const [formData, setFormData] = useState<NewsFormData>({
     slug: initialData?.slug || '',
     cover_image: initialData?.cover_image || '',
+    image_details: initialData?.image_details || {},
     author: initialData?.author || '',
     author_type: initialData?.author_type || 'Organization',
     author_url: initialData?.author_url || '',
@@ -229,7 +232,7 @@ export function NewsForm({ initialData }: { initialData?: NewsAdminArticle }) {
           <div role="tabpanel" dir={activeLocale === 'ar' ? 'rtl' : 'ltr'} className="space-y-5">
             <div><label htmlFor={`news-title-${activeLocale}`} className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">Заголовок {activeLocale === defaultLocale && '*'}</label><input id={`news-title-${activeLocale}`} required={activeLocale === defaultLocale} value={translation.title} onChange={(event) => setTranslation(activeLocale, 'title', event.target.value)} maxLength={240} className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 font-semibold outline-none transition focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10" /></div>
             <div><label htmlFor={`news-excerpt-${activeLocale}`} className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">Краткий анонс {activeLocale === defaultLocale && '*'}</label><textarea id={`news-excerpt-${activeLocale}`} required={activeLocale === defaultLocale} rows={3} value={translation.excerpt} onChange={(event) => setTranslation(activeLocale, 'excerpt', event.target.value)} maxLength={500} className="w-full rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm leading-relaxed outline-none transition focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10" /><p className="mt-1 text-right text-xs text-slate-400">{translation.excerpt.length}/500</p></div>
-            <div><label htmlFor={`news-content-${activeLocale}`} className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">Текст статьи {activeLocale === defaultLocale && '*'}</label><textarea id={`news-content-${activeLocale}`} required={activeLocale === defaultLocale} rows={16} value={translation.content} onChange={(event) => setTranslation(activeLocale, 'content', event.target.value)} className="w-full rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm leading-7 outline-none transition focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10" /><p className="mt-1 text-xs text-slate-400">Разделяйте абзацы пустой строкой.</p></div>
+            <div><label htmlFor={`news-content-${activeLocale}`} className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">Текст статьи {activeLocale === defaultLocale && '*'}</label><ContentEditor id={`news-content-${activeLocale}`} required={activeLocale === defaultLocale} value={translation.content} onChange={value => setTranslation(activeLocale, 'content', value)} /></div>
             <div className="grid gap-5 lg:grid-cols-2">
               <div><label htmlFor={`news-meta-title-${activeLocale}`} className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">SEO-заголовок</label><input id={`news-meta-title-${activeLocale}`} value={translation.meta_title || ''} onChange={(event) => setTranslation(activeLocale, 'meta_title', event.target.value)} maxLength={240} className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm outline-none focus:border-primary focus:bg-white" /></div>
               <div><label htmlFor={`news-meta-description-${activeLocale}`} className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">SEO-описание</label><textarea id={`news-meta-description-${activeLocale}`} value={translation.meta_description || ''} onChange={(event) => setTranslation(activeLocale, 'meta_description', event.target.value)} maxLength={320} rows={3} className="w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm outline-none focus:border-primary focus:bg-white" /></div>
@@ -325,6 +328,9 @@ export function NewsForm({ initialData }: { initialData?: NewsAdminArticle }) {
         )}
       </section>
 
+      <section className="rounded-xl border bg-white p-5"><h2 className="mb-3 text-lg font-bold">Описания фотографий · {activeLocale.toUpperCase()}</h2>
+        {Array.from(new Set([formData.cover_image, ...formData.media.filter(item => item.media_type === 'image').map(item => item.url)].filter((url): url is string => Boolean(url)))).map(url => <div key={url} className="mb-4 rounded border"><p className="break-all px-3 pt-3 text-xs text-slate-500">{url}</p><ImageTextEditor url={url} locale={activeLocale} value={formData.image_details} onChange={image_details => setFormData(previous => ({ ...previous, image_details }))} /></div>)}
+      </section>
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end"><Link href="/admin/news" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-200 px-6 text-sm font-semibold text-slate-700 hover:bg-slate-100">Отмена</Link><button type="submit" disabled={loading} aria-busy={loading} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-7 text-sm font-bold text-white shadow-md transition hover:bg-primary-800 disabled:opacity-50">{loading ? <AdminActionSpinner /> : <Save className="h-4 w-4" />}{loading ? 'Сохранение…' : initialData ? 'Сохранить изменения' : 'Создать публикацию'}</button></div>
     </form>
   );

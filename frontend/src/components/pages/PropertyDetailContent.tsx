@@ -1,3 +1,4 @@
+import { RelatedProperties } from '@/components/properties/RelatedProperties';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { propertySchemaType } from '@/lib/structured-data';
 import { getMessages } from '@/i18n/messages';
@@ -32,6 +33,7 @@ export async function PropertyDetailContent({ id, locale, initialProperty }: { i
   const siteUrl = getSiteOrigin();
   const canonicalUrl = new URL(`/${contentLocale}/properties/${property.slug}`, siteUrl).toString();
   const absoluteImages = (property.images || []).map((image) => /^https?:\/\//i.test(image) ? image : new URL(image, siteUrl).toString());
+  const breadcrumbs = <Breadcrumbs items={[{name:getMessages(locale).navigation.home,href:`/${locale}`},{name:allCopy.catalog.title,href:`/${locale}/properties`},{name:localized.title,href:`/${contentLocale}/properties/${property.slug}`}]} />;
   if (property.listing_kind === 'development' && property.development) {
     if (property.development.is_demo) return <DevelopmentPage property={property} locale={contentLocale} />;
     const developmentData = {
@@ -40,7 +42,7 @@ export async function PropertyDetailContent({ id, locale, initialProperty }: { i
       image: absoluteImages,
       address: { '@type': 'PostalAddress', streetAddress: localized.address, addressLocality: localized.city, addressRegion: localized.district },
     };
-    return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(developmentData).replace(/</g, '\\u003c') }} /><DevelopmentPage property={property} locale={contentLocale} /></>;
+    return <><div className="container mx-auto px-4 pt-6">{breadcrumbs}</div><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(developmentData).replace(/</g, '\\u003c') }} /><DevelopmentPage property={property} locale={contentLocale} /></>;
   }
   const availability = {
     available: 'https://schema.org/InStock',
@@ -89,13 +91,14 @@ export async function PropertyDetailContent({ id, locale, initialProperty }: { i
   return (
     <div className="container mx-auto min-h-screen bg-slate-50 px-4 py-8 md:px-6 md:py-12">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, '\\u003c') }} />
-      <Breadcrumbs items={[{name:getMessages(locale).navigation.home,href:`/${locale}`},{name:allCopy.catalog.title,href:`/${locale}/properties`},{name:localized.title,href:`/${contentLocale}/properties/${property.slug}`}]} />
+      {breadcrumbs}
       <Link href={localizeHref(locale, '/properties')} className="mb-6 inline-flex items-center text-primary transition-colors hover:text-primary-600"><ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" />{copy.back}</Link>
       {!hasPropertyLocale(property, locale) && <p className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-900">{copy.fallbackNotice}</p>}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2"><div lang={contentLocale} dir={contentLocale === 'ar' ? 'rtl' : 'ltr'}><PropertyDetails property={property} locale={contentLocale} /></div></div>
-        <div className="lg:col-span-1"><div className="sticky top-24 rounded-xl border border-slate-200 bg-white p-6 shadow-sm md:p-8"><h3 className="mb-2 text-2xl font-bold text-slate-900">{copy.interested}</h3><p className="mb-6 text-slate-600">{copy.interestedDescription}</p><ContactForm propertyId={property.id} /><PropertyContactActions propertyId={property.id} /></div></div>
+        <div className="lg:col-span-1"><div className="sticky top-24 rounded-xl border border-slate-200 bg-white p-6 shadow-sm md:p-8"><h2 className="mb-2 text-2xl font-bold text-slate-900">{copy.interested}</h2><p className="mb-6 text-slate-600">{copy.interestedDescription}</p><ContactForm propertyId={property.id} /><PropertyContactActions propertyId={property.id} /></div></div>
       </div>
+      <RelatedProperties property={property} locale={locale} title={copy.related} />
     </div>
   );
 }

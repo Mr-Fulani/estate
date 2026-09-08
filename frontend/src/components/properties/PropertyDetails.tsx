@@ -18,6 +18,7 @@ export async function PropertyDetails({ property: sourceProperty, locale }: { pr
       <div className="p-4 md:p-6 pb-0">
         <PropertyGallery
           images={property.images || []}
+          imageDetails={property.image_details}
           title={property.title}
           isFeatured={property.is_featured}
           categoryName={localizedCategoryName(locale, property.category?.slug, property.category?.name, property.category?.translations)}
@@ -42,7 +43,7 @@ export async function PropertyDetails({ property: sourceProperty, locale }: { pr
 
         {/* Characteristics Grid */}
         <div className="mb-8">
-          <h3 className="text-lg font-bold text-slate-900 mb-4">{copy.parameters}</h3>
+          <h2 className="text-lg font-bold text-slate-900 mb-4">{copy.parameters}</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center gap-3.5">
               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
@@ -92,7 +93,7 @@ export async function PropertyDetails({ property: sourceProperty, locale }: { pr
 
         {/* Description */}
         <div className="mb-6">
-          <h3 className="text-lg font-bold text-slate-900 mb-4">{copy.description}</h3>
+          <h2 className="text-lg font-bold text-slate-900 mb-4">{copy.description}</h2>
           <div className="max-w-none space-y-4 text-sm leading-relaxed text-slate-700 md:text-base">
             {property.description ? (
               property.description.split('\n').map((paragraph, i) => (
