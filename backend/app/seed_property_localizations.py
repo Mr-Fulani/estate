@@ -4,6 +4,7 @@ The script only fills missing values. Existing non-empty editorial content is
 left untouched, so it is safe to run again after manual changes in the admin.
 """
 
+from app.demo_import import require_demo_import
 import asyncio
 
 from sqlalchemy import select
@@ -316,6 +317,7 @@ def russian_fields(prop: Property) -> LocalizedFields:
 
 
 async def seed_property_localizations() -> None:
+    require_demo_import()
     expected_slugs = set(TRANSLATIONS)
     inserted = 0
     completed_fields = 0

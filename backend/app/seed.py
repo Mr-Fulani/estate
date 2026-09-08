@@ -1,3 +1,4 @@
+from app.demo_import import require_demo_import
 import asyncio
 from sqlalchemy import func, select
 from app.database import AsyncSessionLocal
@@ -7,6 +8,7 @@ from app.models.property_translation import PropertyTranslation
 from app.models.news import NewsArticle, NewsTranslation
 
 async def seed_data():
+    require_demo_import()
     async with AsyncSessionLocal() as db:
         existing_categories = await db.scalar(select(func.count(Category.id)))
         if existing_categories:

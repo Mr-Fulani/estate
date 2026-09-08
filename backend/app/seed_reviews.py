@@ -1,3 +1,4 @@
+from app.demo_import import require_demo_import
 import asyncio
 from datetime import datetime, timedelta, timezone
 
@@ -161,6 +162,7 @@ REVIEWS = [
 
 
 async def seed_reviews() -> None:
+    require_demo_import()
     now = datetime.now(timezone.utc)
     created = 0
     normalized = 0

@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "change-me"
     CORS_ORIGINS: str = "http://localhost:3000"
     ENVIRONMENT: str = "development"
+    ALLOW_DEMO_IMPORT: bool = False
     CRM_WEBHOOK_SECRET: str = ""
     AUTH_COOKIE_NAME: str = "estate_admin_session"
     AUTH_CSRF_COOKIE_NAME: str = "estate_admin_csrf"

@@ -4,6 +4,7 @@ All illustrations are authored schematic SVGs; no real project, prices or develo
 are represented. The demo flag disables enquiries, SEO indexing and featuring.
 Run: docker compose exec -T api python -m app.seed_demo_development
 """
+from app.demo_import import require_demo_import
 import asyncio
 from sqlalchemy import select
 from app.database import AsyncSessionLocal
@@ -63,6 +64,7 @@ TEXT = {
 
 
 async def seed():
+    require_demo_import()
     async with AsyncSessionLocal() as db:
         existing = await db.scalar(select(Property).where(Property.slug == SLUG))
         if existing:

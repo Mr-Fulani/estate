@@ -1,3 +1,4 @@
+from app.demo_import import require_demo_import
 import asyncio
 from datetime import datetime, timedelta, timezone
 
@@ -148,6 +149,7 @@ Denizİstanbul; konutu marina, peyzaj ve günlük hizmetlerle birleştiren Beyli
 
 
 async def seed_news() -> None:
+    require_demo_import()
     now = datetime.now(timezone.utc)
     created = 0
 

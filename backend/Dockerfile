@@ -9,7 +9,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 FROM builder as development
 WORKDIR /app
 COPY . .
-CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"]
+CMD ["sh", "-c", "python -m app.migrate && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"]
 
 # Stage: production
 FROM python:3.12-slim as production
@@ -19,4 +19,4 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 COPY . .
 RUN useradd -m appuser && mkdir -p /app/uploads && chown -R appuser /app
 USER appuser
-CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+CMD ["sh", "-c", "python -m app.migrate && uvicorn app.main:app --host 0.0.0.0 --port 8000"]

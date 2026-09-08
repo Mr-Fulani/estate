@@ -4,6 +4,7 @@ Source: user-supplied Google Drive folder 1x1X8zAy022W7Pwrb5BDJiP33BoYHBV9e.
 Brochure (July 2025): pages 9, 15-18, 23, 25, 28-32.
 Price Range file: last modified 24 June 2025, NOT a current verified offer.
 """
+from app.demo_import import require_demo_import
 import asyncio
 import argparse
 from sqlalchemy import select
@@ -100,6 +101,7 @@ def complete_layouts(item: Property):
 
 
 async def seed(enrich_existing=False):
+    require_demo_import()
     async with AsyncSessionLocal() as db:
         existing = await db.scalar(select(Property).where(Property.slug == "etro-residences-istanbul"))
         if existing:
