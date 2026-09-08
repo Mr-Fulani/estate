@@ -1,0 +1,169 @@
+{
+  "brand_name": "Rahat Home",
+  "hero_image_url": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2075&q=80",
+  "about_image_url": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+  "og_image_url": "/og.png",
+  "address_locality": "Istanbul",
+  "address_region": "Beylikdüzü",
+  "address_country": "TR",
+  "price_presets": [
+    10000000,
+    20000000,
+    50000000,
+    100000000
+  ],
+  "seo": {
+    "ru": {
+      "home": {
+        "title": "Rahat Home — агентство недвижимости",
+        "description": "Подбор, покупка и продажа недвижимости с полным сопровождением."
+      },
+      "properties": {
+        "title": "Недвижимость в Стамбуле — каталог Rahat Home",
+        "description": "Квартиры, виллы и коммерческая недвижимость в Стамбуле. Подбор, проверка и сопровождение сделки."
+      },
+      "services": {
+        "title": "Услуги по недвижимости в Турции — Rahat Home",
+        "description": "Подбор, покупка, продажа и аренда недвижимости в Турции, юридическая проверка и сопровождение."
+      },
+      "about": {
+        "title": "О компании Rahat Home",
+        "description": "Rahat Home помогает покупать, продавать и арендовать недвижимость в Стамбуле с прозрачным сопровождением."
+      },
+      "contact": {
+        "title": "Контакты Rahat Home — Стамбул, Бейликдюзю",
+        "description": "Свяжитесь с Rahat Home по вопросам покупки, продажи и аренды недвижимости в Стамбуле."
+      },
+      "privacy": {
+        "title": "Политика конфиденциальности — Rahat Home",
+        "description": "Как Rahat Home собирает, использует и защищает персональные данные посетителей сайта и клиентов."
+      },
+      "terms": {
+        "title": "Условия использования — Rahat Home",
+        "description": "Условия использования сайта Rahat Home и опубликованной информации о недвижимости."
+      },
+      "news": {
+        "title": "Новости и статьи о недвижимости — Rahat Home",
+        "description": "Аналитика рынка, советы по покупке и продаже, юридические разборы и новости Rahat Home."
+      },
+      "reviews": {
+        "title": "Отзывы клиентов об Rahat Home",
+        "description": "Подтверждённые отзывы клиентов о покупке, продаже и аренде недвижимости с Rahat Home."
+      }
+    },
+    "en": {
+      "home": {
+        "title": "Rahat Home — real estate agency",
+        "description": "Property search, purchase and sales with end-to-end support."
+      },
+      "properties": {
+        "title": "Istanbul property listings — Rahat Home",
+        "description": "Apartments, villas and commercial property in Istanbul with due diligence and end-to-end transaction support."
+      },
+      "services": {
+        "title": "Real estate services in Türkiye — Rahat Home",
+        "description": "Property search, purchase, sale and rental in Türkiye with legal due diligence and transaction support."
+      },
+      "about": {
+        "title": "About Rahat Home",
+        "description": "Rahat Home helps clients buy, sell and rent property in Istanbul with clear, end-to-end support."
+      },
+      "contact": {
+        "title": "Contact Rahat Home — Beylikdüzü, Istanbul",
+        "description": "Contact Rahat Home about buying, selling or renting property in Istanbul."
+      },
+      "privacy": {
+        "title": "Privacy policy — Rahat Home",
+        "description": "How Rahat Home collects, uses and protects website visitor and client personal data."
+      },
+      "terms": {
+        "title": "Terms of use — Rahat Home",
+        "description": "Terms for using the Rahat Home website and its published property information."
+      },
+      "news": {
+        "title": "Real estate news and insight — Rahat Home",
+        "description": "Market analysis, buying and selling advice, legal explainers and Rahat Home news."
+      },
+      "reviews": {
+        "title": "Rahat Home client reviews",
+        "description": "Verified client reviews about buying, selling and renting property with Rahat Home."
+      }
+    },
+    "tr": {
+      "home": {
+        "title": "Rahat Home — gayrimenkul danışmanlığı",
+        "description": "Uçtan uca destekle gayrimenkul arama, satın alma ve satış hizmetleri."
+      },
+      "properties": {
+        "title": "İstanbul gayrimenkul ilanları — Rahat Home",
+        "description": "İstanbul’da daire, villa ve ticari gayrimenkuller. Seçim, inceleme ve işlem sürecinde uçtan uca destek."
+      },
+      "services": {
+        "title": "Türkiye gayrimenkul hizmetleri — Rahat Home",
+        "description": "Gayrimenkul arama, alım, satım ve kiralama; hukuki inceleme ve işlem danışmanlığı."
+      },
+      "about": {
+        "title": "Rahat Home hakkında",
+        "description": "Rahat Home, İstanbul’da gayrimenkul alım, satım ve kiralama süreçlerinde şeffaf ve kapsamlı destek sunar."
+      },
+      "contact": {
+        "title": "Rahat Home iletişim — Beylikdüzü, İstanbul",
+        "description": "İstanbul’da gayrimenkul alım, satım veya kiralama hakkında Rahat Home ile iletişime geçin."
+      },
+      "privacy": {
+        "title": "Gizlilik politikası — Rahat Home",
+        "description": "Rahat Home’in site ziyaretçisi ve müşteri kişisel verilerini nasıl topladığı, kullandığı ve koruduğu."
+      },
+      "terms": {
+        "title": "Kullanım koşulları — Rahat Home",
+        "description": "Rahat Home web sitesinin ve yayınlanan gayrimenkul bilgilerinin kullanım koşulları."
+      },
+      "news": {
+        "title": "Gayrimenkul haberleri ve analizleri — Rahat Home",
+        "description": "Piyasa analizleri, alım satım önerileri, hukuki rehberler ve Rahat Home haberleri."
+      },
+      "reviews": {
+        "title": "Rahat Home müşteri yorumları",
+        "description": "Rahat Home ile gayrimenkul alım, satım ve kiralama süreçlerine ait doğrulanmış müşteri yorumları."
+      }
+    },
+    "ar": {
+      "home": {
+        "title": "Rahat Home — وكالة عقارية",
+        "description": "البحث عن العقارات وشراؤها وبيعها مع دعم متكامل."
+      },
+      "properties": {
+        "title": "عقارات إسطنبول — دليل Rahat Home",
+        "description": "شقق وفلل وعقارات تجارية في إسطنبول مع الفحص القانوني والدعم الكامل لإتمام الصفقة."
+      },
+      "services": {
+        "title": "الخدمات العقارية في تركيا — Rahat Home",
+        "description": "البحث عن العقارات وشراؤها وبيعها واستئجارها في تركيا مع الفحص القانوني ودعم الصفقة."
+      },
+      "about": {
+        "title": "عن Rahat Home",
+        "description": "تساعد Rahat Home العملاء على شراء العقارات وبيعها واستئجارها في إسطنبول بدعم واضح ومتكامل."
+      },
+      "contact": {
+        "title": "تواصل مع Rahat Home — بيليك دوزو، إسطنبول",
+        "description": "تواصل مع Rahat Home بشأن شراء العقارات أو بيعها أو استئجارها في إسطنبول."
+      },
+      "privacy": {
+        "title": "سياسة الخصوصية — Rahat Home",
+        "description": "كيفية جمع Rahat Home للبيانات الشخصية لزوار الموقع والعملاء واستخدامها وحمايتها."
+      },
+      "terms": {
+        "title": "شروط الاستخدام — Rahat Home",
+        "description": "شروط استخدام موقع Rahat Home ومعلومات العقارات المنشورة فيه."
+      },
+      "news": {
+        "title": "أخبار وتحليلات العقارات — Rahat Home",
+        "description": "تحليلات السوق ونصائح الشراء والبيع والأدلة القانونية وأخبار Rahat Home."
+      },
+      "reviews": {
+        "title": "آراء عملاء Rahat Home",
+        "description": "آراء موثقة حول شراء العقارات وبيعها واستئجارها مع Rahat Home."
+      }
+    }
+  }
+}

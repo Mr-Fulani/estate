@@ -1,12 +1,29 @@
 import argparse
 import asyncio
 import getpass
+import json
+from pathlib import Path
 
 from sqlalchemy import select
 
 from app.database import AsyncSessionLocal
 from app.models.admin_user import AdminUser
 from app.security import hash_password
+
+
+async def apply_site_profile(filename: str) -> None:
+    from app.models.settings import SiteSetting
+    from app.services.site_profile_import import fill_missing_profile
+
+    incoming = json.loads(Path(filename).read_text(encoding='utf-8'))
+    async with AsyncSessionLocal() as db:
+        settings = await db.scalar(select(SiteSetting).where(SiteSetting.id == 1).with_for_update())
+        if settings is None:
+            settings = SiteSetting(id=1, profile={})
+            db.add(settings)
+        settings.profile = fill_missing_profile(settings.profile or {}, incoming)
+        await db.commit()
+    print('Project profile applied; existing CMS values and contacts preserved.')
 
 
 async def create_founder(
@@ -57,6 +74,8 @@ async def create_founder(
 def main() -> None:
     parser = argparse.ArgumentParser(description="Real estate administration commands")
     subparsers = parser.add_subparsers(dest="command", required=True)
+    profile = subparsers.add_parser('apply-site-profile', help='Fill missing company profile fields from a project JSON file')
+    profile.add_argument('--file', required=True)
     founder = subparsers.add_parser("create-founder", help="Create or reset the founder account")
     founder.add_argument("--email", required=True)
     founder.add_argument("--username")
@@ -67,6 +86,8 @@ def main() -> None:
         help="Allow a password shorter than 12 characters for local development only",
     )
     args = parser.parse_args()
+    if args.command == 'apply-site-profile':
+        asyncio.run(apply_site_profile(args.file))
     if args.command == "create-founder":
         username = args.username or args.email.split("@", 1)[0]
         asyncio.run(
