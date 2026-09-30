@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+/usr/local/sbin/estate-compose --profile public ps
+curl -fsS --max-time 10 http://127.0.0.1:3000/api/backend/settings >/dev/null
+/usr/local/sbin/estate-compose exec -T db sh -c 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
+df -h /
+systemctl --no-pager list-timers estate-backup.timer estate-monitor.timer

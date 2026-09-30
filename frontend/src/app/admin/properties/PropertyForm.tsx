@@ -75,6 +75,7 @@ export function PropertyForm({
     total_floors: initialData?.total_floors || undefined,
     year_built: initialData?.year_built || undefined,
     images: initialData?.images || [],
+    videos: initialData?.videos || [],
     image_details: initialData?.image_details || {},
     category_id: initialData?.category_id || (categories[0]?.id || 1),
     is_featured: initialData?.is_featured ?? false,
@@ -651,6 +652,11 @@ export function PropertyForm({
 
         {/* Add Image Input */}
         <PropertyImageUpload onBusy={onUploadBusy} onUploaded={urls => setFormData(previous => ({ ...previous, images: [...(previous.images || []), ...urls] }))} />
+        <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <label htmlFor="property-videos" className="mb-2 block text-sm font-semibold text-slate-800">Видео объекта — одна HTTPS-ссылка в строке</label>
+          <textarea id="property-videos" rows={3} value={(formData.videos || []).join('\n')} onChange={event => setFormData(previous => ({ ...previous, videos: event.target.value.split('\n').map(value => value.trim()).filter(Boolean) }))} placeholder="https://drive.google.com/file/d/.../view" className="w-full rounded-lg border border-slate-200 bg-white p-3 text-sm" />
+          <p className="mt-2 text-xs text-slate-500">Поддерживаются Google Drive, YouTube, Vimeo и прямые ссылки на MP4. Видео Drive должно быть доступно для просмотра по ссылке.</p>
+        </div>
         <div className="flex gap-2">
           <input
             type="url"

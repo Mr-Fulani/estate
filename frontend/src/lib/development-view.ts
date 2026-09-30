@@ -1,8 +1,15 @@
 import type { Category, DevelopmentProfile, Property, PropertyFormData } from '@/types';
 import type { Locale } from '@/i18n/config';
 
-export const emptyDevelopment: DevelopmentProfile = { is_demo: false, developer: '', design_brand: '', price_date: null, price_status: 'indicative', images_are_renders: true, interior_images: [], translations: {} };
+export const emptyDevelopment: DevelopmentProfile = { is_demo: false, developer: '', design_brand: '', price_date: null, price_status: 'indicative', images_are_renders: true, interior_images: [], hero_video_url: null, hero_videos: [], translations: {} };
 const clean = (values: string[]) => values.map(value => value.trim()).filter(Boolean);
+export const developmentUnitPath = (code: string) => encodeURIComponent(code.trim().toLowerCase().replace(/\s+/g, '-'));
+export const developmentUnitMatchesPath = (code: string, path: string) => {
+  let decodedPath = path;
+  try { decodedPath = decodeURIComponent(path); } catch { /* Compare the raw path when it is malformed. */ }
+  const normalize = (value: string) => value.trim().toLowerCase().replace(/\s+/g, '-');
+  return normalize(code) === normalize(decodedPath);
+};
 export function isMediaUrl(value: string): boolean {
   if (value.includes('\\') || Array.from(value).some(character => character.charCodeAt(0) <= 32)) return false;
   if (value.startsWith('/') && !value.startsWith('//')) return true;
@@ -19,6 +26,8 @@ export function preparePropertyForm(data: PropertyFormData): PropertyFormData {
   const development = data.listing_kind === 'development' ? {
     ...emptyDevelopment, ...data.development,
     interior_images: clean(data.development?.interior_images || []),
+    hero_video_url: data.development?.hero_video_url?.trim() || null,
+    hero_videos: clean(data.development?.hero_videos || (data.development?.hero_video_url ? [data.development.hero_video_url] : [])),
     translations: Object.fromEntries(Object.entries(data.development?.translations || {}).map(([locale, copy]) => [locale, { ...copy, amenities: clean(copy.amenities) }])),
   } : null;
   return {
@@ -26,7 +35,7 @@ export function preparePropertyForm(data: PropertyFormData): PropertyFormData {
     is_featured: development?.is_demo ? false : data.is_featured,
     unit_types: data.listing_kind === 'development' ? data.unit_types?.map((unit, position) => {
       const plans = clean(unit.plans);
-      return { ...unit, code: unit.code.trim(), position, plans, plan_details: unit.plan_details?.filter(detail => plans.includes(detail.image)) || [] };
+      return { ...unit, code: unit.code.trim(), position, plans, media_images: clean(unit.media_images || []), video_url: unit.video_url?.trim() || null, plan_details: unit.plan_details?.filter(detail => plans.includes(detail.image)) || [] };
     }) : [],
     title: primary?.title.trim() || data.title.trim(),
     description: primary?.description?.trim() || data.description?.trim() || '',

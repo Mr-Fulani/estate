@@ -16,9 +16,11 @@ import { useLocale } from '@/context/LocaleContext';
 import { localizedStatus } from '@/i18n/domain';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import { getSiteCopy } from '@/lib/site-profile';
+import { displayImageUrl, isDirectVideoUrl, isDriveImage, videoEmbedUrl } from '@/lib/video-media';
 
 export function PropertyGallery({
   images,
+  videos = [],
   title,
   imageDetails,
   isFeatured,
@@ -27,6 +29,7 @@ export function PropertyGallery({
   statusBadge,
 }: {
   images: string[];
+  videos?: string[];
   title: string;
   imageDetails?: ImageDetails;
   isFeatured?: boolean;
@@ -43,6 +46,7 @@ export function PropertyGallery({
   const copy = getSiteCopy(locale, siteSettings).property;
 
   const hasImages = images && images.length > 0;
+  const hasVideos = videos.length > 0;
   const currentImage = hasImages ? images[selectedIndex] : null;
 
   const currentText = imageText(imageDetails, currentImage || '', locale, `${title} — ${copy.photo} ${selectedIndex + 1}`);
@@ -108,7 +112,7 @@ export function PropertyGallery({
     setSelectedIndex((prev) => (prev + 1) % images.length);
   };
 
-  if (!hasImages) {
+  if (!hasImages && !hasVideos) {
     return (
       <div className="w-full aspect-[16/9] bg-gradient-to-br from-primary-100 to-primary-200 rounded-2xl flex flex-col items-center justify-center text-primary-400 gap-2">
         <Camera className="w-10 h-10 opacity-50" />
@@ -120,18 +124,19 @@ export function PropertyGallery({
   return (
     <div className="space-y-3">
       {/* Main Large Image Display */}
-      <div 
+      {hasImages && <div
         onClick={() => setIsLightboxOpen(true)}
         className="relative w-full aspect-[16/10] md:aspect-[16/9] bg-slate-900 rounded-2xl overflow-hidden cursor-zoom-in group shadow-sm border border-slate-200"
       >
         <Image
-          src={currentImage!}
+          src={displayImageUrl(currentImage!)}
           alt={currentText.alt}
           fill
           preload
           loading="eager"
           sizes="(max-width: 640px) calc(100vw - 68px), (max-width: 1024px) calc(100vw - 96px), 66vw"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
+          unoptimized={isDriveImage(currentImage!)}
         />
 
         {/* Badges Overlay */}
@@ -189,12 +194,12 @@ export function PropertyGallery({
             </button>
           </>
         )}
-      </div>
+      </div>}
 
-      {currentText.caption && <p className="text-sm text-slate-600">{currentText.caption}</p>}
+      {hasImages && currentText.caption && <p className="text-sm text-slate-600">{currentText.caption}</p>}
 
       {/* Thumbnails Row */}
-      {images.length > 1 && (
+      {hasImages && images.length > 1 && (
         <div className="flex gap-2.5 overflow-x-auto pb-2 pt-1">
           {images.map((imgUrl, idx) => {
             const isSelected = selectedIndex === idx;
@@ -213,12 +218,13 @@ export function PropertyGallery({
                 aria-current={isSelected ? 'true' : undefined}
               >
                 <Image
-                  src={imgUrl}
+                  src={displayImageUrl(imgUrl, 240)}
                   alt=""
                   fill
                   loading={idx === 0 ? 'eager' : 'lazy'}
                   sizes="96px"
                   className="object-cover"
+                  unoptimized={isDriveImage(imgUrl)}
                 />
                 {idx === 0 && (
                   <span className="absolute bottom-1 start-1 rounded bg-primary px-1 text-[8px] font-bold text-white">
@@ -230,6 +236,20 @@ export function PropertyGallery({
           })}
         </div>
       )}
+
+      {hasVideos && <section aria-label={copy.videos} className="space-y-3">
+        <h2 className="text-sm font-semibold text-slate-800">{copy.videos}</h2>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {videos.map((url, index) => {
+            const embed = videoEmbedUrl(url);
+            return <div key={`${url}-${index}`} className="relative aspect-video overflow-hidden rounded-xl bg-slate-950">
+              {embed ? <iframe src={embed} title={`${title} — ${copy.video} ${index + 1}`} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen loading="lazy" className="absolute inset-0 h-full w-full border-0" />
+                : isDirectVideoUrl(url) ? <video src={url} title={`${title} — ${copy.video} ${index + 1}`} controls playsInline preload="metadata" className="absolute inset-0 h-full w-full object-contain" />
+                  : <a href={url} target="_blank" rel="noopener noreferrer" className="grid h-full place-items-center px-4 text-center text-sm text-white underline">{copy.openVideo}</a>}
+            </div>;
+          })}
+        </div>
+      </section>}
 
       {/* Fullscreen Lightbox Modal */}
       {isLightboxOpen && (
@@ -261,11 +281,12 @@ export function PropertyGallery({
           {/* Central Image View */}
           <div className="relative flex-1 w-full max-h-[80vh] flex items-center justify-center my-auto" onClick={(e) => e.stopPropagation()}>
             <Image
-              src={currentImage!}
+              src={displayImageUrl(currentImage!)}
               alt={currentText.alt}
               fill
               sizes="100vw"
               className="object-contain rounded-xl shadow-2xl transition-all"
+              unoptimized={isDriveImage(currentImage!)}
             />
 
             {/* Left & Right Arrows in Lightbox */}
@@ -308,7 +329,7 @@ export function PropertyGallery({
                   aria-label={`${copy.photo} ${idx + 1}${idx === 0 ? ` · ${copy.mainPhoto}` : ''}`}
                   aria-current={selectedIndex === idx ? 'true' : undefined}
                 >
-                  <Image src={imgUrl} alt="" fill sizes="64px" className="object-cover" />
+                  <Image src={displayImageUrl(imgUrl, 200)} alt="" fill sizes="64px" className="object-cover" unoptimized={isDriveImage(imgUrl)} />
                 </button>
               ))}
             </div>

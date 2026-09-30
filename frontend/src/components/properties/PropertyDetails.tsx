@@ -18,6 +18,7 @@ export async function PropertyDetails({ property: sourceProperty, locale }: { pr
       <div className="p-4 md:p-6 pb-0">
         <PropertyGallery
           images={property.images || []}
+          videos={property.videos || []}
           imageDetails={property.image_details}
           title={property.title}
           isFeatured={property.is_featured}

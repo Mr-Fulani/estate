@@ -1,0 +1,7 @@
+[Unit]
+Description=Estate local readiness, disk and backup check
+After=estate.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/estate-monitor

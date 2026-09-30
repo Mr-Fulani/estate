@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+release_dir=${ESTATE_RELEASE_DIR:-$(readlink -f /opt/estate/current)}
+test -f "$release_dir/deploy/release.env"
+exec docker compose --project-name estate --env-file "$release_dir/deploy/release.env" -f "$release_dir/deploy/compose.yml" "$@"

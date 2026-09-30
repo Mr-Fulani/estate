@@ -18,7 +18,7 @@ import {
 import { TrackedContactLink } from '@/components/contact/TrackedContactLink';
 import type { ContactTrackData } from '@/types';
 
-export default function ContactPage() {
+export default function ContactPage({ contextMessage }: { contextMessage?: string } = {}) {
   const { settings: siteSettings } = useSiteSettings();
   const { settings } = useSiteSettings();
   const { locale } = useLocale();
@@ -136,7 +136,7 @@ export default function ContactPage() {
             <p className="text-slate-500 text-sm mb-6">
               {copy.responseTime}
             </p>
-            <ContactForm />
+            <ContactForm contextMessage={contextMessage} />
           </div>
         </div>
       </div>

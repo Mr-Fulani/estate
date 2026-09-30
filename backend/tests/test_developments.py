@@ -1,6 +1,7 @@
 """Unit checks plus opt-in PostgreSQL tests that roll back all fixture changes."""
 import os
 import unittest
+from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock, patch
 
 from fastapi import BackgroundTasks, HTTPException, Request
@@ -10,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.pool import NullPool
 
 from app.api.contacts import _reject_demo_enquiry, create_contact, track_contact_action, update_contact
+from app.api.seo import development_unit_path, sitemap_items
 from app.api.properties import create_property, list_properties, update_property
 from app.config import get_settings
 from app.models.admin_user import AdminUser
@@ -32,6 +34,22 @@ def development():
 
 
 class DevelopmentTests(unittest.TestCase):
+    def test_development_unit_seo_path_is_encoded_and_stable(self):
+        self.assertEqual(development_unit_path('brand-vadi', '6+1 Duplex'), '/properties/brand-vadi/6%2B1-duplex')
+
+    def test_project_and_property_video_urls_are_validated_and_round_trip(self):
+        drive = "https://drive.google.com/file/d/abc123/view"
+        youtube = "https://youtu.be/abcdefghijk"
+        project = DevelopmentProfile(hero_videos=[drive, youtube])
+        self.assertEqual(project.hero_videos, [drive, youtube])
+        self.assertEqual(PropertyUpdate(videos=[drive]).videos, [drive])
+        for payload in [
+            lambda: DevelopmentProfile(hero_videos=["javascript:alert(1)"]),
+            lambda: PropertyUpdate(videos=["http://example.com/video.mp4"]),
+        ]:
+            with self.assertRaises(ValidationError):
+                payload()
+
     def test_demo_flag_survives_validation_and_disables_featuring(self):
         self.assertFalse(DevelopmentProfile().is_demo)
         item = development()
@@ -117,6 +135,21 @@ class DevelopmentTests(unittest.TestCase):
         item = Property(listing_kind="property", unit_types=[])
         with self.assertRaises(HTTPException):
             sync_development(item, [unit()])
+
+
+class DevelopmentSitemapTests(unittest.IsolatedAsyncioTestCase):
+    async def test_each_translated_development_unit_is_added_to_sitemap(self):
+        rows = [
+            [(41, 'ru')],
+            [SimpleNamespace(id=41, slug='brand-vadi', content_locale='ru', updated_at=None, created_at=None, complete=True)],
+            [(41, '6+1 Duplex')],
+            [], [], [],
+        ]
+        db = AsyncMock()
+        db.execute.side_effect = [SimpleNamespace(all=lambda values=values: values) for values in rows]
+        result = await sitemap_items(db, ['ru', 'en', 'tr', 'ar'])
+        item = next(item for item in result['items'] if item['path'] == '/properties/brand-vadi/6%2B1-duplex')
+        self.assertEqual(item['locales'], ['ru'])
 
 
 class DevelopmentLeadTests(unittest.IsolatedAsyncioTestCase):

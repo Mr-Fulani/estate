@@ -42,7 +42,7 @@ export async function PropertyDetailContent({ id, locale, initialProperty }: { i
       image: absoluteImages,
       address: { '@type': 'PostalAddress', streetAddress: localized.address, addressLocality: localized.city, addressRegion: localized.district },
     };
-    return <><div className="container mx-auto px-4 pt-6">{breadcrumbs}</div><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(developmentData).replace(/</g, '\\u003c') }} /><DevelopmentPage property={property} locale={contentLocale} /></>;
+    return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(developmentData).replace(/</g, '\\u003c') }} /><DevelopmentPage property={property} locale={contentLocale} /></>;
   }
   const availability = {
     available: 'https://schema.org/InStock',

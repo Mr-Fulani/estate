@@ -1,0 +1,9 @@
+[Unit]
+Description=Estate verified database, media and configuration backup
+After=estate.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+UMask=0077
+ExecStart=/usr/local/sbin/estate-backup

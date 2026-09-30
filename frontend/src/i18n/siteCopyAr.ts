@@ -37,7 +37,7 @@ export const arabicSiteCopy: SiteCopy = {
     related: 'عقارات مشابهة',
     back: 'العودة إلى العقارات', fallbackNotice: 'هذا العقار غير متاح بالعربية حالياً، لذلك نعرض نسخة أخرى متاحة.', interested: 'هل أنت مهتم بهذا العقار؟', interestedDescription: 'اترك بياناتك وسيتواصل معك مستشارنا.', recommended: 'موصى به', actual: 'متاح', archived: 'مؤرشف',
     area: 'المساحة', rooms: 'الغرف', floor: 'الطابق', year: 'سنة البناء', parameters: 'المواصفات الأساسية', description: 'وصف العقار', noDescription: 'لم تتم إضافة وصف بعد', freePlan: 'مخطط مفتوح', unspecified: 'غير محدد',
-    noPhoto: 'لا توجد صورة', photosSoon: 'ستتم إضافة الصور قريباً', photo: 'صورة', mainPhoto: 'الرئيسية', enlarge: 'تكبير الصورة', previousPhoto: 'الصورة السابقة', nextPhoto: 'الصورة التالية', close: 'إغلاق',
+    noPhoto: 'لا توجد صورة', photosSoon: 'ستتم إضافة الصور قريباً', photo: 'صورة', videos: 'فيديوهات العقار', video: 'فيديو', openVideo: 'فتح الفيديو', mainPhoto: 'الرئيسية', enlarge: 'تكبير الصورة', previousPhoto: 'الصورة السابقة', nextPhoto: 'الصورة التالية', close: 'إغلاق',
     quickContact: 'أو تواصل معنا مباشرة', whatsapp: 'واتساب', telegram: 'تيليغرام', call: 'اتصال',
   },
   form: {

@@ -52,6 +52,7 @@ export interface Property {
   market_status: 'available' | 'reserved' | 'sold' | 'rented' | 'archived';
   status_badge?: string | null;
   images: string[];
+  videos?: string[];
   image_details?: ImageDetails;
   category_id: number;
   category: Category | null;
@@ -72,6 +73,8 @@ export interface PropertyUnitType {
   price_min: number | null;
   price_max: number | null;
   plans: string[];
+  media_images?: string[];
+  video_url?: string | null;
   plan_details?: PropertyPlanDetail[];
   position: number;
 }
@@ -102,6 +105,8 @@ export interface DevelopmentProfile {
   price_status: 'indicative' | 'verified';
   images_are_renders: boolean;
   interior_images: string[];
+  hero_video_url?: string | null;
+  hero_videos?: string[];
   brochure_url?: string | null;
   translations: Partial<Record<Locale, DevelopmentCopy>>;
 }
@@ -336,6 +341,7 @@ export interface PropertyFormData {
   total_floors?: number;
   year_built?: number;
   images?: string[];
+  videos?: string[];
   image_details?: ImageDetails;
   category_id: number;
   is_featured?: boolean;

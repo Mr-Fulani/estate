@@ -1,0 +1,85 @@
+name: estate
+
+x-runtime: &runtime
+  restart: unless-stopped
+  security_opt: [no-new-privileges:true]
+  logging:
+    driver: json-file
+    options:
+      # No automatic deletion of logs; disk usage is monitored separately.
+      compress: "false"
+
+services:
+  db:
+    <<: *runtime
+    image: ${POSTGRES_IMAGE:?Set pinned POSTGRES_IMAGE}
+    env_file: [/etc/estate/database.env]
+    volumes:
+      - /var/lib/estate/postgres:/var/lib/postgresql/data
+    networks: [database]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  api:
+    <<: *runtime
+    image: estate-api:${RELEASE:?Set RELEASE}
+    build:
+      context: ../backend
+      target: production
+    # Only the release script runs migrations, after a verified backup.
+    command: [uvicorn, app.main:app, --host, 0.0.0.0, --port, "8000", --no-access-log]
+    env_file: [/etc/estate/api.env]
+    volumes:
+      - /var/lib/estate/uploads:/app/uploads
+    networks: [database, application]
+    depends_on:
+      db: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/settings',timeout=5).read()"]
+      interval: 30s
+      timeout: 8s
+      retries: 3
+      start_period: 30s
+
+  web:
+    <<: *runtime
+    image: estate-web:${RELEASE:?Set RELEASE}
+    build:
+      context: ../frontend
+      target: runner
+    env_file: [/etc/estate/web.env]
+    environment:
+      HOSTNAME: 0.0.0.0
+    ports: ["127.0.0.1:3000:3000"]
+    networks: [application]
+    depends_on:
+      api: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:3000/api/backend/settings').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 8s
+      retries: 3
+      start_period: 30s
+
+  proxy:
+    <<: *runtime
+    image: ${CADDY_IMAGE:?Set pinned CADDY_IMAGE}
+    profiles: [public]
+    ports: ["80:80", "443:443"]
+    volumes:
+      - /etc/estate/Caddyfile:/etc/caddy/Caddyfile:ro
+      - /var/lib/estate/caddy-data:/data
+      - /var/lib/estate/caddy-config:/config
+    networks: [application]
+    depends_on:
+      web: {condition: service_healthy}
+
+networks:
+  database:
+    internal: true
+  application:
+    ipam:
+      config: [{subnet: 172.30.80.0/24}]

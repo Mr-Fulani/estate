@@ -1,0 +1,15 @@
+[Unit]
+Description=Estate production services
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/sbin/estate-compose --profile public up -d --wait db api web proxy
+ExecStop=/usr/local/sbin/estate-compose stop
+TimeoutStartSec=300
+
+[Install]
+WantedBy=multi-user.target

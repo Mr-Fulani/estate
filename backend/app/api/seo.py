@@ -1,15 +1,21 @@
 from datetime import datetime, timezone
+from urllib.parse import quote
 from fastapi import APIRouter, Depends
 from sqlalchemy import and_, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
-from app.models.property import Property
+from app.models.property import Property, PropertyUnitType
 from app.models.property_translation import PropertyTranslation
 from app.models.news import NewsArticle, NewsTranslation
 from app.models.landing_page import LandingPage
 from app.site_runtime import site_runtime
 
 router = APIRouter(prefix='/api/v1/seo', tags=['SEO'])
+
+
+def development_unit_path(slug, code):
+    code_path = quote('-'.join(code.strip().lower().split()), safe='-._~')
+    return f'/properties/{slug}/{code_path}'
 
 
 def has_text(column):
@@ -24,12 +30,18 @@ async def sitemap_items(db, active):
     for identity, locale in translations:
         by_property.setdefault(identity, set()).add(locale)
     properties = (await db.execute(select(Property.id, Property.slug, Property.content_locale, Property.updated_at, Property.created_at, and_(has_text(Property.title),has_text(Property.description)).label('complete')).where(visible).order_by(Property.id))).all()
+    unit_rows = (await db.execute(select(PropertyUnitType.property_id, PropertyUnitType.code).join(Property, Property.id == PropertyUnitType.property_id).where(visible, Property.listing_kind == 'development').order_by(PropertyUnitType.position, PropertyUnitType.id))).all()
+    units_by_property = {}
+    for property_id, code in unit_rows:
+        units_by_property.setdefault(property_id, []).append(code)
     for prop in properties:
         languages = by_property.get(prop.id, set())
         if prop.complete and prop.content_locale in active:
             languages.add(prop.content_locale)
         if languages:
             items.append({'path':f'/properties/{prop.slug}','locales':[locale for locale in active if locale in languages],'last_modified':prop.updated_at or prop.created_at})
+            for code in units_by_property.get(prop.id, []):
+                items.append({'path':development_unit_path(prop.slug, code),'locales':[locale for locale in active if locale in languages],'last_modified':prop.updated_at or prop.created_at})
 
     published = and_(NewsArticle.is_published.is_(True),or_(NewsArticle.published_at.is_(None),NewsArticle.published_at <= datetime.now(timezone.utc)))
     translations = (await db.execute(select(NewsTranslation.article_id,NewsTranslation.locale).join(NewsArticle,NewsArticle.id==NewsTranslation.article_id).where(published, NewsTranslation.locale.in_(active),has_text(NewsTranslation.title),has_text(NewsTranslation.excerpt),has_text(NewsTranslation.content)))).all()

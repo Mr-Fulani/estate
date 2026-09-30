@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+curl -fsS --max-time 15 http://127.0.0.1:3000/api/backend/settings >/dev/null
+used=$(df --output=pcent / | tail -1 | tr -dc '0-9')
+if (( used >= 80 )); then echo "estate disk usage is ${used}%; inspect before any cleanup" >&2; exit 1; fi
+if ! find /var/backups/estate -name COMPLETE -mmin -1500 -print -quit | grep -q .; then
+  echo 'estate has no completed backup within 25 hours' >&2
+  exit 1
+fi

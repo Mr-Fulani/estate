@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  echo "Usage: estate-release deploy RELEASE_DIRECTORY | rollback RELEASE_DIRECTORY" >&2
+  exit 64
+}
+
+command=${1:-}
+release_dir=${2:-}
+test -n "$release_dir" || usage
+release_dir=$(readlink -f "$release_dir")
+test -f "$release_dir/deploy/compose.yml" || { echo 'Not an estate release' >&2; exit 65; }
+test -f "$release_dir/deploy/release.env" || { echo 'Missing release.env' >&2; exit 65; }
+
+case "$command" in
+  deploy)
+    old_release=''
+    if test -L /opt/estate/current; then old_release=$(readlink -f /opt/estate/current); fi
+    ln -sfn "$release_dir" /opt/estate/current
+    dc=/usr/local/sbin/estate-compose
+    if ! "$dc" build --pull api web; then
+      test -n "$old_release" && ln -sfn "$old_release" /opt/estate/current
+      exit 1
+    fi
+    "$dc" up -d --wait db
+    /usr/local/sbin/estate-backup
+    if ! "$dc" run --rm --no-deps api python -m app.migrate; then
+      test -n "$old_release" && ln -sfn "$old_release" /opt/estate/current
+      exit 1
+    fi
+    "$dc" --profile public up -d --wait api web proxy
+    systemctl enable --now estate.service estate-backup.timer estate-monitor.timer
+    ;;
+  rollback)
+    ln -sfn "$release_dir" /opt/estate/current
+    /usr/local/sbin/estate-compose --profile public up -d --wait api web proxy
+    ;;
+  *) usage ;;
+esac

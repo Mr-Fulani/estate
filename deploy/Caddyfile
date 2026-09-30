@@ -1,0 +1,18 @@
+{
+    admin localhost:2019
+    servers {
+        protocols h1 h2
+    }
+}
+
+rahat-home.com {
+    encode zstd gzip
+    reverse_proxy web:3000 {
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Real-IP {remote_host}
+    }
+}
+
+www.rahat-home.com {
+    redir https://rahat-home.com{uri} permanent
+}

@@ -4,6 +4,7 @@ import unittest
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from app.models import Category, Property, SiteSetting
+from app.models.property import PropertyUnitType
 from app.schemas.settings import SiteSettingsResponse
 
 
@@ -47,6 +48,12 @@ class SeoDatabaseTests(unittest.IsolatedAsyncioTestCase):
                     self.assertEqual(entry['locales'], [prop.content_locale])
                     self.assertNotIn('description', entry)
                     self.assertNotIn('images', entry)
+                    project = Property(title='Villa project', description='Complete villa project description', price=100, currency='EUR', category_id=category.id, slug='seo-test-project', listing_kind='development', development={'is_demo': False}, unit_types=[PropertyUnitType(code='6+1 Duplex', rooms=6, plans=[])])
+                    db.add(project)
+                    await db.flush()
+                    sitemap = await sitemap_items(db, site_runtime()['locales'])
+                    detail = next(item for item in sitemap['items'] if item['path'] == '/properties/seo-test-project/6%2B1-duplex')
+                    self.assertEqual(detail['locales'], [project.content_locale])
                     from app.models.contact import ContactRequest
                     from app.schemas.contact import ContactCreate, ContactResponse
                     request = ContactCreate(name='Fixture person', phone='123456789', message='Fixture enquiry', first_touch={'at':'2026-09-08T12:00:00Z','page_url':'https://agency.test/en?token=secret','utm_source':'organic'})

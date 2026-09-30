@@ -43,6 +43,7 @@ class Property(Base):
     
     image_details: Mapped[dict] = mapped_column(JSON().with_variant(JSONB, "postgresql"), default=dict, server_default="{}")
     images: Mapped[list[Any] | None] = mapped_column(JSON().with_variant(JSONB, 'postgresql'), default=list)
+    videos: Mapped[list[str]] = mapped_column(JSON().with_variant(JSONB, 'postgresql'), default=list, server_default='[]')
 
     listing_kind: Mapped[str] = mapped_column(String(20), default="property", server_default="property")
     development: Mapped[dict | None] = mapped_column(JSON().with_variant(JSONB, 'postgresql'), nullable=True)
@@ -75,6 +76,8 @@ class PropertyUnitType(Base):
     price_min: Mapped[float | None] = mapped_column(Numeric(12, 2))
     price_max: Mapped[float | None] = mapped_column(Numeric(12, 2))
     plans: Mapped[list[str]] = mapped_column(JSON().with_variant(JSONB, 'postgresql'), default=list)
+    media_images: Mapped[list[str]] = mapped_column(JSON().with_variant(JSONB, 'postgresql'), default=list, server_default='[]')
+    video_url: Mapped[str | None] = mapped_column(String(2000), nullable=True)
     plan_details: Mapped[list[dict]] = mapped_column(JSON().with_variant(JSONB, 'postgresql'), default=list, server_default='[]')
     position: Mapped[int] = mapped_column(Integer, default=0)
     property: Mapped[Property] = relationship(back_populates="unit_types")

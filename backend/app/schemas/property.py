@@ -37,12 +37,24 @@ class DevelopmentProfile(BaseModel):
     price_status: Literal["indicative", "verified"] = "indicative"
     images_are_renders: bool = True
     interior_images: list[str] = Field(default_factory=list, max_length=30)
+    hero_video_url: str | None = None
+    hero_videos: list[str] = Field(default_factory=list, max_length=30)
     brochure_url: str | None = None
     translations: dict[Literal["ru", "en", "tr", "ar"], DevelopmentCopy] = Field(default_factory=dict)
 
     @field_validator("interior_images")
     @classmethod
     def validate_images(cls, values):
+        return [validate_media_url(value) for value in values]
+
+    @field_validator("hero_video_url")
+    @classmethod
+    def validate_hero_video(cls, value):
+        return validate_media_url(value) if value else None
+
+    @field_validator("hero_videos")
+    @classmethod
+    def validate_hero_videos(cls, values):
         return [validate_media_url(value) for value in values]
 
     @field_validator("brochure_url")
@@ -87,6 +99,8 @@ class PropertyUnitTypeInput(BaseModel):
     price_min: float | None = Field(default=None, gt=0, lt=10_000_000_000, allow_inf_nan=False)
     price_max: float | None = Field(default=None, gt=0, lt=10_000_000_000, allow_inf_nan=False)
     plans: list[str] = Field(default_factory=list, max_length=20)
+    media_images: list[str] = Field(default_factory=list, max_length=30)
+    video_url: str | None = None
     plan_details: list[PropertyPlanDetail] = Field(default_factory=list, max_length=20)
     position: int = Field(default=0, ge=0)
 
@@ -99,6 +113,16 @@ class PropertyUnitTypeInput(BaseModel):
     @classmethod
     def validate_plans(cls, values):
         return [validate_media_url(value) for value in values]
+
+    @field_validator("media_images")
+    @classmethod
+    def validate_media_images(cls, values):
+        return [validate_media_url(value) for value in values]
+
+    @field_validator("video_url")
+    @classmethod
+    def validate_video_url(cls, value):
+        return validate_media_url(value) if value else None
 
     @model_validator(mode="after")
     def ordered_ranges(self):
@@ -150,6 +174,7 @@ class PropertyBase(BaseModel):
     total_floors: Optional[int] = None
     year_built: Optional[int] = None
     images: list[str] = Field(default_factory=list)
+    videos: list[str] = Field(default_factory=list, max_length=30)
     image_details: ImageDetails = Field(default_factory=dict, max_length=100)
     category_id: int
     transaction_type: Literal["sale", "rent"] = "sale"
@@ -157,6 +182,11 @@ class PropertyBase(BaseModel):
     status_badge: Optional[str] = "Актуально"
     listing_kind: Literal["property", "development"] = "property"
     development: DevelopmentProfile | None = None
+
+    @field_validator("videos")
+    @classmethod
+    def validate_videos(cls, values):
+        return [validate_media_url(value) for value in values]
 
 class PropertyCreate(PropertyBase):
     slug: Optional[str] = None
@@ -193,6 +223,7 @@ class PropertyUpdate(BaseModel):
     total_floors: Optional[int] = None
     year_built: Optional[int] = None
     images: Optional[list[str]] = None
+    videos: Optional[list[str]] = Field(default=None, max_length=30)
     image_details: ImageDetails | None = Field(default=None, max_length=100)
     category_id: Optional[int] = None
     is_featured: Optional[bool] = None
@@ -204,6 +235,11 @@ class PropertyUpdate(BaseModel):
     listing_kind: Literal["property", "development"] | None = None
     development: DevelopmentProfile | None = None
     unit_types: list[PropertyUnitTypeInput] | None = Field(default=None, max_length=50)
+
+    @field_validator("videos")
+    @classmethod
+    def validate_videos(cls, values):
+        return [validate_media_url(value) for value in values] if values is not None else None
 
 class PropertyResponse(PropertyBase):
     id: int
