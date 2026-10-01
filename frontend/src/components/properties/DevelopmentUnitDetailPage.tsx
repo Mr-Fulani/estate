@@ -8,8 +8,8 @@ import { localizedProperty } from '@/i18n/domain';
 import { developmentCopy } from '@/i18n/development';
 import { CurrencyPrice } from '@/components/currency/CurrencyPrice';
 import { PropertyGallery } from '@/components/properties/PropertyGallery';
-import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { getMessages } from '@/i18n/messages';
+import { getSiteOrigin } from '@/lib/site-config';
 import { fetchSiteSettings } from '@/lib/api';
 import { getSiteCopy } from '@/lib/site-profile';
 import type { Property, PropertyUnitType } from '@/types';
@@ -32,9 +32,19 @@ export async function DevelopmentUnitDetailPage({ property: source, unit, locale
     ? copy.priceOnRequest
     : <><CurrencyPrice amount={unit.price_min} sourceCurrency={property.currency} locale={locale} />{unit.price_max !== unit.price_min && <> – <CurrencyPrice amount={unit.price_max} sourceCurrency={property.currency} locale={locale} /></>}</>;
   const title = `${property.title} · ${unit.code}`;
+  const projectName = property.title.split(/\s+[—–]\s+/)[0];
   const unitPath = encodeURIComponent(unit.code.trim().toLowerCase().replace(/\s+/g, '-'));
   const detailPath = `/${locale}/properties/${property.slug}/${unitPath}`;
   const contactHref = `${localizeHref(locale, '/contact')}?property=${encodeURIComponent(property.slug)}&unit=${encodeURIComponent(unit.code)}`;
+  const breadcrumbs = {
+    '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+    itemListElement: [
+      { name: getMessages(locale).navigation.home, href: `/${locale}` },
+      { name: siteCopy.catalog.title, href: `/${locale}/properties` },
+      { name: property.title, href: `/${locale}/properties/${property.slug}` },
+      { name: unit.code, href: detailPath },
+    ].map((item, index) => ({ '@type': 'ListItem', position: index + 1, name: item.name, item: new URL(item.href, getSiteOrigin()).toString() })),
+  };
   const structuredData = {
     '@context': 'https://schema.org', '@type': 'RealEstateListing',
     name: title, description: property.description || `${unit.code} · ${area}`,
@@ -51,17 +61,12 @@ export async function DevelopmentUnitDetailPage({ property: source, unit, locale
 
   return <main className="container mx-auto min-h-screen bg-slate-50 px-4 py-8 md:px-6 md:py-12">
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, '\\u003c') }} />
-    <Breadcrumbs items={[
-      { name: getMessages(locale).navigation.home, href: `/${locale}` },
-      { name: siteCopy.catalog.title, href: `/${locale}/properties` },
-      { name: property.title, href: `/${locale}/properties/${property.slug}` },
-      { name: unit.code, href: detailPath },
-    ]} />
-    <Link href={`/${locale}/properties/${property.slug}`} className="mb-6 inline-flex items-center text-primary transition-colors hover:text-primary-600">
-      <ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" />{copy.backToProject}
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs).replace(/</g, '\\u003c') }} />
+    <Link href={`/${locale}/properties/${property.slug}`} aria-label={`${copy.backToProject}: ${property.title}`} className="mb-6 inline-flex min-h-11 max-w-full items-center gap-2 text-sm text-slate-600 transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">
+      <ArrowLeft className="h-4 w-4 shrink-0 rtl:rotate-180" aria-hidden="true" /><span dir="auto">{projectName}</span>
     </Link>
-    <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-      <article className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm lg:col-span-2">
+    <div className="grid grid-cols-1 gap-6 xl:grid-cols-3 xl:gap-8">
+      <article className="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm xl:col-span-2">
         <div className="p-4 pb-0 md:p-6 md:pb-0">
           <PropertyGallery
             images={unit.media_images || []}
@@ -72,15 +77,15 @@ export async function DevelopmentUnitDetailPage({ property: source, unit, locale
             statusBadge={property.status_badge}
           />
         </div>
-        <div lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'} className="p-6 md:p-8">
-          <h1 className="mb-3 text-2xl font-bold text-slate-900 md:text-4xl" dir="auto">{title}</h1>
-          <div className="mb-6 text-3xl font-black text-primary md:text-4xl">{price}</div>
+        <div lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'} className="min-w-0 p-4 sm:p-6 md:p-8">
+          <h1 className="mb-3 text-2xl font-bold text-slate-900 md:text-4xl" dir="auto">{unit.code}</h1>
+          <div className="mb-6 flex flex-wrap items-baseline gap-x-2 text-2xl font-black text-primary sm:text-3xl 2xl:text-4xl">{price}</div>
           {location && <div className="mb-8 flex items-start gap-2 rounded-xl border border-slate-100 bg-slate-50 p-4 text-base text-slate-600 md:text-lg">
             <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-primary" /><span dir="auto">{location}</span>
           </div>}
           <section className="mb-8">
             <h2 className="mb-4 text-lg font-bold text-slate-900">{propertyCopy.parameters}</h2>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <Fact icon={<Shapes className="h-5 w-5" />} label={copy.plan} value={unit.code} />
               <Fact icon={<Maximize className="h-5 w-5" />} label={copy.area} value={area} />
               <Fact icon={<Building2 className="h-5 w-5" />} label={copy.developer} value={source.development?.developer || propertyCopy.unspecified} />
@@ -104,7 +109,7 @@ export async function DevelopmentUnitDetailPage({ property: source, unit, locale
           <p className="mt-6 text-sm leading-relaxed text-slate-500">{copy.planNote}</p>
         </div>
       </article>
-      <aside className="h-fit rounded-xl border border-slate-200 bg-white p-6 shadow-sm lg:sticky lg:top-24 md:p-8">
+      <aside className="min-w-0 h-fit rounded-xl border border-slate-200 bg-white p-6 shadow-sm xl:sticky xl:top-28 md:p-8">
         <h2 className="mb-2 text-2xl font-bold text-slate-900">{propertyCopy.interested}</h2>
         <p className="mb-6 text-slate-600">{propertyCopy.interestedDescription}</p>
         <Link href={contactHref} className="flex min-h-12 items-center justify-between gap-4 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-primary-700">
@@ -116,8 +121,8 @@ export async function DevelopmentUnitDetailPage({ property: source, unit, locale
 }
 
 function Fact({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
-  return <div className="flex items-center gap-3.5 rounded-xl border border-slate-100 bg-slate-50 p-4">
+  return <div className="flex min-w-0 items-start gap-3.5 rounded-xl border border-slate-100 bg-slate-50 p-4">
     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">{icon}</span>
-    <div className="min-w-0"><p className="text-xs font-medium text-slate-500">{label}</p><p className="text-sm font-bold text-slate-900 md:text-base" dir="auto">{value}</p></div>
+    <div className="min-w-0 break-words"><p className="text-xs font-medium text-slate-500">{label}</p><p className="text-sm font-bold text-slate-900 md:text-base" dir="auto">{value}</p></div>
   </div>;
 }
