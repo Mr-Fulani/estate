@@ -77,7 +77,9 @@ def import_one(url, kind, cache):
         record = json.loads(record_path.read_text())
         target = MEDIA_ROOT / record["url"].removeprefix(settings.MEDIA_URL.rstrip('/') + '/')
         if target.is_file() and hashlib.sha256(target.read_bytes()).hexdigest() == record["output_sha256"]:
-            return record
+            # One Drive file may appear as /file/d/... and uc?id=... links.
+            # Reuse the file, but replace the exact URL requested by this import.
+            return {**record, "source": url}
     with tempfile.TemporaryDirectory(prefix="estate-drive-") as work:
         source = Path(work) / "source"
         subprocess.run([sys.executable, "-m", "gdown", f"https://drive.google.com/uc?id={identity}", "-O", str(source), "--quiet", "--no-cookies"], check=True, capture_output=True, timeout=600)

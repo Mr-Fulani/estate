@@ -1,4 +1,5 @@
 import io
+import hashlib
 import json
 import mimetypes
 from pathlib import Path
@@ -10,7 +11,7 @@ from unittest.mock import patch
 
 from PIL import Image
 from app.media_optimization import optimize_image, optimize_video, publish
-from app.import_property_media import drive_id, replace_urls, sources
+from app.import_property_media import drive_id, import_one, replace_urls, sources
 from app.media_static import MediaStaticFiles
 from starlette.applications import Starlette
 from starlette.routing import Mount
@@ -18,6 +19,27 @@ from starlette.testclient import TestClient
 
 
 class OptimizationTests(unittest.TestCase):
+    def test_drive_aliases_reuse_download_and_replace_each_source(self):
+        with tempfile.TemporaryDirectory() as work:
+            root = Path(work)
+            cache = root / "cache"
+            cache.mkdir()
+            file = publish(b"saved image", root / "properties" / "optimized", ".webp")
+            first = "https://drive.google.com/file/d/abcdefghijk/view"
+            alias = "https://drive.google.com/uc?id=abcdefghijk&export=view"
+            local = "/uploads/properties/optimized/" + file.name
+            key = hashlib.sha256(b"v1:abcdefghijk:photo").hexdigest()
+            record = {"source": first, "url": local, "output_sha256": file.stem}
+            (cache / (key + ".json")).write_text(json.dumps(record))
+            with patch("app.import_property_media.MEDIA_ROOT", root), patch("app.import_property_media.subprocess.run") as download:
+                records = [import_one(url, "photo", cache) for url in (first, alias)]
+                download.assert_not_called()
+            rewritten = replace_urls({"images": [first, alias], "image_details": {alias: {"alt": "caption"}}}, {r["source"]: r["url"] for r in records})
+            self.assertEqual(rewritten["images"], [local, local])
+            self.assertIn(local, rewritten["image_details"])
+            self.assertFalse(sources({"images": rewritten["images"], "videos": [], "development": {}, "units": []}))
+            self.assertEqual(len(list((root / "properties" / "optimized").iterdir())), 1)
+
     def test_photo_dimensions_and_alpha_survive(self):
         image = Image.new("RGBA", (3000, 1500), (10, 20, 30, 128))
         source = io.BytesIO()
