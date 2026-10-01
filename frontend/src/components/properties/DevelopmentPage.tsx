@@ -77,7 +77,7 @@ export function DevelopmentPage({ property: source, locale, preview = false }: {
         <div><p className={styles.eyebrow}>01 / {copy.overview}</p><h2>{editorial?.story_title || property.title}</h2></div>
         <div>{property.description && <p className={styles.prose}>{property.description}</p>}{!interiors.length && editorial?.story && <p className={styles.prose}>{editorial.story}</p>}<div className={styles.facts}>
           {[[copy.developer, profile.developer], [copy.design, profile.design_brand], [copy.types, units.map(item => item.code).join(' / ')]].filter(([, value]) => value).map(([label, value]) => <div key={label}><span>{label}</span><strong dir="auto">{value}</strong></div>)}
-        </div></div>
+        </div>{profile.brochure_url && <a className={styles.textLink} href={profile.brochure_url} target="_blank" rel="noopener noreferrer">{copy.brochure}<ArrowUpRight size={16} /></a>}</div>
       </section>}
 
       {interiors.length > 0 && <section id="interiors" className={styles.showroom}>
