@@ -1,10 +1,12 @@
 import io
 import json
+import mimetypes
 from pathlib import Path
 import shutil
 import subprocess
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from PIL import Image
 from app.media_optimization import optimize_image, optimize_video, publish
@@ -60,7 +62,11 @@ class OptimizationTests(unittest.TestCase):
             root = Path(work)
             target = publish(b"0123456789", root / "properties" / "optimized", ".mp4")
             (root / "legacy.mp4").write_bytes(b"old")
-            client = TestClient(Starlette(routes=[Mount("/uploads", app=MediaStaticFiles(directory=root))]))
+            image = publish(b"webp", root / "properties" / "optimized", ".webp")
+            with patch.dict(mimetypes.types_map, {".webp": "text/plain", ".mp4": "text/plain"}):
+                client = TestClient(Starlette(routes=[Mount("/uploads", app=MediaStaticFiles(directory=root))]))
+                self.assertEqual(client.get("/uploads/properties/optimized/" + image.name).headers["Content-Type"], "image/webp")
+                self.assertEqual(client.get("/uploads/properties/optimized/" + target.name).headers["Content-Type"], "video/mp4")
             url = "/uploads/properties/optimized/" + target.name
             response = client.get(url, headers={"Range": "bytes=2-4"})
             self.assertEqual(response.status_code, 206)
