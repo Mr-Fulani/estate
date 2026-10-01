@@ -2,6 +2,8 @@ import asyncio
 import os
 from pathlib import Path
 from uuid import uuid4
+import tempfile
+from app.media_optimization import optimize_image, optimize_video, publish
 
 from app.config import get_settings
 
@@ -28,12 +30,16 @@ async def save_news_image(content: bytes) -> str:
     return await save_image(content, "news")
 
 
-async def save_image(content: bytes, collection: str) -> str:
+async def save_image(content: bytes, collection: str, *, plan: bool = False) -> str:
     if collection not in {"news", "properties"}:
         raise ValueError("Unsupported media collection")
     extension = detect_image_extension(content)
     if extension is None:
         raise ValueError("Unsupported image format")
+    if collection == "properties":
+        root = MEDIA_ROOT / collection / "optimized"
+        target = await asyncio.to_thread(lambda: publish(optimize_image(content, plan=plan), root, ".webp"))
+        return f"{settings.MEDIA_URL.rstrip('/')}/{collection}/optimized/{target.name}"
     filename = f"{uuid4().hex}{extension}"
     root = MEDIA_ROOT / collection
     root.mkdir(parents=True, exist_ok=True)
@@ -61,26 +67,19 @@ def detect_video_extension(content: bytes, filename: str = "") -> str | None:
 async def save_video(upload, collection: str, extension: str) -> str:
     if collection != "properties" or extension not in {".mp4", ".mov", ".webm", ".ogv"}:
         raise ValueError("Unsupported video collection or format")
-    filename = f"{uuid4().hex}{extension}"
-    root = MEDIA_ROOT / collection / "videos"
-    root.mkdir(parents=True, exist_ok=True)
-    target = root / filename
-    temporary = root / f".{filename}.tmp"
+    async with VIDEO_ENCODER:
+        def encode():
+            with tempfile.TemporaryDirectory(prefix="estate-upload-") as work:
+                source = Path(work) / f"source{extension}"
+                with source.open("xb") as destination:
+                    while chunk := upload.read(1024 * 1024):
+                        destination.write(chunk)
+                return optimize_video(source, MEDIA_ROOT / collection / "optimized")
+        target = await asyncio.to_thread(encode)
+        return f"{settings.MEDIA_URL.rstrip('/')}/{collection}/optimized/{target.name}"
 
-    def write_file() -> None:
-        try:
-            with temporary.open("xb") as destination:
-                while chunk := upload.read(1024 * 1024):
-                    destination.write(chunk)
-                destination.flush()
-                os.fsync(destination.fileno())
-            temporary.replace(target)
-        except Exception:
-            temporary.unlink(missing_ok=True)
-            raise
 
-    await asyncio.to_thread(write_file)
-    return f"{settings.MEDIA_URL.rstrip('/')}/{collection}/videos/{filename}"
+VIDEO_ENCODER = asyncio.Semaphore(1)
 
 
 async def delete_owned_news_file(url: str | None) -> None:

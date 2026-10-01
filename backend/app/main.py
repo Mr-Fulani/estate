@@ -5,7 +5,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
-from fastapi.staticfiles import StaticFiles
+from app.media_static import MediaStaticFiles
 from app.config import get_settings
 from app.api import auth, properties, categories, contacts, currency, admin, news, reviews, telegram, uploads, settings as settings_api
 
@@ -19,7 +19,7 @@ app = FastAPI(
     openapi_url=None if is_production else "/openapi.json",
 )
 Path(settings.MEDIA_ROOT).mkdir(parents=True, exist_ok=True)
-app.mount(settings.MEDIA_URL, StaticFiles(directory=settings.MEDIA_ROOT), name="uploads")
+app.mount(settings.MEDIA_URL, MediaStaticFiles(directory=settings.MEDIA_ROOT), name="uploads")
 
 app.add_middleware(
     TrustedHostMiddleware,

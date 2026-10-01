@@ -11,7 +11,7 @@ import { displayImageUrl, isDirectVideoUrl, videoEmbedUrl } from '@/lib/video-me
 const emptyCopy: DevelopmentCopy = { eyebrow: '', headline: '', story_title: '', story: '', location_description: '', purchase_note: '', amenities: [] };
 const control = 'mt-1 block w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900';
 
-export function PropertyImageUpload({ onUploaded, onBusy, multiple = true, label = 'Загрузить изображения' }: { onUploaded: (urls: string[]) => void; onBusy?: (busy: boolean) => void; multiple?: boolean; label?: string }) {
+export function PropertyImageUpload({ onUploaded, onBusy, multiple = true, kind = 'photo', label = 'Загрузить изображения' }: { onUploaded: (urls: string[]) => void; onBusy?: (busy: boolean) => void; multiple?: boolean; kind?: 'photo' | 'plan'; label?: string }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   return <div><label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium focus-within:ring-2 focus-within:ring-primary"><Upload size={15} />{busy ? 'Загрузка…' : label}<input type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple={multiple} disabled={busy} className="sr-only" onChange={async event => {
@@ -20,7 +20,7 @@ export function PropertyImageUpload({ onUploaded, onBusy, multiple = true, label
     if (!files.length) return;
     setBusy(true); onBusy?.(true); setError('');
     const urls: string[] = [];
-    try { for (const file of files) urls.push(await uploadPropertyImage(file)); }
+    try { for (const file of files) urls.push(await uploadPropertyImage(file, kind)); }
     catch (error) { setError(error instanceof Error ? error.message : 'Ошибка загрузки'); }
     finally { if (urls.length) onUploaded(urls); setBusy(false); onBusy?.(false); }
   }} /></label>{error && <p role="alert" className="mt-2 text-sm text-red-600">{error}</p>}</div>;
@@ -75,7 +75,7 @@ export function DevelopmentEditor({ profile, units, projectImages, onProfile, on
       <label className="text-xs">Название (например 1+1)<input required maxLength={40} className={control} value={unit.code} onChange={event => patchUnit(index, { code: event.target.value })} /></label>
       <label className="text-xs">Спальни (для фильтра)<input required min={1} max={50} type="number" className={control} value={unit.rooms || ''} onChange={event => patchUnit(index, { rooms: Number(event.target.value) })} /></label>
       {([['area_min', 'Площадь от, м²'], ['area_max', 'Площадь до, м²'], ['price_min', 'Цена от'], ['price_max', 'Цена до']] as const).map(([field, label]) => <label className="text-xs" key={field}>{label}<input min={0.01} step="0.01" type="number" placeholder="По запросу" className={control} value={unit[field] ?? ''} onChange={event => patchUnit(index, { [field]: event.target.value === '' ? null : Number(event.target.value) })} /></label>)}
-      <div className="col-span-2 text-xs md:col-span-3"><p className="mb-2 font-medium">Планы этого типа</p><ImageOrder urls={unit.plans} onChange={plans => patchUnit(index, { plans })} label="План" /><PropertyImageUpload onBusy={onBusy} onUploaded={urls => patchUnit(index, { plans: [...unit.plans.filter(Boolean), ...urls] })} label="Загрузить планы" /></div>
+      <div className="col-span-2 text-xs md:col-span-3"><p className="mb-2 font-medium">Планы этого типа</p><ImageOrder urls={unit.plans} onChange={plans => patchUnit(index, { plans })} label="План" /><PropertyImageUpload onBusy={onBusy} onUploaded={urls => patchUnit(index, { plans: [...unit.plans.filter(Boolean), ...urls] })} kind="plan" label="Загрузить планы" /></div>
     </div><div className="mt-4 flex flex-wrap items-center justify-between gap-3"><button type="button" onClick={() => onUnits(units.filter((_, i) => i !== index))} className="flex items-center gap-2 text-xs text-red-600"><Trash2 size={14} />Убрать вариант</button></div>
       <div className="mt-5 border-t border-slate-100 pt-4"><h4 className="font-semibold">Медиа виллы {unit.code || ''}</h4><p className="mt-1 text-xs text-slate-500">Для карточки {unit.code || 'этого типа'} добавляйте только относящиеся к нему фото и видео. Общие ролики о комплексе, территории, инфраструктуре и локации добавляйте выше — в «Медиа жилого комплекса».</p><ImageOrder urls={unit.media_images || []} onChange={media_images => patchUnit(index, { media_images })} label="Фото виллы" /><div className="mt-3"><PropertyImageUpload onBusy={onBusy} onUploaded={urls => patchUnit(index, { media_images: [...(unit.media_images || []).filter(Boolean), ...urls] })} label="Загрузить фото виллы" /></div><VideoOrder urls={unit.video_url ? [unit.video_url] : []} onChange={urls => patchUnit(index, { video_url: urls[0] || null })} label={`Видео ${unit.code}`} /><div className="mt-3 flex flex-wrap gap-3"><PropertyVideoUpload onBusy={onBusy} multiple={false} label="Загрузить видео виллы" onUploaded={urls => patchUnit(index, { video_url: urls[0] || null })} /><AddVideoLink onAdd={url => patchUnit(index, { video_url: url })} /></div></div>
       {unit.plans.map((value, planIndex) => {

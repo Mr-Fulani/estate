@@ -64,6 +64,19 @@ services:
       retries: 3
       start_period: 30s
 
+  media-worker:
+    <<: *runtime
+    image: estate-api:${RELEASE:?Set RELEASE}
+    command: [python, -m, app.import_property_media, --watch]
+    env_file: [/etc/estate/api.env]
+    volumes:
+      - /var/lib/estate/uploads:/app/uploads
+      - /var/lib/estate/media-import:/app/media-import
+    networks: [database, application]
+    depends_on:
+      api: {condition: service_healthy}
+    profiles: [media]
+
   proxy:
     <<: *runtime
     image: ${CADDY_IMAGE:?Set pinned CADDY_IMAGE}

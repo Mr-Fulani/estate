@@ -276,8 +276,8 @@ export async function uploadNewsImage(file: File): Promise<string> {
   return uploadImage(file, 'news');
 }
 
-export async function uploadPropertyImage(file: File): Promise<string> {
-  return uploadImage(file, 'properties');
+export async function uploadPropertyImage(file: File, kind: 'photo' | 'plan' = 'photo'): Promise<string> {
+  return uploadImage(file, 'properties', kind);
 }
 
 export async function uploadPropertyVideo(file: File): Promise<string> {
@@ -294,10 +294,10 @@ export async function uploadPropertyVideo(file: File): Promise<string> {
   return data.url;
 }
 
-async function uploadImage(file: File, collection: 'news' | 'properties'): Promise<string> {
+async function uploadImage(file: File, collection: 'news' | 'properties', kind: 'photo' | 'plan' = 'photo'): Promise<string> {
   const body = new FormData();
   body.append('file', file);
-  const res = await fetch(`${getApiBaseUrl()}/uploads/${collection}`, {
+  const res = await fetch(`${getApiBaseUrl()}/uploads/${collection}${collection === 'properties' ? `?kind=${kind}` : ''}`, {
     method: 'POST',
     headers: adminHeaders(),
     credentials: 'include',

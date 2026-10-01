@@ -1,4 +1,6 @@
-from typing import Annotated
+from typing import Annotated, Literal
+import subprocess
+from PIL import UnidentifiedImageError
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 
@@ -23,9 +25,10 @@ async def upload_news_image(
 @router.post("/properties", status_code=status.HTTP_201_CREATED)
 async def upload_property_image(
     file: Annotated[UploadFile, File(...)],
+    kind: Literal["photo", "plan"] = "photo",
     _: AdminUser = Depends(require_permission("properties:write", csrf=True)),
 ):
-    return await upload_image(file, "properties")
+    return await upload_image(file, "properties", plan=kind == "plan")
 
 
 @router.post("/properties/videos", status_code=status.HTTP_201_CREATED)
@@ -51,12 +54,15 @@ async def upload_property_video(
                 detail="Supported video formats: MP4, MOV, WebM and Ogg",
             )
         await file.seek(0)
-        return {"url": await save_video(file.file, "properties", extension)}
+        try:
+            return {"url": await save_video(file.file, "properties", extension)}
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired, ValueError):
+            raise HTTPException(status_code=422, detail="Video could not be processed; check the file and its duration")
     finally:
         await file.close()
 
 
-async def upload_image(file: UploadFile, collection: str):
+async def upload_image(file: UploadFile, collection: str, *, plan: bool = False):
     max_bytes = settings.MEDIA_MAX_IMAGE_MB * 1024 * 1024
     content = await file.read(max_bytes + 1)
     await file.close()
@@ -72,5 +78,8 @@ async def upload_image(file: UploadFile, collection: str):
             status_code=415,
             detail="Supported image formats: JPEG, PNG, WebP and GIF",
         )
-    url = await save_image(content, collection)
+    try:
+        url = await save_image(content, collection, plan=plan)
+    except (UnidentifiedImageError, ValueError, OSError):
+        raise HTTPException(status_code=422, detail="Image could not be processed; animated images must be uploaded as video")
     return {"url": url}
