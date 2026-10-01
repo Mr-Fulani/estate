@@ -70,7 +70,8 @@ jobs:
           done
           exit 1
       - name: HTTP metadata, sitemap, redirects and status codes
-        run: python scripts/seo-smoke.py --base-url http://127.0.0.1:3000 --origin https://agency-beta.com --expected-sitemap-count 225 --forbidden 'Rahat Home' --redirect /en/properties/fixture-old-office=/en/properties/fixture-office-1 --report seo-http.json
+        # 20 static + 201 office + 1 development + 3 unit + 1 article + 2 collection URLs.
+        run: python scripts/seo-smoke.py --base-url http://127.0.0.1:3000 --origin https://agency-beta.com --expected-sitemap-count 228 --forbidden 'Rahat Home' --redirect /en/properties/fixture-old-office=/en/properties/fixture-office-1 --report seo-http.json
       - name: Same build, another origin, indexing disabled
         run: |
           (cd backend && DATABASE_URL=postgresql+asyncpg://postgres@127.0.0.1:5432/estate_seo_test_b python -m uvicorn app.main:app --host 127.0.0.1 --port 8001 > /tmp/estate-seo-api-b.log 2>&1) &
