@@ -1,3 +1,5 @@
+name: rahat-preview
+
 services:
   db:
     image: postgres:17-alpine
@@ -53,3 +55,4 @@ services:
 
 volumes:
   postgres_data:
+    name: rahat-preview_postgres_data

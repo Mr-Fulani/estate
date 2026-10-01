@@ -1,0 +1,24 @@
+{
+  "buildPath": "code",
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "arial",
+        "createdAt": "2026-09-28T22:57:02.999Z",
+        "reason": "This pre-existing, unchanged rule styles the small utility price label; the established development page pairs Georgia display prices with Arial utility text, and this media update does not alter that typography."
+      },
+      {
+        "rule": "gray-on-color",
+        "value": "*",
+        "files": [
+          "frontend/src/app/admin/properties/PropertyForm.tsx"
+        ],
+        "createdAt": "2026-09-29T10:56:47.719Z",
+        "reason": "This existing delete icon uses muted gray on a white button surface, not gray text on a colored background; the reported contrast pairing is a false positive."
+      }
+    ]
+  }
+}

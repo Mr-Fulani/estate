@@ -19,7 +19,7 @@ export function videoEmbedUrl(value: string): string | null {
 }
 
 export function isDirectVideoUrl(value: string): boolean {
-  return /\.(mp4|webm|ogg)(?:$|[?#])/i.test(value);
+  return /\.(mp4|mov|webm|ogv|ogg)(?:$|[?#])/i.test(value);
 }
 
 /** Google Drive's `uc?export=view` endpoint can stall when embedded in a site.

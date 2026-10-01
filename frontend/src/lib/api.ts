@@ -280,6 +280,20 @@ export async function uploadPropertyImage(file: File): Promise<string> {
   return uploadImage(file, 'properties');
 }
 
+export async function uploadPropertyVideo(file: File): Promise<string> {
+  const body = new FormData();
+  body.append('file', file);
+  const res = await fetch(`${getApiBaseUrl()}/uploads/properties/videos`, {
+    method: 'POST',
+    headers: adminHeaders(),
+    credentials: 'include',
+    body,
+  });
+  await ensureAdminResponse(res, 'Не удалось загрузить видео');
+  const data: { url: string } = await res.json();
+  return data.url;
+}
+
 async function uploadImage(file: File, collection: 'news' | 'properties'): Promise<string> {
   const body = new FormData();
   body.append('file', file);

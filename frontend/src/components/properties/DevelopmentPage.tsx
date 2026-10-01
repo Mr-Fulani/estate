@@ -62,7 +62,7 @@ export function DevelopmentPage({ property: source, locale, preview = false }: {
           </div>
         </div>
         {heroMediaCount > 0 && <div className={styles.heroImage}>
-          {heroVideo ? <VideoFrame url={heroVideo} title={`${property.title} — ${copy.project} ${heroMediaIndex - property.images.length + 1}`} /> : <Image src={displayImageUrl(property.images[heroMediaIndex] || property.images[0])} alt={`${property.title} — ${copy.render}`} fill priority unoptimized={isDriveImage(property.images[heroMediaIndex] || property.images[0])} sizes="(max-width: 760px) 100vw, 56vw" className={styles.heroPhoto} />}
+          {heroVideo ? <VideoFrame url={heroVideo} title={`${property.title} — ${copy.project} ${heroMediaIndex - property.images.length + 1}`} /> : <Image src={displayImageUrl(property.images[heroMediaIndex] || property.images[0])} alt={`${property.title} — ${copy.render}`} fill priority unoptimized={isDriveImage(property.images[heroMediaIndex] || property.images[0])} sizes="100vw" className={styles.heroPhoto} />}
           <span className={styles.heroImageLabel}>{location}</span>
           {profile.images_are_renders && <span className={styles.renderLabel}>{copy.render}</span>}
           {heroMediaCount > 1 && <div className={styles.heroMediaControls} aria-label={copy.gallery}>
@@ -107,7 +107,8 @@ export function DevelopmentPage({ property: source, locale, preview = false }: {
               <div className={styles.unitCardMedia}>
                 {item.media_images?.[0] ? <Link href={detailHref} aria-label={`${copy.details}: ${item.code}`}><Image src={displayImageUrl(item.media_images[0])} alt={`${property.title} — ${item.code}`} fill unoptimized={isDriveImage(item.media_images[0])} sizes="(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 33vw" /></Link>
                   : item.video_url ? <VideoFrame url={item.video_url} title={`${property.title} — ${item.code}`} />
-                    : <span className={styles.unitCardEmpty}>{copy.mediaPending}</span>}
+                    : item.plans?.[0] ? <Link href={detailHref} aria-label={`${copy.details}: ${item.code} — ${copy.plan}`}><Image src={displayImageUrl(item.plans[0])} alt={`${property.title} — ${item.code} — ${copy.plan}`} fill unoptimized={isDriveImage(item.plans[0])} sizes="(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 33vw" className={styles.unitCardPlan} /></Link>
+                      : <span className={styles.unitCardEmpty}>{copy.mediaPending}</span>}
                 {item.video_url && item.media_images?.[0] && <span className={styles.unitCardVideo}>{copy.video}</span>}
               </div>
               <div className={styles.unitCardDetails}>

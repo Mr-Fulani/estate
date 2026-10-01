@@ -1,4 +1,5 @@
 import asyncio
+import os
 from pathlib import Path
 from uuid import uuid4
 
@@ -45,6 +46,41 @@ async def save_image(content: bytes, collection: str) -> str:
 
     await asyncio.to_thread(write_file)
     return f"{settings.MEDIA_URL.rstrip('/')}/{collection}/{filename}"
+
+
+def detect_video_extension(content: bytes, filename: str = "") -> str | None:
+    if len(content) >= 12 and content[4:8] == b"ftyp":
+        return ".mov" if filename.lower().endswith(".mov") else ".mp4"
+    if content.startswith(b"\x1a\x45\xdf\xa3"):
+        return ".webm"
+    if content.startswith(b"OggS"):
+        return ".ogv"
+    return None
+
+
+async def save_video(upload, collection: str, extension: str) -> str:
+    if collection != "properties" or extension not in {".mp4", ".mov", ".webm", ".ogv"}:
+        raise ValueError("Unsupported video collection or format")
+    filename = f"{uuid4().hex}{extension}"
+    root = MEDIA_ROOT / collection / "videos"
+    root.mkdir(parents=True, exist_ok=True)
+    target = root / filename
+    temporary = root / f".{filename}.tmp"
+
+    def write_file() -> None:
+        try:
+            with temporary.open("xb") as destination:
+                while chunk := upload.read(1024 * 1024):
+                    destination.write(chunk)
+                destination.flush()
+                os.fsync(destination.fileno())
+            temporary.replace(target)
+        except Exception:
+            temporary.unlink(missing_ok=True)
+            raise
+
+    await asyncio.to_thread(write_file)
+    return f"{settings.MEDIA_URL.rstrip('/')}/{collection}/videos/{filename}"
 
 
 async def delete_owned_news_file(url: str | None) -> None:

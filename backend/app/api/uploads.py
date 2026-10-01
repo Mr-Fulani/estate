@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 
 from app.config import get_settings
-from app.media_storage import detect_image_extension, save_image
+from app.media_storage import detect_image_extension, detect_video_extension, save_image, save_video
 from app.models.admin_user import AdminUser
 from app.security import require_permission
 
@@ -26,6 +26,34 @@ async def upload_property_image(
     _: AdminUser = Depends(require_permission("properties:write", csrf=True)),
 ):
     return await upload_image(file, "properties")
+
+
+@router.post("/properties/videos", status_code=status.HTTP_201_CREATED)
+async def upload_property_video(
+    file: Annotated[UploadFile, File(...)],
+    _: AdminUser = Depends(require_permission("properties:write", csrf=True)),
+):
+    max_bytes = settings.MEDIA_MAX_VIDEO_MB * 1024 * 1024
+    try:
+        size = file.size
+        if size is None or size <= 0:
+            raise HTTPException(status_code=422, detail="The video file is empty")
+        if size > max_bytes:
+            raise HTTPException(
+                status_code=413,
+                detail=f"Video must be smaller than {settings.MEDIA_MAX_VIDEO_MB} MB",
+            )
+        header = await file.read(32)
+        extension = detect_video_extension(header, file.filename or "")
+        if extension is None:
+            raise HTTPException(
+                status_code=415,
+                detail="Supported video formats: MP4, MOV, WebM and Ogg",
+            )
+        await file.seek(0)
+        return {"url": await save_video(file.file, "properties", extension)}
+    finally:
+        await file.close()
 
 
 async def upload_image(file: UploadFile, collection: str):

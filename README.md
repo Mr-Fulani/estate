@@ -39,6 +39,8 @@ cp frontend/.env.example frontend/.env
 docker compose up --build
 ```
 
+Локальное окружение закреплено за Compose-проектом `rahat-preview` и томом БД `rahat-preview_postgres_data`. Обычный `docker compose up` использует эту же сохранённую базу; не задавайте другое имя через `-p` для повседневной локальной работы. Том базы имеет явное имя, чтобы смена имени Compose-проекта не создавала другой локальный каталог данных.
+
 Контейнер API автоматически выполняет `python -m app.migrate`. После запуска:
 
 - сайт: [http://localhost:3000/ru](http://localhost:3000/ru);
@@ -89,10 +91,10 @@ uvicorn app.main:app --reload
 cd frontend
 cp .env.example .env
 npm ci
-npm run dev
+npm run dev:host
 ```
 
-Браузер обращается к API через same-origin прокси `/api/backend`, поэтому защищённые cookie не передаются между разными доменами. `INTERNAL_API_URL` используется серверным рендерингом и прокси внутри Docker. `SITE_URL` задаёт базовый URL canonical и социальных метаданных во время запуска сервера, поэтому один образ можно использовать на разных доменах. В production обязателен реальный HTTPS origin без пути и query; `NEXT_PUBLIC_SITE_URL` больше не используется. Передавайте `SITE_URL` контейнеру web через environment/env_file. `DEPLOYMENT_ENV=test` разрешён только для изолированных тестов.
+Браузер обращается к API через same-origin прокси `/api/backend`, поэтому защищённые cookie не передаются между разными доменами. `npm run dev:host` явно использует доступный с хоста API `http://127.0.0.1:8000/api/v1` и слушает только loopback. Для запуска в Docker используйте `npm run dev` внутри контейнера: там `INTERNAL_API_URL=http://api:8000/api/v1` задаётся Docker Compose. `SITE_URL` задаёт базовый URL canonical и социальных метаданных во время запуска сервера, поэтому один образ можно использовать на разных доменах. В production обязателен реальный HTTPS origin без пути и query; `NEXT_PUBLIC_SITE_URL` больше не используется. Передавайте `SITE_URL` контейнеру web через environment/env_file. `DEPLOYMENT_ENV=test` разрешён только для изолированных тестов.
 
 ## Миграции
 

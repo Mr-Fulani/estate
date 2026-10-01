@@ -29,19 +29,10 @@ import { useLocale } from '@/context/LocaleContext';
 import { cn } from '@/lib/utils';
 import { startNavigationFeedback } from '@/components/layout/NavigationFeedback';
 import { localeLabels, type Locale } from '@/i18n/config';
-import { DevelopmentEditor, PropertyImageUpload } from '@/components/admin/DevelopmentEditor';
+import { AddVideoLink, DevelopmentEditor, PropertyImageUpload, PropertyVideoUpload, VideoOrder } from '@/components/admin/DevelopmentEditor';
 import { emptyDevelopment, preparePropertyForm, buildDevelopmentPreview } from '@/lib/development-view';
 import { DevelopmentPreview } from '@/components/admin/DevelopmentPreview';
-
-const sampleImages = [
-  { name: 'Квартира премиум', url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80' },
-  { name: 'Загородный дом', url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80' },
-  { name: 'Современная кухня', url: 'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=1200&q=80' },
-  { name: 'Светлая гостиная', url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80' },
-  { name: 'Офис / Коммерция', url: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80' },
-];
-
-
+import { displayImageUrl } from '@/lib/video-media';
 
 export function PropertyForm({
   initialData,
@@ -352,7 +343,7 @@ export function PropertyForm({
         </div>
       </div>
 
-      {formData.listing_kind === 'development' && <DevelopmentEditor profile={formData.development || emptyDevelopment} units={formData.unit_types || []} onProfile={development => setFormData(previous => ({ ...previous, development, is_featured: development.is_demo ? false : previous.is_featured }))} onUnits={unit_types => setFormData(previous => ({ ...previous, unit_types }))} onBusy={onUploadBusy} />}
+      {formData.listing_kind === 'development' && <DevelopmentEditor profile={formData.development || emptyDevelopment} units={formData.unit_types || []} projectImages={formData.images || []} onProfile={development => setFormData(previous => ({ ...previous, development, is_featured: development.is_demo ? false : previous.is_featured }))} onUnits={unit_types => setFormData(previous => ({ ...previous, unit_types }))} onProjectImages={images => setFormData(previous => ({ ...previous, images }))} onBusy={onUploadBusy} />}
 
       {/* 2. Location Card */}
       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">
@@ -586,18 +577,18 @@ export function PropertyForm({
         <div className="grid gap-5 rounded-2xl border border-slate-200 bg-slate-50 p-4 md:grid-cols-[minmax(0,1.4fr)_minmax(240px,0.8fr)] md:p-5">
           <div className="relative aspect-[1200/630] min-w-0 overflow-hidden rounded-xl border border-slate-200 bg-slate-200">
             {formData.images?.[0] ? (
-              <img src={formData.images[0]} alt="Превью OG-изображения объекта" className="h-full w-full object-cover" />
+              <img src={displayImageUrl(formData.images[0], 600)} alt="Превью OG-изображения объекта" className="h-full w-full object-cover" />
             ) : (
               <div className="flex h-full flex-col items-center justify-center gap-2 px-6 text-center text-slate-400">
                 <ImageIcon className="h-8 w-8" />
-                <span className="text-xs font-semibold">Добавьте главное фото объекта</span>
+                <span className="text-xs font-semibold">Добавьте первое фото {formData.listing_kind === 'development' ? 'жилого комплекса' : 'объекта'}</span>
               </div>
             )}
             <span className="absolute bottom-2.5 right-2.5 rounded-lg bg-slate-950/75 px-2.5 py-1 text-[10px] font-bold text-white backdrop-blur-sm">OG · 1200 × 630</span>
           </div>
           <div className="flex min-w-0 flex-col justify-center">
-            <p className="text-sm font-bold text-slate-900">OG-изображение объекта</p>
-            <p className="mt-2 text-xs leading-relaxed text-slate-600">В превью ссылки автоматически используется первое фото. Оно же отмечено как «Главное фото» в медиаблоке.</p>
+            <p className="text-sm font-bold text-slate-900">Обложка страницы и превью ссылки</p>
+            <p className="mt-2 text-xs leading-relaxed text-slate-600">Используется первое фото. {formData.listing_kind === 'development' ? 'Порядок фото комплекса меняется в блоке «Медиа жилого комплекса».' : 'Меняйте порядок в галерее ниже или отметьте другое фото главным.'}</p>
             <p className="mt-2 text-xs leading-relaxed text-slate-500">Рекомендуемый размер — 1200 × 630 px. Важные детали лучше располагать ближе к центру, чтобы соцсети не обрезали их.</p>
             <a href="#property-media" className="mt-4 inline-flex w-fit items-center gap-2 text-xs font-bold text-primary transition-colors hover:text-secondary">
               <ImageIcon className="h-4 w-4" />
@@ -639,61 +630,32 @@ export function PropertyForm({
       </div>
 
       {/* 4. Media & Photos Card with Drag and Drop Reordering */}
-      <div id="property-media" className="scroll-mt-28 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">
+      {formData.listing_kind !== 'development' && <div id="property-media" className="scroll-mt-28 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">
         <div className="flex items-center justify-between pb-3 border-b border-slate-100">
           <div className="flex items-center gap-2">
             <ImageIcon className="w-5 h-5 text-primary" />
-            <h2 className="text-lg font-bold text-slate-900">Управление медиа и фотографиями</h2>
+          <h2 className="text-lg font-bold text-slate-900">Фото объекта</h2>
           </div>
           <span className="text-xs font-medium text-slate-400">
-            Перетягивайте фото мышкой для смены порядка
+            Первое фото — обложка страницы
           </span>
         </div>
 
         {/* Add Image Input */}
-        <PropertyImageUpload onBusy={onUploadBusy} onUploaded={urls => setFormData(previous => ({ ...previous, images: [...(previous.images || []), ...urls] }))} />
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-          <label htmlFor="property-videos" className="mb-2 block text-sm font-semibold text-slate-800">Видео объекта — одна HTTPS-ссылка в строке</label>
-          <textarea id="property-videos" rows={3} value={(formData.videos || []).join('\n')} onChange={event => setFormData(previous => ({ ...previous, videos: event.target.value.split('\n').map(value => value.trim()).filter(Boolean) }))} placeholder="https://drive.google.com/file/d/.../view" className="w-full rounded-lg border border-slate-200 bg-white p-3 text-sm" />
-          <p className="mt-2 text-xs text-slate-500">Поддерживаются Google Drive, YouTube, Vimeo и прямые ссылки на MP4. Видео Drive должно быть доступно для просмотра по ссылке.</p>
-        </div>
-        <div className="flex gap-2">
-          <input
+        <div className="flex flex-wrap items-center gap-3"><PropertyImageUpload onBusy={onUploadBusy} onUploaded={urls => setFormData(previous => ({ ...previous, images: [...(previous.images || []), ...urls] }))} label="Загрузить фото объекта" /><div className="flex gap-2"><input
             type="url"
             value={newImageUrl}
             onChange={(e) => setNewImageUrl(e.target.value)}
-            placeholder="Вставьте прямую ссылку на фото (https://...)"
-            className="flex-1 h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-medium"
-          />
-          <button
+            placeholder="Ссылка на фото из Google Drive"
+            aria-label="Ссылка на фото"
+            className="h-10 w-64 rounded-lg border border-slate-200 bg-white px-3 text-sm"
+          /><button
             type="button"
             onClick={() => handleAddImage()}
-            className="h-11 px-5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-sm font-semibold flex items-center gap-1.5 transition-colors shrink-0"
-          >
-            <Plus className="w-4 h-4" />
-            Добавить
-          </button>
-        </div>
-
-        {/* Sample Presets */}
-        <div>
-          <span className="text-xs font-medium text-slate-400 block mb-2">
-            Или выберите готовые фото:
-          </span>
-          <div className="flex flex-wrap gap-2">
-            {sampleImages.map((s, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => handleAddImage(s.url)}
-                className="px-3 py-1.5 rounded-lg text-xs bg-slate-100 hover:bg-primary hover:text-white text-slate-700 font-medium transition-colors border border-slate-200"
-              >
-                + {s.name}
-              </button>
-            ))}
-          </div>
-        </div>
-
+            disabled={!newImageUrl.trim()}
+            className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-slate-300 px-3 text-sm font-medium disabled:opacity-40"
+          ><Plus className="h-4 w-4" />Добавить по ссылке</button></div></div>
+        <div className="border-t border-slate-100 pt-4"><h3 className="mb-2 text-sm font-semibold">Видео объекта</h3><p className="mb-3 text-xs text-slate-500">Добавьте видео самого объекта. Для Google Drive проверьте, что доступ открыт для просмотра по ссылке.</p><VideoOrder urls={formData.videos || []} onChange={videos => setFormData(previous => ({ ...previous, videos }))} label="Видео объекта" /><div className="mt-3 flex flex-wrap gap-3"><PropertyVideoUpload onBusy={onUploadBusy} onUploaded={urls => setFormData(previous => ({ ...previous, videos: [...(previous.videos || []), ...urls] }))} /><AddVideoLink onAdd={url => setFormData(previous => ({ ...previous, videos: [...(previous.videos || []), url] }))} /></div></div>
         {/* Interactive Drag & Drop Images Grid */}
         {formData.images && formData.images.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-3">
@@ -719,7 +681,7 @@ export function PropertyForm({
                 >
                   {/* Image Aspect Ratio Box */}
                   <div className="relative aspect-[4/3] w-full overflow-hidden">
-                    <img src={imgUrl} alt={`Фото ${i + 1}`} className="w-full h-full object-cover pointer-events-none" />
+                    <img src={displayImageUrl(imgUrl, 900)} alt={`Фото ${i + 1}`} className="w-full h-full object-cover pointer-events-none" />
 
                     {/* Order & Primary Badges */}
                     <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 z-10">
@@ -796,10 +758,10 @@ export function PropertyForm({
           </div>
         ) : (
           <div className="py-8 text-center border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 text-sm">
-            Фотографии еще не добавлены. Вставьте ссылку или выберите из готовых выше.
+            Фото ещё не добавлены. Загрузите файлы или добавьте ссылку выше.
           </div>
         )}
-      </div>
+      </div>}
 
       {/* 5. Publication & Badge Settings */}
       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">
