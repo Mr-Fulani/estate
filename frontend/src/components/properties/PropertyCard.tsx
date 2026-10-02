@@ -13,6 +13,7 @@ import { fetchSiteSettings } from '@/lib/api';
 import { getSiteCopy } from '@/lib/site-profile';
 import { CurrencyPrice } from '@/components/currency/CurrencyPrice';
 import { DevelopmentCard } from './DevelopmentCard';
+import { PropertyMediaPlaceholder } from './PropertyMediaPlaceholder';
 
 interface PropertyCardProps {
   property: Property;
@@ -23,7 +24,7 @@ export async function PropertyCard({ property: sourceProperty, locale }: Propert
   if (sourceProperty.listing_kind === 'development') return <DevelopmentCard property={sourceProperty} locale={locale} />;
   const property = localizedProperty(sourceProperty, locale);
   const copy = getSiteCopy(locale, await fetchSiteSettings()).property;
-  // Use first image or a gradient placeholder
+  // Use the first image or the branded media placeholder.
   const imageUrl = property.images && property.images.length > 0 
     ? property.images[0] 
     : null;
@@ -46,9 +47,7 @@ export async function PropertyCard({ property: sourceProperty, locale }: Propert
               className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center text-primary-400">
-              <span className="text-sm font-medium">{copy.noPhoto}</span>
-            </div>
+            <PropertyMediaPlaceholder locale={locale} />
           )}
           
           <div className="absolute start-3.5 top-3.5 flex flex-wrap gap-1.5 z-10">

@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { PropertyMediaPlaceholder } from './PropertyMediaPlaceholder';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { ArrowDown, ArrowLeft, ArrowUpRight, ChevronLeft, ChevronRight, Expand, MapPin, Pause, Play, X } from 'lucide-react';
@@ -108,7 +109,7 @@ export function DevelopmentPage({ property: source, locale, preview = false }: {
                 {item.media_images?.[0] ? <Link href={detailHref} aria-label={`${copy.details}: ${item.code}`}><Image src={displayImageUrl(item.media_images[0])} alt={`${property.title} — ${item.code}`} fill unoptimized={isDriveImage(item.media_images[0])} sizes="(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 33vw" /></Link>
                   : item.video_url ? <VideoFrame url={item.video_url} title={`${property.title} — ${item.code}`} />
                     : item.plans?.[0] ? <Link href={detailHref} aria-label={`${copy.details}: ${item.code} — ${copy.plan}`}><Image src={displayImageUrl(item.plans[0])} alt={`${property.title} — ${item.code} — ${copy.plan}`} fill unoptimized={isDriveImage(item.plans[0])} sizes="(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 33vw" className={styles.unitCardPlan} /></Link>
-                      : <span className={styles.unitCardEmpty}>{copy.mediaPending}</span>}
+                      : <Link href={detailHref} aria-label={`${copy.details}: ${item.code}`}><PropertyMediaPlaceholder locale={locale} /></Link>}
                 {item.video_url && item.media_images?.[0] && <span className={styles.unitCardVideo}>{copy.video}</span>}
               </div>
               <div className={styles.unitCardDetails}>
