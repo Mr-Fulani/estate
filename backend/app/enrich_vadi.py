@@ -76,7 +76,8 @@ async def run(args):
     location = groups["1PwvtZU0EjVhIIKceWP0sPPc_mPNxrq8y"]
     image_ids = [project[0]["id"], "16_cys5y8W52ZhHvMk01JIBjtnnoZptrs"] + [f["id"] for f in project[1:]] + [f["id"] for f in groups["site"]] + [f["id"] for f in location if f["id"] != "16_cys5y8W52ZhHvMk01JIBjtnnoZptrs"]
     general_videos = ["1n0wQ8NIu55ldVftQ8tYXLtmTMXA8gH7j", "1_x4tRtsh1fr2Vp2ee5EYlZ48lQNwX1ha", "16_MYtE4ZnO-tNKG4uJZ985x3NPoou_fx", "12ARSHUweaNIPb573RyAdP7Zechk7jHW4", "1bqyqWngKnwONct2_EFjsHifnDMFrgSz4"]
-    unit_videos = {"6+1": "15Dd1XHw11iPg6U5B3WACPayFlrZVC-UG", "7+1": "1r6rZpUDqcSYKTDFryTgmzuIFFxwfdnU0", "10+1": "1dCBWCYf116qDw1xOgWMkpsAKr_DT5PoF"}
+    # The source labelled 7+1 duplicates the general drone footage.
+    unit_videos = {"6+1": "15Dd1XHw11iPg6U5B3WACPayFlrZVC-UG", "10+1": "1dCBWCYf116qDw1xOgWMkpsAKr_DT5PoF"}
     unique = lambda values: list(dict.fromkeys(values))
     profile = copy.deepcopy(before["development"])
     profile.update(interior_images=unique([urls[f["id"]] for f in ordered(groups["sample"])]), hero_videos=unique([urls[i] for i in general_videos]), hero_video_url=None, brochure_url=brochure, images_are_renders=False)
@@ -107,6 +108,8 @@ async def run(args):
             code = unit.code.split()[0]
             if code in report["unit_videos"]:
                 unit.video_url = report["unit_videos"][code]
+            elif code == "7+1" and unit.video_url == urls["1r6rZpUDqcSYKTDFryTgmzuIFFxwfdnU0"]:
+                unit.video_url = None
         await db.commit()
     print("Enrichment applied", flush=True)
 
