@@ -7,11 +7,11 @@ import shutil
 import subprocess
 import tempfile
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from PIL import Image
 from app.media_optimization import optimize_image, optimize_video, publish
-from app.import_property_media import drive_id, import_one, replace_urls, sources
+from app.import_property_media import download_drive, drive_id, import_one, replace_urls, sources
 from app.media_static import MediaStaticFiles
 from starlette.applications import Starlette
 from starlette.routing import Mount
@@ -19,6 +19,22 @@ from starlette.testclient import TestClient
 
 
 class OptimizationTests(unittest.TestCase):
+    def test_inline_drive_download_and_invalid_response_limits(self):
+        for media_type, chunks, valid in [("image/jpeg", [b"image"], True), ("text/html", [b"login"], False), ("image/jpeg", [b"a" * (1024 * 1024), b"b"], False)]:
+            with self.subTest(media_type=media_type, valid=valid), tempfile.TemporaryDirectory() as work:
+                response = MagicMock()
+                response.headers = {"Content-Type": media_type, "Content-Disposition": "inline"}
+                response.iter_content.return_value = iter(chunks)
+                response.__enter__.return_value = response
+                with patch("app.import_property_media.subprocess.run", side_effect=subprocess.CalledProcessError(1, "gdown")), patch("app.import_property_media.requests.get", return_value=response), patch("app.import_property_media.settings.MEDIA_MAX_IMAGE_MB", 1):
+                    source = Path(work) / "source"
+                    if valid:
+                        download_drive("abcdefghijk", source, "photo")
+                        self.assertEqual(source.read_bytes(), b"image")
+                    else:
+                        with self.assertRaises(ValueError):
+                            download_drive("abcdefghijk", source, "photo")
+
     def test_drive_aliases_reuse_download_and_replace_each_source(self):
         with tempfile.TemporaryDirectory() as work:
             root = Path(work)

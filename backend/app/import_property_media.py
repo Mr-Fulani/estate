@@ -10,10 +10,12 @@ import json
 from pathlib import Path
 import re
 import tempfile
+import time
 from urllib.parse import parse_qs, urlparse
 
 import subprocess
 import sys
+import requests
 from sqlalchemy import select
 
 from app.database import AsyncSessionLocal
@@ -69,6 +71,35 @@ def replace_urls(value, mapping):
     return value
 
 
+def download_drive(identity, source, kind):
+    """Handle Drive's inline files when gdown expects an attachment header."""
+    url = f"https://drive.google.com/uc?id={identity}"
+    try:
+        subprocess.run([sys.executable, "-m", "gdown", url, "-O", str(source), "--quiet", "--no-cookies"], check=True, capture_output=True, timeout=600)
+        return
+    except subprocess.CalledProcessError:
+        pass
+    limit = (settings.MEDIA_MAX_VIDEO_MB if kind == "video" else settings.MEDIA_MAX_IMAGE_MB) * 1024 * 1024
+    started = time.monotonic()
+    with requests.get(url, stream=True, timeout=(15, 60)) as response:
+        response.raise_for_status()
+        media_type = response.headers.get("Content-Type", "").split(";")[0].lower()
+        expected = "video/" if kind == "video" else "application/pdf" if kind == "pdf" else "image/"
+        if not media_type.startswith(expected):
+            raise ValueError("Drive returned a non-media page instead of the requested file")
+        if int(response.headers.get("Content-Length", "0")) > limit:
+            raise ValueError("Drive source exceeds media size limit")
+        size = 0
+        with source.open("wb") as output:
+            for chunk in response.iter_content(1024 * 1024):
+                size += len(chunk)
+                if size > limit or time.monotonic() - started > 600:
+                    raise ValueError("Drive download exceeds size or time limit")
+                output.write(chunk)
+        if not size:
+            raise ValueError("Empty Drive media file")
+
+
 def import_one(url, kind, cache):
     identity = drive_id(url)
     key = hashlib.sha256(f"v1:{identity}:{kind}".encode()).hexdigest()
@@ -82,7 +113,7 @@ def import_one(url, kind, cache):
             return {**record, "source": url}
     with tempfile.TemporaryDirectory(prefix="estate-drive-") as work:
         source = Path(work) / "source"
-        subprocess.run([sys.executable, "-m", "gdown", f"https://drive.google.com/uc?id={identity}", "-O", str(source), "--quiet", "--no-cookies"], check=True, capture_output=True, timeout=600)
+        download_drive(identity, source, kind)
         size = source.stat().st_size
         limit = (settings.MEDIA_MAX_VIDEO_MB if kind == "video" else settings.MEDIA_MAX_IMAGE_MB) * 1024 * 1024
         if not 0 < size <= limit:

@@ -8,14 +8,12 @@ import copy
 import hashlib
 import json
 from pathlib import Path
-import subprocess
-import sys
 import tempfile
 
 from sqlalchemy import select
 from app.database import AsyncSessionLocal
 from app.models.property import Property
-from app.import_property_media import import_one, snapshot
+from app.import_property_media import download_drive, import_one, snapshot
 from app.media_storage import MEDIA_ROOT, settings
 from app.media_optimization import publish
 from app.schemas.property import DevelopmentProfile
@@ -37,7 +35,7 @@ def download_brochure(cache):
             return record["url"]
     with tempfile.TemporaryDirectory(prefix="vadi-brochure-") as work:
         source = Path(work) / "brochure.pdf"
-        subprocess.run([sys.executable, "-m", "gdown", "https://drive.google.com/uc?id=13UNgOdepilSN4AFdtqcUsLANwTfBo3ZB", "-O", str(source), "--quiet", "--no-cookies"], check=True, capture_output=True, timeout=600)
+        download_drive("13UNgOdepilSN4AFdtqcUsLANwTfBo3ZB", source, "pdf")
         content = source.read_bytes()
         if not content.startswith(b"%PDF-") or len(content) > 25 * 1024 * 1024:
             raise ValueError("Invalid brochure")
