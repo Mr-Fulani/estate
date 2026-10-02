@@ -7,8 +7,7 @@ import {
   ChevronLeft, 
   ChevronRight, 
   Maximize2, 
-  X, 
-  Camera
+  X
 } from 'lucide-react';
 import { Badge } from '../ui/Badge';
 import { cn, getStatusBadgeVariant } from '@/lib/utils';
@@ -17,6 +16,7 @@ import { localizedStatus } from '@/i18n/domain';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import { getSiteCopy } from '@/lib/site-profile';
 import { displayImageUrl, isDirectVideoUrl, isDriveImage, videoEmbedUrl } from '@/lib/video-media';
+import { PropertyMediaPlaceholder } from './PropertyMediaPlaceholder';
 
 export function PropertyGallery({
   images,
@@ -114,9 +114,8 @@ export function PropertyGallery({
 
   if (!hasImages && !hasVideos) {
     return (
-      <div className="w-full aspect-[16/9] bg-gradient-to-br from-primary-100 to-primary-200 rounded-2xl flex flex-col items-center justify-center text-primary-400 gap-2">
-        <Camera className="w-10 h-10 opacity-50" />
-        <span className="font-medium text-sm">{copy.photosSoon}</span>
+      <div className="relative w-full aspect-[16/10] md:aspect-[16/9] overflow-hidden rounded-2xl">
+        <PropertyMediaPlaceholder locale={locale} sizes="(max-width: 1280px) 100vw, 66vw" />
       </div>
     );
   }
