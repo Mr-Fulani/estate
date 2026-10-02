@@ -50,23 +50,19 @@ export async function PropertyCard({ property: sourceProperty, locale }: Propert
             <PropertyMediaPlaceholder locale={locale} />
           )}
           
-          <div className="absolute start-3.5 top-3.5 flex flex-wrap gap-1.5 z-10">
-            {property.is_featured && (
-              <Badge variant="secondary" className="shadow-md font-semibold">{copy.recommended}</Badge>
+          <div className="absolute inset-x-3.5 top-3.5 z-10 flex flex-wrap items-start gap-1.5">
+            {statusBadgeText && (
+              <Badge variant={statusBadgeVariant} className="max-w-full whitespace-normal break-words bg-white/95 px-2 py-1 text-[11px] leading-tight shadow-md">
+                {statusBadgeText}
+              </Badge>
             )}
-            {property.category && (
-              <Badge variant="primary" className="shadow-md">{localizedCategoryName(locale, property.category.slug, property.category.name, property.category.translations)}</Badge>
+            {property.is_featured && (
+              <Badge variant="secondary" className="max-w-full whitespace-normal break-words px-2 py-1 text-[11px] leading-tight shadow-md">
+                {copy.recommended}
+              </Badge>
             )}
           </div>
 
-          {/* Status Badge in Top Right */}
-          {statusBadgeText && (
-            <div className="absolute end-3.5 top-3.5 z-10">
-              <Badge variant={statusBadgeVariant} className="shadow-md bg-white/95 backdrop-blur-sm font-semibold">
-                {statusBadgeText}
-              </Badge>
-            </div>
-          )}
         </div>
 
         <div className="p-5 flex flex-col flex-grow">
@@ -74,6 +70,12 @@ export async function PropertyCard({ property: sourceProperty, locale }: Propert
             <CurrencyPrice amount={property.price} sourceCurrency={property.currency} locale={locale} />
           </div>
           
+          {property.category && (
+            <p className="mb-1 text-xs font-medium text-slate-600">
+              {localizedCategoryName(locale, property.category.slug, property.category.name, property.category.translations)}
+            </p>
+          )}
+
           <h3 dir="auto" className="text-lg font-semibold text-slate-800 mb-2 line-clamp-1 group-hover:text-primary transition-colors">
             {property.title}
           </h3>
