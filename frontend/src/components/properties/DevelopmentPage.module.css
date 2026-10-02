@@ -80,7 +80,7 @@
 /* Keep the pinned hero, with project media behind the text as on the homepage. */
 .page[data-preview=false]{margin-top:-80px}
 .page[data-preview=false]>.demoNotice{padding-top:98px}
-.hero{display:block;height:auto;min-height:100svh}
+.hero{display:block;height:auto;min-height:100svh;top:min(0px,calc(100svh - var(--hero-height,100svh)))}
 .heroContent{z-index:1;width:100%;max-width:850px;min-height:100svh;padding-bottom:130px}
 .page[data-preview=false] .heroContent{padding-top:114px}
 .heroImage{position:absolute;inset:0;min-height:0;aspect-ratio:auto}

@@ -30,6 +30,7 @@ export function DevelopmentPage({ property: source, locale, preview = false }: {
   const [motion, setMotion] = useState(true);
   const [expanded, setExpanded] = useState<{ url: string; label: string } | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
+  const hero = useRef<HTMLElement>(null);
   const heroMediaCount = property.images.length + heroVideos.length;
   const heroVideo = heroMediaIndex >= property.images.length ? heroVideos[heroMediaIndex - property.images.length] : null;
   const location = [property.district, property.city].filter(Boolean).join(' · ');
@@ -37,6 +38,17 @@ export function DevelopmentPage({ property: source, locale, preview = false }: {
   const area = (value: number) => `${value.toLocaleString(localeTags[locale])} m²`;
   const range = (min: number | null, max: number | null) => min === null || max === null ? copy.areaOnRequest : min === max ? area(min) : `${min.toLocaleString(localeTags[locale])}–${area(max)}`;
   const date = profile.price_date ? new Intl.DateTimeFormat(localeTags[locale], { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${profile.price_date}T12:00:00`)) : '';
+
+  useEffect(() => {
+    const element = hero.current;
+    if (!element) return;
+    // Let a tall hero scroll to its bottom before pinning its media controls.
+    const measure = () => element.style.setProperty('--hero-height', `${element.getBoundingClientRect().height}px`);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (!expanded) { dialog.current?.close(); return; }
@@ -49,7 +61,7 @@ export function DevelopmentPage({ property: source, locale, preview = false }: {
   return (
     <article className={styles.page} data-motion={motion} data-preview={preview} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       {sandboxed && <aside className={styles.demoNotice} role="note"><strong>{profile.is_demo ? demoCopy.badge : demoCopy.preview}</strong><span>{profile.is_demo ? demoCopy.notice : demoCopy.form} {demoCopy.disabled}</span></aside>}
-      <section className={styles.hero} data-no-image={!property.images[0] && !heroVideos.length} aria-labelledby="development-title">
+      <section ref={hero} className={styles.hero} data-no-image={!property.images[0] && !heroVideos.length} aria-labelledby="development-title">
         <div className={styles.heroContent}>
           <Link href={localizeHref(locale, '/properties')} className={styles.back}><ArrowLeft size={14} className="rtl:rotate-180" />{copy.back}</Link>
           <p className={styles.eyebrow}>{editorial?.eyebrow || copy.collection}</p>
