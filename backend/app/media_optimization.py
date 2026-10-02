@@ -55,4 +55,28 @@ def optimize_video(source: Path, root: Path) -> Path:
         probe = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "json", str(output)], check=True, capture_output=True, timeout=30)
         if float(json.loads(probe.stdout)["format"]["duration"]) <= 0:
             raise ValueError("Invalid encoded video")
-        return publish(output.read_bytes(), root, ".mp4")
+        target = publish(output.read_bytes(), root, ".mp4")
+        ensure_video_poster(target)
+        return target
+
+
+def ensure_video_poster(video: Path) -> Path:
+    """Create a cached preview from a local video without changing its bytes."""
+    poster = video.with_suffix(".poster.webp")
+    if poster.is_file():
+        return poster
+    probe = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "json", str(video)], check=True, capture_output=True, timeout=30)
+    duration = float(json.loads(probe.stdout)["format"]["duration"])
+    frame = subprocess.run([
+        "ffmpeg", "-nostdin", "-v", "error", "-threads", "2", "-ss", str(min(3, duration / 10)),
+        "-i", str(video), "-vf", "thumbnail=30,scale=w='min(960,iw)':h='min(960,ih)':force_original_aspect_ratio=decrease",
+        "-frames:v", "1", "-c:v", "libwebp", "-quality", "82", "-f", "image2pipe", "pipe:1",
+    ], check=True, capture_output=True, timeout=60)
+    with Image.open(io.BytesIO(frame.stdout)) as image:
+        image.verify()
+    content = publish(frame.stdout, video.parent, ".webp")
+    try:
+        os.link(content, poster)
+    except FileExistsError:
+        pass
+    return poster

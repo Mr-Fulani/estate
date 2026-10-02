@@ -10,7 +10,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from PIL import Image
-from app.media_optimization import optimize_image, optimize_video, publish
+from app.media_optimization import optimize_image, optimize_video, publish, ensure_video_poster
 from app.import_property_media import download_drive, drive_id, import_one, replace_urls, sources
 from app.media_static import MediaStaticFiles
 from starlette.applications import Starlette
@@ -117,7 +117,7 @@ class OptimizationTests(unittest.TestCase):
     def test_video_transcode_preserves_audio_and_limits_dimensions(self):
         with tempfile.TemporaryDirectory() as work:
             source = Path(work) / "source.mp4"
-            subprocess.run(["ffmpeg", "-v", "error", "-f", "lavfi", "-i", "color=size=2000x1120:rate=10:duration=1", "-f", "lavfi", "-i", "sine=duration=1", "-c:v", "libx264", "-threads", "2", "-c:a", "aac", "-shortest", str(source)], check=True, timeout=60)
+            subprocess.run(["ffmpeg", "-v", "error", "-f", "lavfi", "-i", "color=c=blue:size=2000x1120:rate=10:duration=1", "-f", "lavfi", "-i", "sine=duration=1", "-c:v", "libx264", "-threads", "2", "-c:a", "aac", "-shortest", str(source)], check=True, timeout=60)
             result = optimize_video(source, Path(work) / "optimized")
             probe = subprocess.run(["ffprobe", "-v", "error", "-show_streams", "-of", "json", str(result)], capture_output=True, check=True)
             streams = json.loads(probe.stdout)["streams"]
@@ -126,3 +126,12 @@ class OptimizationTests(unittest.TestCase):
             self.assertLessEqual(video["height"], 1080)
             self.assertTrue(any(s["codec_type"] == "audio" for s in streams))
             self.assertTrue(source.exists())
+            poster = result.with_suffix('.poster.webp')
+            with Image.open(poster) as preview:
+                self.assertLessEqual(max(preview.size), 960)
+                self.assertGreater(preview.convert('RGB').getpixel((0, 0))[2], 200)
+            before = result.read_bytes()
+            with patch('app.media_optimization.subprocess.run') as encode:
+                self.assertEqual(ensure_video_poster(result), poster)
+                encode.assert_not_called()
+            self.assertEqual(result.read_bytes(), before)

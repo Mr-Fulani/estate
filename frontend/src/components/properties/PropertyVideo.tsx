@@ -1,0 +1,39 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+import { Play } from 'lucide-react';
+import { useLocale } from '@/context/LocaleContext';
+import { isDirectVideoUrl, videoEmbedUrl, videoPosterUrl } from '@/lib/video-media';
+
+const labels = { ru: 'Воспроизвести видео', en: 'Play video', tr: 'Videoyu oynat', ar: 'تشغيل الفيديو' };
+
+/** Shared playback defaults for developments, apartment types and ordinary listings. */
+export function PropertyVideo({ url, title, poster, className = '' }: { url: string; title: string; poster?: string; className?: string }) {
+  const { locale } = useLocale();
+  const video = useRef<HTMLVideoElement>(null);
+  const [playing, setPlaying] = useState(false);
+  const [loadedPoster, setLoadedPoster] = useState<string | null>(null);
+  const candidate = videoPosterUrl(url);
+  const preview = loadedPoster === candidate && candidate ? candidate : poster || '/og.png';
+  useEffect(() => {
+
+    if (!candidate) return;
+    let active = true;
+    const image = new window.Image();
+    image.onload = () => { if (active) setLoadedPoster(candidate); };
+    image.src = candidate;
+    return () => { active = false; };
+  }, [candidate]);
+  const embed = videoEmbedUrl(url);
+  if (embed) {
+    const muted = new URL(embed);
+    if (muted.hostname.includes('youtube')) muted.searchParams.set('mute', '1');
+    if (muted.hostname.includes('vimeo')) muted.searchParams.set('muted', '1');
+    return <iframe src={muted.href} title={title} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen loading="lazy" className={`h-full w-full border-0 ${className}`} />;
+  }
+  if (!isDirectVideoUrl(url)) return <a href={url} target="_blank" rel="noopener noreferrer" className="grid h-full place-items-center px-4 text-center text-white underline">{title}</a>;
+  return <div className={`relative h-full w-full overflow-hidden bg-[#172931] ${className}`}>
+    <video key={url} ref={video} src={url} poster={preview} title={title} controls muted playsInline preload="metadata" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} className="h-full w-full object-contain" />
+    {!playing && <button type="button" aria-label={`${labels[locale]}: ${title}`} onClick={() => { void video.current?.play().catch(() => setPlaying(false)); }} className="absolute start-1/2 top-1/2 grid h-14 w-14 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-white/70 bg-[#172931]/90 text-white shadow-lg hover:bg-[#172931] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white rtl:translate-x-1/2"><Play size={24} fill="currentColor" /></button>}
+  </div>;
+}

@@ -38,3 +38,9 @@ export function isDriveImage(value: string): boolean {
   try { return new URL(value).hostname === 'drive.google.com'; }
   catch { return false; }
 }
+
+/** Optimized videos have an immutable server-generated WebP preview beside them. */
+export function videoPosterUrl(value: string): string | null {
+  return /\/properties\/optimized\/[a-f0-9]{64}\.mp4(?:$|[?#])/i.test(value)
+    ? value.replace(/\.mp4(?=$|[?#])/i, '.poster.webp') : null;
+}

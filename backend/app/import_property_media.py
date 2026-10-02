@@ -21,7 +21,7 @@ from sqlalchemy import select
 from app.database import AsyncSessionLocal
 from app.models.property import Property
 from app.media_storage import MEDIA_ROOT, settings
-from app.media_optimization import optimize_image, optimize_video, publish
+from app.media_optimization import optimize_image, optimize_video, publish, ensure_video_poster
 
 
 def drive_id(url):
@@ -108,6 +108,8 @@ def import_one(url, kind, cache):
         record = json.loads(record_path.read_text())
         target = MEDIA_ROOT / record["url"].removeprefix(settings.MEDIA_URL.rstrip('/') + '/')
         if target.is_file() and hashlib.sha256(target.read_bytes()).hexdigest() == record["output_sha256"]:
+            if kind == "video":
+                ensure_video_poster(target)
             # One Drive file may appear as /file/d/... and uc?id=... links.
             # Reuse the file, but replace the exact URL requested by this import.
             return {**record, "source": url}

@@ -4,7 +4,9 @@ Admin image uploads become WebP (2560 px maximum side, quality 82); plan uploads
 use lossless WebP up to 3200 px. Images are oriented using EXIF before processing.
 Animated images must be uploaded as video. Videos become MP4/H.264 with AAC audio,
 maximum 1920×1080, CRF 25, and fast-start metadata. Audio and the complete clip are
-retained; background video editing is a separate operation.
+retained; background video editing is a separate operation. Each optimized video
+also receives a WebP frame preview (`<video-sha>.poster.webp`), cached alongside
+the video. Existing previews and video encodings are reused.
 
 Files live in `/var/lib/estate/uploads/properties/optimized`, not in PostgreSQL.
 Their SHA-256 names deduplicate identical outputs and enable a one-year immutable

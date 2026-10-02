@@ -1,6 +1,7 @@
 import type { Locale } from './config';
 
 const ru = {
+  heroGallery: 'Медиа проекта', mediaGallery: 'Фото и видео', mediaGalleryTitle: 'Проект в деталях',
   areaOnRequest: 'Площадь по запросу', grossArea: 'Общая площадь (gross)', netArea: 'Полезная площадь (net)', withBalcony: 'Net с балконом', typePriceNote: 'Ценовой диапазон относится к типу квартир, а не к конкретной планировке.',
   collection: 'Коллекция резиденций', project: 'Жилой комплекс', back: 'Все объекты', backToProject: 'К проекту',
   explore: 'Выбрать резиденцию', enquiry: 'Получить предложение', from: 'от',
@@ -27,6 +28,7 @@ type Copy = { [K in keyof typeof ru]: string };
 export const developmentCopy: Record<Locale, Copy> = {
   ru,
   en: {
+    heroGallery: 'Project media', mediaGallery: 'Photos and videos', mediaGalleryTitle: 'The project in detail',
     areaOnRequest: 'Area on request', grossArea: 'Gross area', netArea: 'Net usable area', withBalcony: 'Net including balcony', typePriceNote: 'The price range applies to the apartment type, not an individual floor plan.',
     collection: 'A collection of residences', project: 'Residential development', back: 'All properties', backToProject: 'Back to project',
     explore: 'Find your residence', enquiry: 'Request an offer', from: 'from',
@@ -45,6 +47,7 @@ export const developmentCopy: Record<Locale, Copy> = {
     delivery: 'Completion date and payment terms on request', details: 'Explore the development',
   },
   tr: {
+    heroGallery: 'Proje medyası', mediaGallery: 'Fotoğraflar ve videolar', mediaGalleryTitle: 'Projenin detayları',
     areaOnRequest: 'Alan talep üzerine', grossArea: 'Brüt alan', netArea: 'Net alan', withBalcony: 'Balkon dahil net alan', typePriceNote: 'Fiyat aralığı belirli bir plana değil, daire tipine aittir.',
     collection: 'Rezidans koleksiyonu', project: 'Konut projesi', back: 'Tüm ilanlar', backToProject: 'Projeye dön', explore: 'Rezidansınızı seçin', enquiry: 'Teklif alın', from: 'başlangıç',
     indicative: 'Referans fiyat', priceOnRequest: 'Fiyat için iletişime geçin', mediaPending: 'Fotoğraf ve videolar eklenecek', overview: 'Proje', interiors: 'İç mekânlar', residences: 'Rezidanslar', location: 'Konum',
@@ -60,6 +63,7 @@ export const developmentCopy: Record<Locale, Copy> = {
     delivery: 'Teslim tarihi ve ödeme koşulları talep üzerine', details: 'Projeyi keşfedin',
   },
   ar: {
+    heroGallery: 'وسائط المشروع', mediaGallery: 'صور وفيديوهات', mediaGalleryTitle: 'المشروع بالتفصيل',
     areaOnRequest: 'المساحة عند الطلب', grossArea: 'المساحة الإجمالية', netArea: 'المساحة الصافية', withBalcony: 'الصافية مع الشرفة', typePriceNote: 'نطاق السعر يخص نوع الشقة وليس مخططاً محدداً.',
     collection: 'مجموعة من المساكن', project: 'مجمع سكني', back: 'جميع العقارات', backToProject: 'العودة إلى المشروع', explore: 'اختر مسكنك', enquiry: 'اطلب عرضاً', from: 'ابتداءً من',
     indicative: 'سعر استرشادي', priceOnRequest: 'السعر عند الطلب', mediaPending: 'ستتم إضافة الصور والفيديوهات', overview: 'عن المشروع', interiors: 'التصميم الداخلي', residences: 'المساكن', location: 'الموقع',

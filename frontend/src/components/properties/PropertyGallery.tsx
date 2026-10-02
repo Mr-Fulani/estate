@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { PropertyVideo } from './PropertyVideo';
 import { imageText, type ImageDetails } from '@/lib/image-text';
 import { useState, useEffect, useRef } from 'react';
 import { 
@@ -15,7 +16,7 @@ import { useLocale } from '@/context/LocaleContext';
 import { localizedStatus } from '@/i18n/domain';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import { getSiteCopy } from '@/lib/site-profile';
-import { displayImageUrl, isDirectVideoUrl, isDriveImage, videoEmbedUrl } from '@/lib/video-media';
+import { displayImageUrl, isDriveImage } from '@/lib/video-media';
 import { PropertyMediaPlaceholder } from './PropertyMediaPlaceholder';
 
 export function PropertyGallery({
@@ -122,6 +123,12 @@ export function PropertyGallery({
 
   return (
     <div className="space-y-3">
+      {hasVideos && <section aria-label={copy.videos} className="space-y-3">
+        <h2 className="text-sm font-semibold text-slate-800">{copy.videos}</h2>
+        <div className={cn('grid gap-3', videos.length > 1 && 'sm:grid-cols-2')}>
+          {videos.map((url, index) => <div key={url} className="relative aspect-video overflow-hidden rounded-xl bg-slate-950"><PropertyVideo url={url} title={`${title} — ${copy.video} ${index + 1}`} /></div>)}
+        </div>
+      </section>}
       {/* Main Large Image Display */}
       {hasImages && <div
         onClick={() => setIsLightboxOpen(true)}
@@ -236,19 +243,7 @@ export function PropertyGallery({
         </div>
       )}
 
-      {hasVideos && <section aria-label={copy.videos} className="space-y-3">
-        <h2 className="text-sm font-semibold text-slate-800">{copy.videos}</h2>
-        <div className={cn('grid gap-3', videos.length > 1 && 'sm:grid-cols-2')}>
-          {videos.map((url, index) => {
-            const embed = videoEmbedUrl(url);
-            return <div key={`${url}-${index}`} className="relative aspect-video overflow-hidden rounded-xl bg-slate-950">
-              {embed ? <iframe src={embed} title={`${title} — ${copy.video} ${index + 1}`} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen loading="lazy" className="absolute inset-0 h-full w-full border-0" />
-                : isDirectVideoUrl(url) ? <video src={url} title={`${title} — ${copy.video} ${index + 1}`} controls playsInline preload="metadata" className="absolute inset-0 h-full w-full object-contain" />
-                  : <a href={url} target="_blank" rel="noopener noreferrer" className="grid h-full place-items-center px-4 text-center text-sm text-white underline">{copy.openVideo}</a>}
-            </div>;
-          })}
-        </div>
-      </section>}
+
 
       {/* Fullscreen Lightbox Modal */}
       {isLightboxOpen && (

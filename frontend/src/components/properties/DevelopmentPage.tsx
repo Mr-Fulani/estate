@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { PropertyVideo } from './PropertyVideo';
 import { PropertyMediaPlaceholder } from './PropertyMediaPlaceholder';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
@@ -11,7 +12,7 @@ import { localizedProperty } from '@/i18n/domain';
 import { developmentCopy } from '@/i18n/development';
 import { CurrencyPrice } from '@/components/currency/CurrencyPrice';
 import { developmentSections, developmentUnitPath } from '@/lib/development-view';
-import { displayImageUrl, isDirectVideoUrl, isDriveImage, videoEmbedUrl } from '@/lib/video-media';
+import { displayImageUrl, isDriveImage, videoPosterUrl } from '@/lib/video-media';
 import { developmentDemoCopy } from '@/i18n/development-demo';
 import styles from './DevelopmentPage.module.css';
 
@@ -24,7 +25,8 @@ export function DevelopmentPage({ property: source, locale, preview = false }: {
   const sandboxed = preview || profile.is_demo;
   const copy = developmentCopy[locale];
   const units = property.unit_types || [];
-  const heroVideos = profile.hero_videos?.length ? profile.hero_videos : profile.hero_video_url ? [profile.hero_video_url] : [];
+  const heroVideos = Array.from(new Set([...(profile.hero_videos || []), ...(profile.hero_video_url ? [profile.hero_video_url] : []), ...(property.videos || [])]));
+  const galleryMedia = [...heroVideos.map(url => ({ url, video: true })), ...interiors.map(url => ({ url, video: false }))];
   const [heroMediaIndex, setHeroMediaIndex] = useState(0);
   const [roomIndex, setRoomIndex] = useState(0);
   const [motion, setMotion] = useState(true);
@@ -32,7 +34,8 @@ export function DevelopmentPage({ property: source, locale, preview = false }: {
   const dialog = useRef<HTMLDialogElement>(null);
   const hero = useRef<HTMLElement>(null);
   const heroMediaCount = property.images.length + heroVideos.length;
-  const heroVideo = heroMediaIndex >= property.images.length ? heroVideos[heroMediaIndex - property.images.length] : null;
+  const heroVideo = heroMediaIndex < heroVideos.length ? heroVideos[heroMediaIndex] : null;
+  const heroImage = property.images[heroMediaIndex - heroVideos.length] || property.images[0];
   const location = [property.district, property.city].filter(Boolean).join(' · ');
   const price = (value: number) => <CurrencyPrice amount={value} sourceCurrency={property.currency} locale={locale} />;
   const area = (value: number) => `${value.toLocaleString(localeTags[locale])} m²`;
@@ -61,7 +64,13 @@ export function DevelopmentPage({ property: source, locale, preview = false }: {
   return (
     <article className={styles.page} data-motion={motion} data-preview={preview} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       {sandboxed && <aside className={styles.demoNotice} role="note"><strong>{profile.is_demo ? demoCopy.badge : demoCopy.preview}</strong><span>{profile.is_demo ? demoCopy.notice : demoCopy.form} {demoCopy.disabled}</span></aside>}
-      <section ref={hero} className={styles.hero} data-no-image={!property.images[0] && !heroVideos.length} aria-labelledby="development-title">
+      <section ref={hero} className={styles.hero} data-video={Boolean(heroVideo)} data-no-image={!property.images[0] && !heroVideos.length} aria-labelledby="development-title">
+          {heroMediaCount > 1 && <div className={styles.heroControlsShelf} aria-label={copy.heroGallery}>
+            <div className={styles.heroMediaControls}><span>{heroVideo ? copy.video : copy.image}</span><button type="button" aria-label={copy.previous} onClick={() => setHeroMediaIndex((heroMediaIndex - 1 + heroMediaCount) % heroMediaCount)}><ChevronLeft size={19} /></button>
+            <span>{heroMediaIndex + 1} / {heroMediaCount}</span>
+            <button type="button" aria-label={copy.next} onClick={() => setHeroMediaIndex((heroMediaIndex + 1) % heroMediaCount)}><ChevronRight size={19} /></button>
+            </div>
+          </div>}
         <div className={styles.heroContent}>
           <Link href={localizeHref(locale, '/properties')} className={styles.back}><ArrowLeft size={14} className="rtl:rotate-180" />{copy.back}</Link>
           <p className={styles.eyebrow}>{editorial?.eyebrow || copy.collection}</p>
@@ -75,14 +84,10 @@ export function DevelopmentPage({ property: source, locale, preview = false }: {
           </div>
         </div>
         {heroMediaCount > 0 && <div className={styles.heroImage}>
-          {heroVideo ? <VideoFrame url={heroVideo} title={`${property.title} — ${copy.project} ${heroMediaIndex - property.images.length + 1}`} /> : <Image src={displayImageUrl(property.images[heroMediaIndex] || property.images[0])} alt={`${property.title} — ${copy.render}`} fill priority unoptimized={isDriveImage(property.images[heroMediaIndex] || property.images[0])} sizes="100vw" className={styles.heroPhoto} />}
-          <span className={styles.heroImageLabel}>{location}</span>
-          {profile.images_are_renders && <span className={styles.renderLabel}>{copy.render}</span>}
-          {heroMediaCount > 1 && <div className={styles.heroMediaControls} aria-label={copy.gallery}>
-            <button type="button" aria-label={copy.previous} onClick={() => setHeroMediaIndex((heroMediaIndex - 1 + heroMediaCount) % heroMediaCount)}><ChevronLeft size={19} /></button>
-            <span>{heroMediaIndex + 1} / {heroMediaCount}</span>
-            <button type="button" aria-label={copy.next} onClick={() => setHeroMediaIndex((heroMediaIndex + 1) % heroMediaCount)}><ChevronRight size={19} /></button>
-          </div>}
+          {heroVideo ? <VideoFrame key={heroVideo} url={heroVideo} title={`${property.title} — ${copy.video} ${heroMediaIndex + 1}`} /> : <Image src={displayImageUrl(heroImage)} alt={`${property.title} — ${copy.render}`} fill priority unoptimized={isDriveImage(heroImage)} sizes="100vw" className={styles.heroPhoto} />}
+          {!heroVideo && <span className={styles.heroImageLabel}>{location}</span>}
+          {!heroVideo && profile.images_are_renders && <span className={styles.renderLabel}>{copy.render}</span>}
+
         </div>}
       </section>
 
@@ -93,18 +98,19 @@ export function DevelopmentPage({ property: source, locale, preview = false }: {
         </div>{profile.brochure_url && <a className={styles.textLink} href={profile.brochure_url} target="_blank" rel="noopener noreferrer">{copy.brochure}<ArrowUpRight size={16} /></a>}</div>
       </section>}
 
-      {interiors.length > 0 && <section id="interiors" className={styles.showroom}>
-        <div className={styles.showroomHeader}><div><p className={styles.eyebrow}>02 / {copy.interiors}</p><h2>{copy.livingTitle}</h2></div><button className={styles.motionToggle} onClick={() => setMotion(!motion)} aria-label={motion ? copy.motionOff : copy.motionOn} title={motion ? copy.motionOff : copy.motionOn}>{motion ? <Pause size={15} /> : <Play size={15} />}</button></div>
-        {interiors[roomIndex] && <div className={styles.roomFrame}>
-          <Image key={interiors[roomIndex]} src={displayImageUrl(interiors[roomIndex])} alt={`${property.title} — ${copy.interiors} ${roomIndex + 1}`} fill unoptimized={isDriveImage(interiors[roomIndex])} sizes="(max-width: 760px) 100vw, 90vw" className={styles.roomPhoto} />
-          <button className={styles.expandButton} onClick={() => setExpanded({ url: interiors[roomIndex], label: `${copy.interiors} ${roomIndex + 1}` })}><Expand size={15} />{copy.open}</button>
-          <span className={styles.roomCaption}>{String(roomIndex + 1).padStart(2, '0')} / {String(interiors.length).padStart(2, '0')}</span>
+      {galleryMedia.length > 0 && <section id="interiors" className={styles.showroom}>
+        <div className={styles.showroomHeader}><div><p className={styles.eyebrow}>02 / {copy.mediaGallery}</p><h2>{copy.mediaGalleryTitle}</h2></div><button className={styles.motionToggle} onClick={() => setMotion(!motion)} aria-label={motion ? copy.motionOff : copy.motionOn} title={motion ? copy.motionOff : copy.motionOn}>{motion ? <Pause size={15} /> : <Play size={15} />}</button></div>
+        {galleryMedia[roomIndex] && <div className={styles.roomFrame}>
+          {galleryMedia[roomIndex].video ? <VideoFrame key={galleryMedia[roomIndex].url} url={galleryMedia[roomIndex].url} title={`${property.title} — ${copy.video} ${roomIndex + 1}`} /> : <>
+            <Image key={galleryMedia[roomIndex].url} src={displayImageUrl(galleryMedia[roomIndex].url)} alt={`${property.title} — ${copy.interiors} ${roomIndex + 1}`} fill unoptimized={isDriveImage(galleryMedia[roomIndex].url)} sizes="90vw" className={styles.roomPhoto} />
+            <button className={styles.expandButton} onClick={() => setExpanded({ url: galleryMedia[roomIndex].url, label: copy.interiors })}><Expand size={15} />{copy.open}</button>
+          </>}
         </div>}
         <div className={styles.galleryFooter}>
-          <div className={styles.thumbnails} aria-label={copy.gallery}>{interiors.map((url, i) => <button key={`${url}-${i}`} onClick={() => setRoomIndex(i)} aria-label={`${copy.image} ${i + 1}`} aria-pressed={i === roomIndex}><Image src={displayImageUrl(url, 240)} alt="" fill unoptimized={isDriveImage(url)} sizes="88px" /></button>)}</div>
-          <div className={styles.galleryControls}><button className={styles.circle} aria-label={copy.previous} onClick={() => setRoomIndex((roomIndex - 1 + interiors.length) % interiors.length)} disabled={!interiors.length}><ChevronLeft size={18} /></button><button className={styles.circle} aria-label={copy.next} onClick={() => setRoomIndex((roomIndex + 1) % interiors.length)} disabled={!interiors.length}><ChevronRight size={18} /></button></div>
+          <div className={styles.thumbnails} aria-label={copy.mediaGallery}>{galleryMedia.map((media, i) => <button key={`${media.url}-${i}`} onClick={() => setRoomIndex(i)} aria-label={`${media.video ? copy.video : copy.image} ${i + 1}`} aria-pressed={i === roomIndex}><Image src={media.video ? videoPosterUrl(media.url) || '/og.png' : displayImageUrl(media.url, 240)} alt="" fill unoptimized={media.video || isDriveImage(media.url)} sizes="88px" />{media.video && <Play size={18} className={styles.videoThumbnailIcon} />}</button>)}</div>
+          <div className={styles.galleryControls}><button className={styles.circle} aria-label={copy.previous} onClick={() => setRoomIndex((roomIndex - 1 + galleryMedia.length) % galleryMedia.length)}><ChevronLeft size={18} /></button><span>{roomIndex + 1} / {galleryMedia.length}</span><button className={styles.circle} aria-label={copy.next} onClick={() => setRoomIndex((roomIndex + 1) % galleryMedia.length)}><ChevronRight size={18} /></button></div>
         </div>
-        {profile.images_are_renders && <p className={styles.caption}>{copy.render}</p>}
+        {!galleryMedia[roomIndex]?.video && profile.images_are_renders && <p className={styles.caption}>{copy.render}</p>}
         {editorial?.story && <p className={styles.showroomStory}>{editorial.story}</p>}
       </section>}
 
@@ -149,8 +155,5 @@ export function DevelopmentPage({ property: source, locale, preview = false }: {
 }
 
 function VideoFrame({ url, title }: { url: string; title: string }) {
-  const embed = videoEmbedUrl(url);
-  if (embed) return <div className={styles.videoFrame}><iframe src={embed} title={title} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen loading="lazy" /></div>;
-  if (isDirectVideoUrl(url)) return <div className={styles.videoFrame}><video src={url} title={title} controls playsInline preload="metadata" /></div>;
-  return <a className={styles.videoLink} href={url} target="_blank" rel="noopener noreferrer">{title}</a>;
+  return <div className={styles.videoFrame}><PropertyVideo url={url} title={title} /></div>;
 }
