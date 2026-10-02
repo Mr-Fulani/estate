@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import ServicesPage from '../../services/page';
+import { ServicesContent } from '@/components/pages/ServicesContent';
+import { CollectionsSection } from '@/components/collections/CollectionsSection';
 import { isLocale } from '@/i18n/config';
 import { staticPageMetadata } from '@/lib/seo';
 
@@ -15,5 +16,5 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function LocalizedServicesPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
-  return <ServicesPage />;
+  return <ServicesContent><CollectionsSection locale={locale} /></ServicesContent>;
 }

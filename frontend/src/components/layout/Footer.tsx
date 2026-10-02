@@ -92,9 +92,6 @@ export function Footer() {
               <li>
                 <Link href={href('/reviews')} className="hover:text-white transition-colors">{copy.reviews}</Link>
               </li>
-              <li>
-                <Link href={href('/contact')} className="hover:text-white transition-colors">{copy.contact}</Link>
-              </li>
             </ul>
           </div>
 

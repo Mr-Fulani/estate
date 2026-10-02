@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import ContactPage from '../../contact/page';
+import { ContactContent } from '@/components/pages/ContactContent';
 import { isLocale } from '@/i18n/config';
 import { staticPageMetadata } from '@/lib/seo';
 import { developmentCopy } from '@/i18n/development';
@@ -21,5 +21,5 @@ export default async function LocalizedContactPage({ params, searchParams }: { p
   const unit = typeof query.unit === 'string' ? query.unit.slice(0, 80) : '';
   const plan = typeof query.plan === 'string' ? query.plan.slice(0, 80) : '';
   const contextMessage = property ? `${developmentCopy[locale].message}: ${property}${unit ? ` · ${unit}` : ''}${plan ? ` · ${plan}` : ''}` : undefined;
-  return <ContactPage contextMessage={contextMessage} />;
+  return <ContactContent contextMessage={contextMessage} />;
 }

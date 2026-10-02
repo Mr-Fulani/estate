@@ -137,7 +137,6 @@ export function Header() {
     { href: href('/news'), label: messages.navigation.news },
     { href: href('/reviews'), label: messages.navigation.reviews },
     { href: href('/about'), label: messages.navigation.about },
-    { href: href('/contact'), label: messages.navigation.contact },
   ];
 
   const switchLocale = (nextLocale: Locale) => {

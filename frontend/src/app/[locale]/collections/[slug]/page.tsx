@@ -45,7 +45,7 @@ export default async function CollectionPage(props: Props) {
   const messages=getMessages(locale);
   const catalogCopy=getSiteCopy(locale,await fetchSiteSettings()).catalog;
   return <div className="container mx-auto px-4 py-10 md:px-6">
-    <Breadcrumbs items={[{name:messages.navigation.home,href:`/${locale}`},{name:collectionsLabel[locale],href:`/${locale}/collections`},{name:copy.title,href:path}]} />
+    <Breadcrumbs visible={false} items={[{name:messages.navigation.home,href:`/${locale}`},{name:collectionsLabel[locale],href:`/${locale}/collections`},{name:copy.title,href:path}]} />
     <h1 className="mb-5 max-w-4xl text-4xl font-bold text-slate-950">{copy.title}</h1>
     <p className="mb-8 max-w-3xl text-lg text-slate-600">{copy.description}</p>
     <div className="mb-12 max-w-3xl"><RichText content={copy.content}/></div>

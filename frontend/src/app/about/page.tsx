@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { ContactContent } from '@/components/pages/ContactContent';
 import { useLocale } from '@/context/LocaleContext';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import { getSiteCopy } from '@/lib/site-profile';
@@ -38,6 +39,7 @@ export default function AboutPage() {
           </div>
         </section>
       </div>
+      <ContactContent embedded />
     </div>
   );
 }
