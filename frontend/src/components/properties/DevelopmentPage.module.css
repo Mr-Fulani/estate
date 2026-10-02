@@ -112,23 +112,24 @@
 .heroControlsShelf{position:sticky;top:100px;height:0;z-index:3;display:flex;justify-content:flex-end;padding-inline:24px}
 .heroMediaControls{position:relative;inset:auto;bottom:auto;align-self:flex-start;flex-shrink:0;background:#172931;color:#fff;backdrop-filter:none}
 .heroMediaControls button{width:40px;height:40px}
-.hero[data-video=true]{display:grid;grid-template-columns:minmax(0,42%) minmax(0,58%);align-items:stretch;gap:0;background:#182a34}
-.hero[data-video=true] .heroControlsShelf{grid-column:1/-1;grid-row:1}
-.hero[data-video=true] .heroContent{grid-column:1;grid-row:2;min-height:100svh;padding:160px 32px 40px}
-.hero[data-video=true] .title{font-size:clamp(2rem,3.4vw,3.5rem)}
-.hero[data-video=true] .back{margin-bottom:28px}
-.hero[data-video=true] .heroImage{position:relative;grid-column:2;grid-row:2;margin:160px 24px 40px 0;height:max(220px,calc(100svh - 200px));min-height:0;align-self:start}
-.page[dir=rtl] .hero[data-video=true] .heroImage{margin-inline:0 24px}
-.hero[data-video=true] .heroImage:after{display:none}
 .hero[data-video=true] .videoFrame video{object-fit:cover}.roomFrame .videoFrame video{object-fit:contain}
 .videoThumbnailIcon{position:absolute;inset:0;margin:auto;color:#fff;filter:drop-shadow(0 1px 3px #000);z-index:1}
 .galleryControls>span{font-size:12px;white-space:nowrap}
 @media(max-width:760px){
   .heroControlsShelf{top:80px;padding-inline:16px}
-  .hero[data-video=true]{display:block}
-  .hero[data-video=true] .heroContent{min-height:0;padding:150px 24px 24px}
-  .hero[data-video=true] .heroContent .eyebrow,.hero[data-video=true] .heroHeadline,.hero[data-video=true] .locationLine,.hero[data-video=true] .heroBottom,.hero[data-video=true] .heroContent>.goldButton{display:none}
-  .hero[data-video=true] .title{font-size:28px;line-height:1.12;margin-bottom:0}
-  .hero[data-video=true] .back{margin-bottom:16px}
-  .hero[data-video=true] .heroImage,.page[dir=rtl] .hero[data-video=true] .heroImage{margin:0 16px 24px;height:max(240px,calc(100svh - 360px));min-height:0}
+}
+
+/* Media fills the same pinned hero canvas for both photos and videos. */
+.hero[data-video=true] .heroImage:after{background:linear-gradient(90deg,#182a34e6,#182a3499 45%,#182a3420 80%);z-index:1}
+.page[dir=rtl] .hero[data-video=true] .heroImage:after{background:linear-gradient(270deg,#182a34e6,#182a3499 45%,#182a3420 80%)}
+.heroImage{z-index:0}.heroContent{z-index:2;pointer-events:none}.heroContent a,.heroContent button{pointer-events:auto}
+.hero[data-video=true] .heroImage .videoFrame button{inset-inline-start:75%;z-index:2}
+.title{width:100%;max-width:680px;letter-spacing:-.035em;line-height:1.08}
+.projectName{display:block;font-size:clamp(42px,5.5vw,80px);text-wrap:balance;overflow-wrap:normal}
+.projectDescription{display:block;max-width:28ch;margin-top:18px;font-size:clamp(24px,2.8vw,38px);line-height:1.25;letter-spacing:-.015em;text-wrap:balance}
+@media(max-width:760px){
+ .projectName{font-size:clamp(36px,10vw,52px)}
+ .projectDescription{font-size:clamp(22px,6vw,28px);margin-top:14px;max-width:26ch}
+ .hero[data-video=true] .heroImage:after,.page[dir=rtl] .hero[data-video=true] .heroImage:after{background:#182a3499}
+ .hero[data-video=true] .heroImage .videoFrame button{inset-inline-start:82%;top:170px;width:44px;height:44px}
 }

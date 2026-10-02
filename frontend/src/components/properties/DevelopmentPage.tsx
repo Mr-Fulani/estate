@@ -25,6 +25,9 @@ export function DevelopmentPage({ property: source, locale, preview = false }: {
   const sandboxed = preview || profile.is_demo;
   const copy = developmentCopy[locale];
   const units = property.unit_types || [];
+  const titleParts = property.title.split(/\s+—\s+/);
+  const projectName = titleParts[0];
+  const projectDescription = titleParts.slice(1).join(" — ");
   const videoSections = developmentVideoSections(profile, property.videos);
   const heroVideos = videoSections.hero;
   const galleryMedia = [...videoSections.gallery.map(url => ({ url, video: true })), ...interiors.map(url => ({ url, video: false }))];
@@ -76,7 +79,7 @@ export function DevelopmentPage({ property: source, locale, preview = false }: {
         <div className={styles.heroContent}>
           <Link href={localizeHref(locale, '/properties')} className={styles.back}><ArrowLeft size={14} className="rtl:rotate-180" />{copy.back}</Link>
           <p className={styles.eyebrow}>{editorial?.eyebrow || copy.collection}</p>
-          <h1 id="development-title" className={styles.title}>{property.title}</h1>
+          <h1 id="development-title" className={styles.title}><span className={styles.projectName}>{projectName}</span>{projectDescription && <><span className="sr-only"> — </span><span className={styles.projectDescription}>{projectDescription}</span></>}</h1>
           {editorial?.headline && <p className={styles.heroHeadline}>{editorial.headline}</p>}
           {location && <p className={styles.locationLine}><MapPin size={14} />{location}</p>}
           <a href={sections.residences ? "#residences" : "#residence-enquiry"} className={styles.goldButton}>{copy.explore}<ArrowUpRight size={18} /></a>
