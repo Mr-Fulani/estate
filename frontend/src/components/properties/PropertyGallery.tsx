@@ -239,7 +239,7 @@ export function PropertyGallery({
 
       {hasVideos && <section aria-label={copy.videos} className="space-y-3">
         <h2 className="text-sm font-semibold text-slate-800">{copy.videos}</h2>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className={cn('grid gap-3', videos.length > 1 && 'sm:grid-cols-2')}>
           {videos.map((url, index) => {
             const embed = videoEmbedUrl(url);
             return <div key={`${url}-${index}`} className="relative aspect-video overflow-hidden rounded-xl bg-slate-950">

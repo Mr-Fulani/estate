@@ -102,7 +102,7 @@ export async function DevelopmentUnitDetailPage({ property: source, unit, locale
           </section>
           {unit.plans.length > 0 && <section className="border-t border-slate-100 pt-6">
             <h2 className="mb-4 text-lg font-bold text-slate-900">{copy.plan}</h2>
-            <div className="grid gap-4 sm:grid-cols-2">{unit.plans.map((plan, index) => <a key={`${plan}-${index}`} href={plan} target="_blank" rel="noopener noreferrer" className="relative block aspect-[4/3] overflow-hidden rounded-xl border border-slate-200 bg-white">
+            <div className={`grid gap-4${unit.plans.length > 1 ? ' sm:grid-cols-2' : ''}`}>{unit.plans.map((plan, index) => <a key={`${plan}-${index}`} href={plan} target="_blank" rel="noopener noreferrer" className="relative block aspect-[4/3] overflow-hidden rounded-xl border border-slate-200 bg-white">
               <Image src={displayImageUrl(plan)} alt={`${copy.plan} ${unit.code} ${index + 1}`} fill unoptimized={isDriveImage(plan)} sizes="(max-width: 640px) 100vw, 40vw" className="object-contain p-3" />
             </a>)}</div>
           </section>}

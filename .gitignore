@@ -9,6 +9,7 @@ Thumbs.db
 node_modules/
 .next/
 .next-dev/
+.next-media-preview/
 .next-etro-build/
 out/
 build/
