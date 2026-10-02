@@ -1,7 +1,7 @@
 import type { Category, DevelopmentProfile, Property, PropertyFormData } from '@/types';
 import type { Locale } from '@/i18n/config';
 
-export const emptyDevelopment: DevelopmentProfile = { is_demo: false, developer: '', design_brand: '', price_date: null, price_status: 'indicative', images_are_renders: true, interior_images: [], hero_video_url: null, hero_videos: [], translations: {} };
+export const emptyDevelopment: DevelopmentProfile = { is_demo: false, developer: '', design_brand: '', price_date: null, price_status: 'indicative', images_are_renders: true, interior_images: [], hero_video_url: null, hero_videos: [], hidden_hero_videos: [], translations: {} };
 const clean = (values: string[]) => values.map(value => value.trim()).filter(Boolean);
 export const developmentUnitPath = (code: string) => encodeURIComponent(code.trim().toLowerCase().replace(/\s+/g, '-'));
 export const developmentUnitMatchesPath = (code: string, path: string) => {
@@ -26,6 +26,7 @@ export function preparePropertyForm(data: PropertyFormData): PropertyFormData {
   const development = data.listing_kind === 'development' ? {
     ...emptyDevelopment, ...data.development,
     interior_images: clean(data.development?.interior_images || []),
+    hidden_hero_videos: clean(data.development?.hidden_hero_videos || []),
     hero_video_url: data.development?.hero_video_url?.trim() || null,
     hero_videos: clean(data.development?.hero_videos || (data.development?.hero_video_url ? [data.development.hero_video_url] : [])),
     translations: Object.fromEntries(Object.entries(data.development?.translations || {}).map(([locale, copy]) => [locale, { ...copy, amenities: clean(copy.amenities) }])),
@@ -77,4 +78,11 @@ export function developmentSections(property: Property, locale: Locale) {
     residences: Boolean(property.unit_types?.length),
     location: Boolean([property.city, property.district, property.address, editorial?.location_description].some(value => value?.trim())),
   };
+}
+
+/** Hero exclusions never remove videos from the project gallery. */
+export function developmentVideoSections(profile: DevelopmentProfile, videos: string[] = []) {
+  const gallery = Array.from(new Set([...(profile.hero_videos || []), ...(profile.hero_video_url ? [profile.hero_video_url] : []), ...videos]));
+  const hidden = new Set(profile.hidden_hero_videos || []);
+  return { gallery, hero: gallery.filter(url => !hidden.has(url)) };
 }

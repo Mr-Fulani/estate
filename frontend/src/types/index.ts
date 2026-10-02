@@ -107,6 +107,7 @@ export interface DevelopmentProfile {
   interior_images: string[];
   hero_video_url?: string | null;
   hero_videos?: string[];
+  hidden_hero_videos?: string[];
   brochure_url?: string | null;
   translations: Partial<Record<Locale, DevelopmentCopy>>;
 }

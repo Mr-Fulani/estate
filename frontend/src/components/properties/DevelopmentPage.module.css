@@ -120,7 +120,7 @@
 .hero[data-video=true] .heroImage{position:relative;grid-column:2;grid-row:2;margin:160px 24px 40px 0;height:max(220px,calc(100svh - 200px));min-height:0;align-self:start}
 .page[dir=rtl] .hero[data-video=true] .heroImage{margin-inline:0 24px}
 .hero[data-video=true] .heroImage:after{display:none}
-.hero[data-video=true] .videoFrame video,.roomFrame .videoFrame video{object-fit:contain}
+.hero[data-video=true] .videoFrame video{object-fit:cover}.roomFrame .videoFrame video{object-fit:contain}
 .videoThumbnailIcon{position:absolute;inset:0;margin:auto;color:#fff;filter:drop-shadow(0 1px 3px #000);z-index:1}
 .galleryControls>span{font-size:12px;white-space:nowrap}
 @media(max-width:760px){

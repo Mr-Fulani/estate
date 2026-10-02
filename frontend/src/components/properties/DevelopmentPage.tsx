@@ -11,7 +11,7 @@ import { type Locale, localizeHref, localeTags } from '@/i18n/config';
 import { localizedProperty } from '@/i18n/domain';
 import { developmentCopy } from '@/i18n/development';
 import { CurrencyPrice } from '@/components/currency/CurrencyPrice';
-import { developmentSections, developmentUnitPath } from '@/lib/development-view';
+import { developmentSections, developmentUnitPath, developmentVideoSections } from '@/lib/development-view';
 import { displayImageUrl, isDriveImage, videoPosterUrl } from '@/lib/video-media';
 import { developmentDemoCopy } from '@/i18n/development-demo';
 import styles from './DevelopmentPage.module.css';
@@ -25,8 +25,9 @@ export function DevelopmentPage({ property: source, locale, preview = false }: {
   const sandboxed = preview || profile.is_demo;
   const copy = developmentCopy[locale];
   const units = property.unit_types || [];
-  const heroVideos = Array.from(new Set([...(profile.hero_videos || []), ...(profile.hero_video_url ? [profile.hero_video_url] : []), ...(property.videos || [])]));
-  const galleryMedia = [...heroVideos.map(url => ({ url, video: true })), ...interiors.map(url => ({ url, video: false }))];
+  const videoSections = developmentVideoSections(profile, property.videos);
+  const heroVideos = videoSections.hero;
+  const galleryMedia = [...videoSections.gallery.map(url => ({ url, video: true })), ...interiors.map(url => ({ url, video: false }))];
   const [heroMediaIndex, setHeroMediaIndex] = useState(0);
   const [roomIndex, setRoomIndex] = useState(0);
   const [motion, setMotion] = useState(true);
@@ -34,8 +35,9 @@ export function DevelopmentPage({ property: source, locale, preview = false }: {
   const dialog = useRef<HTMLDialogElement>(null);
   const hero = useRef<HTMLElement>(null);
   const heroMediaCount = property.images.length + heroVideos.length;
-  const heroVideo = heroMediaIndex < heroVideos.length ? heroVideos[heroMediaIndex] : null;
-  const heroImage = property.images[heroMediaIndex - heroVideos.length] || property.images[0];
+  const activeHeroIndex = heroMediaCount ? heroMediaIndex % heroMediaCount : 0;
+  const heroVideo = activeHeroIndex < heroVideos.length ? heroVideos[activeHeroIndex] : null;
+  const heroImage = property.images[activeHeroIndex - heroVideos.length] || property.images[0];
   const location = [property.district, property.city].filter(Boolean).join(' · ');
   const price = (value: number) => <CurrencyPrice amount={value} sourceCurrency={property.currency} locale={locale} />;
   const area = (value: number) => `${value.toLocaleString(localeTags[locale])} m²`;
@@ -67,7 +69,7 @@ export function DevelopmentPage({ property: source, locale, preview = false }: {
       <section ref={hero} className={styles.hero} data-video={Boolean(heroVideo)} data-no-image={!property.images[0] && !heroVideos.length} aria-labelledby="development-title">
           {heroMediaCount > 1 && <div className={styles.heroControlsShelf} aria-label={copy.heroGallery}>
             <div className={styles.heroMediaControls}><span>{heroVideo ? copy.video : copy.image}</span><button type="button" aria-label={copy.previous} onClick={() => setHeroMediaIndex((heroMediaIndex - 1 + heroMediaCount) % heroMediaCount)}><ChevronLeft size={19} /></button>
-            <span>{heroMediaIndex + 1} / {heroMediaCount}</span>
+            <span>{activeHeroIndex + 1} / {heroMediaCount}</span>
             <button type="button" aria-label={copy.next} onClick={() => setHeroMediaIndex((heroMediaIndex + 1) % heroMediaCount)}><ChevronRight size={19} /></button>
             </div>
           </div>}
@@ -84,7 +86,7 @@ export function DevelopmentPage({ property: source, locale, preview = false }: {
           </div>
         </div>
         {heroMediaCount > 0 && <div className={styles.heroImage}>
-          {heroVideo ? <VideoFrame key={heroVideo} url={heroVideo} title={`${property.title} — ${copy.video} ${heroMediaIndex + 1}`} /> : <Image src={displayImageUrl(heroImage)} alt={`${property.title} — ${copy.render}`} fill priority unoptimized={isDriveImage(heroImage)} sizes="100vw" className={styles.heroPhoto} />}
+          {heroVideo ? <VideoFrame key={heroVideo} url={heroVideo} title={`${property.title} — ${copy.video} ${activeHeroIndex + 1}`} /> : <Image src={displayImageUrl(heroImage)} alt={`${property.title} — ${copy.render}`} fill priority unoptimized={isDriveImage(heroImage)} sizes="100vw" className={styles.heroPhoto} />}
           {!heroVideo && <span className={styles.heroImageLabel}>{location}</span>}
           {!heroVideo && profile.images_are_renders && <span className={styles.renderLabel}>{copy.render}</span>}
 

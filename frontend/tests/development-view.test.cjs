@@ -8,7 +8,7 @@ const assert = require('node:assert/strict');
 const path = resolve(__dirname, '../src/lib/development-view.ts');
 const target = new Module(path, module);
 target._compile(ts.transpileModule(readFileSync(path, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText, path);
-const { emptyDevelopment, preparePropertyForm, buildDevelopmentPreview, developmentSections, isMediaUrl, developmentUnitPath, developmentUnitMatchesPath } = target.exports;
+const { developmentVideoSections, emptyDevelopment, preparePropertyForm, buildDevelopmentPreview, developmentSections, isMediaUrl, developmentUnitPath, developmentUnitMatchesPath } = target.exports;
 const unit = (code = '1+1', price = 100) => ({ code, rooms: 1, area_min: 50, area_max: 60, price_min: price, price_max: price + 10, position: 9, plans: ['/plan.svg'], plan_details: [{ image: '/plan.svg', code: 'A1', area_gross: 50, area_net: 40, area_with_balcony: 45 }] });
 const draft = (more = {}) => ({ title: 'New complex', price: 999, category_id: 6, city: '', listing_kind: 'development', development: { ...emptyDevelopment }, unit_types: [unit()], ...more });
 
@@ -99,4 +99,12 @@ test('shared project page has one global navigation and no local contact form', 
   assert.ok(unitDetail.includes('unit.plans'));
   const pageRoute = readFileSync(resolve(__dirname, '../src/app/[locale]/properties/[id]/[unit]/page.tsx'), 'utf8');
   assert.ok(pageRoute.includes('alternates: { canonical: canonicalPath, languages }'));
+});
+
+test('hero visibility survives save and preview without removing gallery videos', () => {
+  const data = draft({ videos: ['/legacy.mp4'], development: { ...emptyDevelopment, hero_videos: ['/wide.mp4', '/portrait.mp4'], hero_video_url: '/wide.mp4', hidden_hero_videos: [' /portrait.mp4 ', '/legacy.mp4'] } });
+  const preview = buildDevelopmentPreview(data, []);
+  assert.deepEqual(developmentVideoSections(preview.development, preview.videos), { hero: ['/wide.mp4'], gallery: ['/wide.mp4', '/portrait.mp4', '/legacy.mp4'] });
+  assert.deepEqual(developmentVideoSections({ ...preview.development, hidden_hero_videos: ['/wide.mp4', '/portrait.mp4', '/legacy.mp4'] }, preview.videos).hero, []);
+  assert.deepEqual(developmentVideoSections(emptyDevelopment, ['/old.mp4']).hero, ['/old.mp4']);
 });

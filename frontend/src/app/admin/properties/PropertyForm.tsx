@@ -343,7 +343,7 @@ export function PropertyForm({
         </div>
       </div>
 
-      {formData.listing_kind === 'development' && <DevelopmentEditor profile={formData.development || emptyDevelopment} units={formData.unit_types || []} projectImages={formData.images || []} onProfile={development => setFormData(previous => ({ ...previous, development, is_featured: development.is_demo ? false : previous.is_featured }))} onUnits={unit_types => setFormData(previous => ({ ...previous, unit_types }))} onProjectImages={images => setFormData(previous => ({ ...previous, images }))} onBusy={onUploadBusy} />}
+      {formData.listing_kind === 'development' && <DevelopmentEditor profile={formData.development || emptyDevelopment} units={formData.unit_types || []} projectImages={formData.images || []} projectVideos={formData.videos || []} onProfile={development => setFormData(previous => ({ ...previous, development, is_featured: development.is_demo ? false : previous.is_featured }))} onUnits={unit_types => setFormData(previous => ({ ...previous, unit_types }))} onProjectImages={images => setFormData(previous => ({ ...previous, images }))} onBusy={onUploadBusy} />}
 
       {/* 2. Location Card */}
       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">

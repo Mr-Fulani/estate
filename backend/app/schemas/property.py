@@ -39,6 +39,7 @@ class DevelopmentProfile(BaseModel):
     interior_images: list[str] = Field(default_factory=list, max_length=30)
     hero_video_url: str | None = None
     hero_videos: list[str] = Field(default_factory=list, max_length=30)
+    hidden_hero_videos: list[str] = Field(default_factory=list, max_length=60)
     brochure_url: str | None = None
     translations: dict[Literal["ru", "en", "tr", "ar"], DevelopmentCopy] = Field(default_factory=dict)
 
@@ -52,7 +53,7 @@ class DevelopmentProfile(BaseModel):
     def validate_hero_video(cls, value):
         return validate_media_url(value) if value else None
 
-    @field_validator("hero_videos")
+    @field_validator("hero_videos", "hidden_hero_videos")
     @classmethod
     def validate_hero_videos(cls, values):
         return [validate_media_url(value) for value in values]

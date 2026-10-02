@@ -40,11 +40,14 @@ class DevelopmentTests(unittest.TestCase):
     def test_project_and_property_video_urls_are_validated_and_round_trip(self):
         drive = "https://drive.google.com/file/d/abc123/view"
         youtube = "https://youtu.be/abcdefghijk"
-        project = DevelopmentProfile(hero_videos=[drive, youtube])
+        project = DevelopmentProfile(hero_videos=[drive, youtube], hidden_hero_videos=[youtube])
         self.assertEqual(project.hero_videos, [drive, youtube])
+        self.assertEqual(DevelopmentProfile.model_validate(project.model_dump()).hidden_hero_videos, [youtube])
+        self.assertEqual(DevelopmentProfile().hidden_hero_videos, [])
         self.assertEqual(PropertyUpdate(videos=[drive]).videos, [drive])
         for payload in [
             lambda: DevelopmentProfile(hero_videos=["javascript:alert(1)"]),
+            lambda: DevelopmentProfile(hidden_hero_videos=["javascript:alert(1)"]),
             lambda: PropertyUpdate(videos=["http://example.com/video.mp4"]),
         ]:
             with self.assertRaises(ValidationError):
