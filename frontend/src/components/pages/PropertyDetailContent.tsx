@@ -33,7 +33,7 @@ export async function PropertyDetailContent({ id, locale, initialProperty }: { i
   const siteUrl = getSiteOrigin();
   const canonicalUrl = new URL(`/${contentLocale}/properties/${property.slug}`, siteUrl).toString();
   const absoluteImages = (property.images || []).map((image) => /^https?:\/\//i.test(image) ? image : new URL(image, siteUrl).toString());
-  const breadcrumbs = <Breadcrumbs items={[{name:getMessages(locale).navigation.home,href:`/${locale}`},{name:allCopy.catalog.title,href:`/${locale}/properties`},{name:localized.title,href:`/${contentLocale}/properties/${property.slug}`}]} />;
+  const breadcrumbs = <Breadcrumbs visible={false} items={[{name:getMessages(locale).navigation.home,href:`/${locale}`},{name:allCopy.catalog.title,href:`/${locale}/properties`},{name:localized.title,href:`/${contentLocale}/properties/${property.slug}`}]} />;
   if (property.listing_kind === 'development' && property.development) {
     if (property.development.is_demo) return <DevelopmentPage property={property} locale={contentLocale} />;
     const developmentData = {
