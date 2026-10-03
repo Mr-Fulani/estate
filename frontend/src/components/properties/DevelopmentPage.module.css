@@ -138,12 +138,17 @@
 @media(max-width:760px){
  .hero{display:flex;flex-direction:column;min-height:0;height:auto}
  .page[data-preview=false] .hero{padding-top:64px}
- .heroImage{position:relative;inset:auto;order:-1;width:100%;height:auto;min-height:0;aspect-ratio:16/10;flex-shrink:0}
+ .heroImage{position:relative;inset:auto;order:-1;width:100%;height:auto;min-height:0;aspect-ratio:var(--hero-media-ratio,16/9);flex-shrink:0}
  .heroContent,.page[data-preview=false] .heroContent{min-height:0;padding-top:26px;padding-bottom:36px}
  .heroImage:after,.page[dir=rtl] .heroImage:after,.hero[data-video=true] .heroImage:after,.page[dir=rtl] .hero[data-video=true] .heroImage:after{background:linear-gradient(0deg,#182a3470,transparent 35%)}
- .heroControlsShelf{position:absolute;top:16px;inset-inline-end:16px;padding-inline:0;height:auto}
- .page[data-preview=false] .heroControlsShelf{top:80px}
- .heroMediaControls button{width:44px;height:44px}
+ .heroControlsShelf{position:static;inset:auto;justify-content:center;padding:4px 16px 0;height:auto}
+ .page[data-preview=false] .heroControlsShelf{top:auto}
+ .heroMediaControls{padding:0;background:transparent;border-radius:0;gap:8px;font-size:11px;color:#e2ded4}
+ .heroMediaControls>span:first-child{display:none}
+ .heroMediaControls button{width:44px;height:44px;border:0;background:transparent}
+ .heroMediaControls button svg{width:16px;height:16px}
+ .heroPhoto,.hero[data-video=true] .videoFrame video{object-fit:contain}
+ .heroImageLabel{display:none}
  .hero[data-video=true] .heroImage .videoFrame button{inset-inline-start:50%;top:50%;width:52px;height:52px}
  .heroImageLabel{bottom:20px;inset-inline-start:16px;max-width:40%}
  .renderLabel{bottom:20px}

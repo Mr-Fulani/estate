@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { PropertyVideo } from './PropertyVideo';
 import { PropertyMediaPlaceholder } from './PropertyMediaPlaceholder';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { ArrowDown, ArrowLeft, ArrowUpRight, ChevronLeft, ChevronRight, Expand, MapPin, Pause, Play, X } from 'lucide-react';
 import type { Property } from '@/types';
 import { type Locale, localizeHref, localeTags } from '@/i18n/config';
@@ -31,6 +31,7 @@ export function DevelopmentPage({ property: source, locale, preview = false }: {
   const videoSections = developmentVideoSections(profile, property.videos);
   const heroVideos = videoSections.hero;
   const galleryMedia = [...videoSections.gallery.map(url => ({ url, video: true })), ...interiors.map(url => ({ url, video: false }))];
+  const [heroRatios, setHeroRatios] = useState<Record<string, number>>({});
   const [heroMediaIndex, setHeroMediaIndex] = useState(0);
   const [roomIndex, setRoomIndex] = useState(0);
   const [motion, setMotion] = useState(true);
@@ -88,8 +89,8 @@ export function DevelopmentPage({ property: source, locale, preview = false }: {
           <a href={sections.concept ? "#concept" : "#residences"} aria-label={copy.overview} className={styles.circle}><ArrowDown size={18} /></a>
           </div>
         </div>
-        {heroMediaCount > 0 && <div className={styles.heroImage}>
-          {heroVideo ? <VideoFrame key={heroVideo} url={heroVideo} title={`${property.title} — ${copy.video} ${activeHeroIndex + 1}`} /> : <Image src={displayImageUrl(heroImage)} alt={`${property.title} — ${copy.render}`} fill priority unoptimized={isDriveImage(heroImage)} sizes="100vw" className={styles.heroPhoto} />}
+        {heroMediaCount > 0 && <div className={styles.heroImage} style={{ '--hero-media-ratio': heroRatios[heroVideo || heroImage] || 16 / 9 } as CSSProperties}>
+          {heroVideo ? <VideoFrame key={heroVideo} url={heroVideo} title={`${property.title} — ${copy.video} ${activeHeroIndex + 1}`} onAspectRatio={ratio => setHeroRatios(previous => previous[heroVideo] === ratio ? previous : { ...previous, [heroVideo]: ratio })} /> : <Image src={displayImageUrl(heroImage)} alt={`${property.title} — ${copy.render}`} fill priority unoptimized={isDriveImage(heroImage)} sizes="100vw" className={styles.heroPhoto} onLoad={event => { const image = event.currentTarget; if (image.naturalWidth && image.naturalHeight) { const ratio = image.naturalWidth / image.naturalHeight; setHeroRatios(previous => previous[heroImage] === ratio ? previous : { ...previous, [heroImage]: ratio }); } }} />}
           {!heroVideo && <span className={styles.heroImageLabel}>{location}</span>}
           {!heroVideo && profile.images_are_renders && <span className={styles.renderLabel}>{copy.render}</span>}
 
@@ -159,6 +160,6 @@ export function DevelopmentPage({ property: source, locale, preview = false }: {
   );
 }
 
-function VideoFrame({ url, title }: { url: string; title: string }) {
-  return <div className={styles.videoFrame}><PropertyVideo url={url} title={title} /></div>;
+function VideoFrame({ url, title, onAspectRatio }: { url: string; title: string; onAspectRatio?: (ratio: number) => void }) {
+  return <div className={styles.videoFrame}><PropertyVideo url={url} title={title} onAspectRatio={onAspectRatio} /></div>;
 }
