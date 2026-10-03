@@ -92,7 +92,7 @@ test('shared project page has one global navigation and no local contact form', 
   assert.ok(source.includes('item.video_url'));
   assert.ok(source.includes('developmentUnitPath(item.code)'));
   const route = readFileSync(resolve(__dirname, '../src/components/pages/PropertyDetailContent.tsx'), 'utf8');
-  assert.match(route, /return\s*<>\s*<script[^]*?<DevelopmentPage/);
+  assert.match(route, /return\s*<>\s*\{breadcrumbs\}\{videoMarkup\}<script[^]*?<DevelopmentPage/);
   assert.ok(!route.includes('pt-6">{breadcrumbs}'));
   const unitDetail = readFileSync(resolve(__dirname, '../src/components/properties/DevelopmentUnitDetailPage.tsx'), 'utf8');
   assert.ok(unitDetail.includes('PropertyGallery'));

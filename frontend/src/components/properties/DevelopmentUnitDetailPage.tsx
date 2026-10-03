@@ -13,6 +13,7 @@ import { getSiteOrigin } from '@/lib/site-config';
 import { fetchSiteSettings } from '@/lib/api';
 import { getSiteCopy } from '@/lib/site-profile';
 import type { Property, PropertyUnitType } from '@/types';
+import { propertyVideoSchema, unitSeoDescription } from '@/lib/property-seo';
 import { displayImageUrl, isDriveImage } from '@/lib/video-media';
 
 export async function DevelopmentUnitDetailPage({ property: source, unit, locale }: { property: Property; unit: PropertyUnitType; locale: Locale }) {
@@ -45,9 +46,10 @@ export async function DevelopmentUnitDetailPage({ property: source, unit, locale
       { name: unit.code, href: detailPath },
     ].map((item, index) => ({ '@type': 'ListItem', position: index + 1, name: item.name, item: new URL(item.href, getSiteOrigin()).toString() })),
   };
+  const videoData = propertyVideoSchema(unit.video_url ? [unit.video_url] : [], title, locale, new URL(detailPath, getSiteOrigin()).toString(), getSiteOrigin());
   const structuredData = {
     '@context': 'https://schema.org', '@type': 'RealEstateListing',
-    name: title, description: property.description || `${unit.code} · ${area}`,
+    name: title, description: unitSeoDescription(property, unit, locale),
     url: detailPath,
     image: unit.media_images || [], inLanguage: locale,
     about: {
@@ -61,6 +63,7 @@ export async function DevelopmentUnitDetailPage({ property: source, unit, locale
 
   return <main className="container mx-auto min-h-screen bg-slate-50 px-4 py-8 md:px-6 md:py-12">
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, '\\u003c') }} />
+    {videoData.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(videoData).replace(/</g, '\\u003c') }} />}
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs).replace(/</g, '\\u003c') }} />
     <Link href={`/${locale}/properties/${property.slug}`} aria-label={`${copy.backToProject}: ${property.title}`} className="mb-6 inline-flex min-h-11 max-w-full items-center gap-2 text-sm text-slate-600 transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">
       <ArrowLeft className="h-4 w-4 shrink-0 rtl:rotate-180" aria-hidden="true" /><span dir="auto">{projectName}</span>

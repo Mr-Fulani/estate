@@ -8,6 +8,7 @@ import { brandName } from '@/lib/site-profile';
 import { isLocale, openGraphLocales } from '@/i18n/config';
 import { hasPropertyLocale, localizedProperty, propertyAvailableLocales } from '@/i18n/domain';
 import { fetchProperty, fetchSiteSettings } from '@/lib/api';
+import { unitSeoDescription } from '@/lib/property-seo';
 import { developmentUnitMatchesPath } from '@/lib/development-view';
 
 type Props = { params: Promise<{ locale: string; id: string; unit: string }> };
@@ -33,8 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const unitPath = encodeURIComponent(unit.code.trim().toLowerCase().replace(/\s+/g, '-'));
   const canonicalPath = `/${canonicalLocale}/properties/${source.slug}/${unitPath}`;
   const title = `${property.title} · ${unit.code} | ${brandName(settings)}`;
-  const area = unit.area_min !== null && unit.area_max !== null ? `${unit.area_min}–${unit.area_max} m²` : '';
-  const description = `${property.description?.replace(/\s+/g, ' ').trim() || property.title} ${unit.code}${area ? ` · ${area}` : ''}`.slice(0, 320);
+  const description = unitSeoDescription(property, unit, canonicalLocale);
   const languages = Object.fromEntries([
     ...available.map(availableLocale => [availableLocale, `/${availableLocale}/properties/${source.slug}/${unitPath}`]),
     ['x-default', `/${defaultAvailableLocale(available)}/properties/${source.slug}/${unitPath}`],
