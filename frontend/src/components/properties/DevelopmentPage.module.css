@@ -1,6 +1,6 @@
 .page{--ink:#182a34;--cream:#f7f5ef;--gold:#bb965d;--line:#dedbd2;background:var(--cream);color:var(--ink);font-weight:400}
 .demoNotice{display:flex;flex-wrap:wrap;gap:8px 24px;padding:18px 6%;background:#e9dfca;color:#514127;font-size:12px;line-height:1.65}.demoNotice strong{font-size:10px;letter-spacing:.1em;text-transform:uppercase}.demoNotice span{max-width:950px}
-.hero[data-no-image=true],.locationSection[data-no-image=true]{grid-template-columns:1fr}.hero[data-no-image=true] .heroContent{max-width:1000px;width:100%;margin:auto}
+.hero[data-no-image=true],.locationSection[data-no-image=true]{grid-template-columns:1fr}.hero[data-no-image=true] .heroContent{max-width:850px;width:100%;margin-inline-start:0;margin-inline-end:auto;text-align:start}
 .sandboxForm{display:grid;gap:18px;font-size:13px;line-height:1.8}.sandboxForm button:disabled{opacity:.5;cursor:not-allowed;transform:none}
 .page h2{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:clamp(2.1rem,3.7vw,3.9rem);line-height:1.13;letter-spacing:-.035em;text-wrap:balance}
 .page button,.page a{ -webkit-tap-highlight-color:transparent }

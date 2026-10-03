@@ -1,0 +1,86 @@
+[
+  {
+    "group": "hero",
+    "file_id": "1auwgdet3BrKHzckh_-mARh4ANdXDh6GJ",
+    "kind": "photo",
+    "description": "Общий вид комплекса",
+    "source_size_bytes": 13850477
+  },
+  {
+    "group": "gallery",
+    "file_id": "1RoWBnliHXSyWhPX9hgOWnHtYwjggCqt3",
+    "kind": "photo",
+    "description": "Фасады и озеленение",
+    "source_size_bytes": 10483875
+  },
+  {
+    "group": "gallery",
+    "file_id": "1Wav6f-OlGSA-pvn3vMHYknZMfhCZNJJX",
+    "kind": "photo",
+    "description": "Входная группа",
+    "source_size_bytes": 8956916
+  },
+  {
+    "group": "gallery",
+    "file_id": "1d66WsWU6q6E1wZJBR81LZKzWePmWSrwL",
+    "kind": "photo",
+    "description": "Крытый бассейн",
+    "source_size_bytes": 12479681
+  },
+  {
+    "group": "gallery",
+    "file_id": "1GwFNl-H-_lGtBnlLi-D7l0q1pmOCX2HE",
+    "kind": "photo",
+    "description": "Wellness club",
+    "source_size_bytes": 17554042
+  },
+  {
+    "group": "gallery",
+    "file_id": "1JQMh3JiET9rtT5yR0dRS5aqe1JhX2Txi",
+    "kind": "photo",
+    "description": "Фитнес",
+    "source_size_bytes": 20306248
+  },
+  {
+    "group": "1+1",
+    "file_id": "11Zrh7GSUJcPm5NBombzTG1GCWquoLfZq",
+    "kind": "photo",
+    "description": "Пример интерьера 1+1: гостиная и кухня",
+    "source_size_bytes": 7634838
+  },
+  {
+    "group": "1+1",
+    "file_id": "1HloxzpiMjzG6gmpJyapYSaNYYvwi1JBY",
+    "kind": "photo",
+    "description": "Пример интерьера 1+1: гостиная",
+    "source_size_bytes": 6927173
+  },
+  {
+    "group": "2+1",
+    "file_id": "1I8WvVOncZk6UsTq5KQ8FKqzjlUou07ff",
+    "kind": "photo",
+    "description": "Пример интерьера 2+1: гостиная",
+    "source_size_bytes": 19980974
+  },
+  {
+    "group": "2+1",
+    "file_id": "1yI9e4rxnSxzholCNxWkJflZxm1bjf5Lk",
+    "kind": "photo",
+    "description": "Пример интерьера 2+1: кухня",
+    "source_size_bytes": 13411991
+  },
+  {
+    "group": "hero",
+    "file_id": "14usYXfAOM5QAoQCrWZK-NLkNaV7BhQN9",
+    "kind": "video",
+    "description": "Видео проекта — требует просмотра",
+    "source_size_bytes": 69940793
+  },
+  {
+    "group": "unit-video-review",
+    "file_id": "17_bHRZOREVoIEA7fYIwqGAJXwhB_kKwI",
+    "kind": "video",
+    "description": "Видео квартиры — требует просмотра",
+    "source_size_bytes": 75860613
+  }
+]

@@ -1,0 +1,92 @@
+[
+  {
+    "unit": "1+1",
+    "file_id": "1eTlxPeWcnYOPLvikiHN8Ova6jwIt8RF_",
+    "code": "A-21 · I2",
+    "area_net": 59.6,
+    "area_gross": 93.8,
+    "area_with_balcony": null,
+    "source": "https://drive.google.com/file/d/1eTlxPeWcnYOPLvikiHN8Ova6jwIt8RF_/view"
+  },
+  {
+    "unit": "1+1",
+    "file_id": "1isGzGGKIKBTs4UGYwi3Foi6JaPhYNXsD",
+    "code": "A-12 · F1",
+    "area_net": 43.33,
+    "area_gross": 70.59,
+    "area_with_balcony": null,
+    "source": "https://drive.google.com/file/d/1isGzGGKIKBTs4UGYwi3Foi6JaPhYNXsD/view"
+  },
+  {
+    "unit": "2+1",
+    "file_id": "1yfHK8rY0bwihQUd-GlQlIymRwEfnDyIr",
+    "code": "A-05 · A1",
+    "area_net": 91.6,
+    "area_gross": 155.81,
+    "area_with_balcony": null,
+    "source": "https://drive.google.com/file/d/1yfHK8rY0bwihQUd-GlQlIymRwEfnDyIr/view"
+  },
+  {
+    "unit": "3+1",
+    "file_id": "12aWLRlGal_NBdc7g-T2GnygfvOJVB4qo",
+    "code": "D1-09 · D3D",
+    "area_net": 127.0,
+    "area_gross": 187.71,
+    "area_with_balcony": null,
+    "source": "https://drive.google.com/file/d/12aWLRlGal_NBdc7g-T2GnygfvOJVB4qo/view"
+  },
+  {
+    "unit": "3+1",
+    "file_id": "1ky8Mh2fbQjoF4TW-ZBMrceTdU9Eoxd09",
+    "code": "C2-02 · H2h",
+    "area_net": 182.71,
+    "area_gross": 402.49,
+    "area_with_balcony": 212.6,
+    "source": "https://drive.google.com/file/d/1ky8Mh2fbQjoF4TW-ZBMrceTdU9Eoxd09/view"
+  },
+  {
+    "unit": "4+1",
+    "file_id": "1yOfwJxdKv3OfOHZDX9QaO_3xe9wenXr6",
+    "code": "B2-06 · B2",
+    "area_net": 179.87,
+    "area_gross": 288.53,
+    "area_with_balcony": 216.15,
+    "source": "https://drive.google.com/file/d/1yOfwJxdKv3OfOHZDX9QaO_3xe9wenXr6/view"
+  },
+  {
+    "unit": "5+1",
+    "file_id": "1t2ptifY6Q7zhDsb85ALLtLB4EONON8jR",
+    "code": "D1-01 · D1",
+    "area_net": 216.04,
+    "area_gross": 430.6,
+    "area_with_balcony": null,
+    "source": "https://drive.google.com/file/d/1t2ptifY6Q7zhDsb85ALLtLB4EONON8jR/view"
+  },
+  {
+    "unit": "2+1 Duplex",
+    "file_id": "1oaEUxmz6wXPL08ySxMfj813MX5v1XnR9",
+    "code": "A-70 · DUB13",
+    "area_net": 119.88,
+    "area_gross": 227.82,
+    "area_with_balcony": 158.48,
+    "source": "https://drive.google.com/file/d/1oaEUxmz6wXPL08ySxMfj813MX5v1XnR9/view"
+  },
+  {
+    "unit": "5+1 Duplex",
+    "file_id": "18nB3StD59mZyet5L3uh0f26PlY0zPDad",
+    "code": "D1-22 · DUB D1",
+    "area_net": 244.39,
+    "area_gross": 409.9,
+    "area_with_balcony": null,
+    "source": "https://drive.google.com/file/d/18nB3StD59mZyet5L3uh0f26PlY0zPDad/view"
+  },
+  {
+    "unit": "6+1 Duplex",
+    "file_id": "1duBS9k_a2pAxxYh3zUnsjEkViwUKgddw",
+    "code": "C1-14 · DUB2",
+    "area_net": 360.24,
+    "area_gross": 620.24,
+    "area_with_balcony": 458.68,
+    "source": "https://drive.google.com/file/d/1duBS9k_a2pAxxYh3zUnsjEkViwUKgddw/view"
+  }
+]

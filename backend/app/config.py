@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     PUBLIC_REVIEW_RATE_WINDOW_MINUTES: int = 60
     MEDIA_ROOT: str = "/app/uploads"
     MEDIA_URL: str = "/uploads"
-    MEDIA_MAX_IMAGE_MB: int = 25
+    MEDIA_MAX_IMAGE_MB: int = 20
     MEDIA_MAX_VIDEO_MB: int = 250
     TELEGRAM_BOT_TOKEN: str = ""
     TELEGRAM_BOT_USERNAME: str = ""
